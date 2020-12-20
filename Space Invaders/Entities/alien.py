@@ -24,3 +24,7 @@ class Alien:
     def move_right(self):
         self.x = self.x + 20
         self.avatar.setGeometry(self.x, self.y, self.h, self.w)
+
+    def move_down(self):
+        self.y = self.y + 20
+        self.avatar.setGeometry(self.x, self.y, self.h, self.w)

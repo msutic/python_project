@@ -81,7 +81,9 @@ class StartWindow(QWidget):
         self.hide()
 
 
+
 class StartGameSingleplayer(QWidget):
+    counter = 0
 
     def __init__(self):
         super().__init__()
@@ -93,6 +95,7 @@ class StartGameSingleplayer(QWidget):
             self.avatar.move_left()
         elif event.key() == Qt.Key_D:
             self.avatar.move_right()
+
 
     def init_ui(self):
         self.setFixedSize(950, 778)
@@ -210,10 +213,16 @@ class StartGameSingleplayer(QWidget):
         timer.start(200)
 
     def on_timeout(self):
+        if self.counter == 5:
+            for alien in self.aliens:
+                alien.move_down()
+            self.counter = 0
+
         if self.alien1.direction_left:
             for alien in self.aliens:
                 alien.move_left()
             if self.alien1.x - 20 < 10:
+                self.counter += 1
                 Alien.direction_left = False
         else:
             for alien in self.aliens:
