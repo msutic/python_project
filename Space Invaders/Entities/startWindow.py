@@ -1,8 +1,9 @@
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, qApp, QMessageBox, QDesktopWidget
 from PyQt5.QtGui import QPixmap, QIcon
-import Entities.spaceship as ss
-from PyQt5.QtCore import Qt
+from Entities.spaceship import Spaceship
+from Entities.alien import Alien
+from PyQt5.QtCore import Qt, QTimer
 
 
 class StartWindow(QWidget):
@@ -88,42 +89,21 @@ class StartGameSingleplayer(QWidget):
         self.init_ui()
 
     def keyPressEvent(self, event):
-        x = self.player_label.x()
-        y = self.player_label.y()
-        if event.key() == Qt.Key_Left:
-            if x <= 10:
-                x=10
-            else:
-                self.player_label.move(x - 20, y)
-        elif event.key() == Qt.Key_Up:
-            if y <= 500:
-                y=500
-            else:
-                self.player_label.move(x, y - 20)
-        elif event.key() == Qt.Key_Right:
-            if x >= 970:
-                x=970
-            else:
-                self.player_label.move(x + 20, y)
-        elif event.key() == Qt.Key_Down:
-            if y >= 670:
-                y=670
-            else:
-                self.player_label.move(x, y + 20)
+        if event.key() == Qt.Key_A:
+            self.avatar.move_left()
+        elif event.key() == Qt.Key_D:
+            self.avatar.move_right()
 
     def init_ui(self):
-        self.setFixedSize(1043, 778)
+        self.setFixedSize(950, 778)
         self.setWindowIcon(QIcon('images/icon.png'))
-        self.setWindowTitle('Space Invaders [play mode]')
+        self.setWindowTitle('Space Invaders [singleplayer mode]')
 
         self.bgLabel = QLabel(self)
         self.background = QPixmap('images/game_background.png')
         self.bgLabel.setPixmap(self.background)
 
-        self.player_label = QLabel(self)
-        self.player_spaceship = QPixmap('images/in_game_spaceship.png')
-        self.player_label.setPixmap(self.player_spaceship)
-        self.player_label.setGeometry(QtCore.QRect(10, 670, 131, 91))
+        self.avatar = Spaceship(self, 'images/in_game_spaceship.png', 10, 670, 131, 91)
 
         self.pause_label = QLabel(self)
         self.pause_label.setText("pause [p]")
@@ -176,6 +156,70 @@ class StartGameSingleplayer(QWidget):
         self.score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                  "font: 75 15pt \"Fixedsys\";")
 
+        self.alien1 = Alien(self, 'images/alien1-resized.png', 50, 86, 45, 45)
+        self.alien2 = Alien(self, 'images/alien1-resized.png', 120, 86, 45, 45)
+        self.alien3 = Alien(self, 'images/alien1-resized.png', 190, 86, 45, 45)
+        self.alien4 = Alien(self, 'images/alien1-resized.png', 260, 86, 45, 45)
+        self.alien5 = Alien(self, 'images/alien1-resized.png', 330, 86, 45, 45)
+        self.alien6 = Alien(self, 'images/alien1-resized.png', 400, 86, 45, 45)
+        self.alien7 = Alien(self, 'images/alien1-resized.png', 470, 86, 45, 45)
+        self.alien8 = Alien(self, 'images/alien1-resized.png', 540, 86, 45, 45)
+        self.alien9 = Alien(self, 'images/alien1-resized.png', 610, 86, 45, 45)
+        self.alien10 = Alien(self, 'images/alien1-resized.png', 680, 86, 45, 45)
+        self.alien11 = Alien(self, 'images/alien1-resized.png', 750, 86, 45, 45)
+
+        self.alienb1 = Alien(self, 'images/alien1-resized.png', 50, 135, 45, 45)
+        self.alienb2 = Alien(self, 'images/alien1-resized.png', 120, 135, 45, 45)
+        self.alienb3 = Alien(self, 'images/alien1-resized.png', 190, 135, 45, 45)
+        self.alienb4 = Alien(self, 'images/alien1-resized.png', 260, 135, 45, 45)
+        self.alienb5 = Alien(self, 'images/alien1-resized.png', 330, 135, 45, 45)
+        self.alienb6 = Alien(self, 'images/alien1-resized.png', 400, 135, 45, 45)
+        self.alienb7 = Alien(self, 'images/alien1-resized.png', 470, 135, 45, 45)
+        self.alienb8 = Alien(self, 'images/alien1-resized.png', 540, 135, 45, 45)
+        self.alienb9 = Alien(self, 'images/alien1-resized.png', 610, 135, 45, 45)
+        self.alienb10 = Alien(self, 'images/alien1-resized.png', 680, 135, 45, 45)
+        self.alienb11 = Alien(self, 'images/alien1-resized.png', 750, 135, 45, 45)
+
+        self.aliens = []
+        self.aliens.append(self.alien1)
+        self.aliens.append(self.alien2)
+        self.aliens.append(self.alien3)
+        self.aliens.append(self.alien4)
+        self.aliens.append(self.alien5)
+        self.aliens.append(self.alien6)
+        self.aliens.append(self.alien7)
+        self.aliens.append(self.alien8)
+        self.aliens.append(self.alien9)
+        self.aliens.append(self.alien10)
+        self.aliens.append(self.alien11)
+
+        self.aliens.append(self.alienb1)
+        self.aliens.append(self.alienb2)
+        self.aliens.append(self.alienb3)
+        self.aliens.append(self.alienb4)
+        self.aliens.append(self.alienb5)
+        self.aliens.append(self.alienb6)
+        self.aliens.append(self.alienb7)
+        self.aliens.append(self.alienb8)
+        self.aliens.append(self.alienb9)
+        self.aliens.append(self.alienb10)
+        self.aliens.append(self.alienb11)
+
+        timer = QTimer(self)
+        timer.timeout.connect(self.on_timeout)
+        timer.start(200)
+
+    def on_timeout(self):
+        if self.alien1.direction_left:
+            for alien in self.aliens:
+                alien.move_left()
+            if self.alien1.x - 20 < 10:
+                Alien.direction_left = False
+        else:
+            for alien in self.aliens:
+                alien.move_right()
+            if self.alien11.x + 20 > 900:
+                Alien.direction_left = True
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Message',

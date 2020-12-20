@@ -1,25 +1,37 @@
 from PyQt5.QtCore import Qt
-import sys
 
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
 
 
-class Example(QLabel):
-    def __init__(self, label):
-        super().__init__()
-        self.label = label
+class Spaceship():
+    def __init__(self, screen: QWidget, img, x, y, h, w):
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
+        self.img = img
+        self.avatar = QLabel(screen)
+        self.pixmap = QPixmap(self.img)
+        self.avatar.setPixmap(self.pixmap)
+        self.avatar.setGeometry(self.x, self.y, self.h, self.w)
+        self.avatar.show()
+
+    def move_left(self):
+        if self.x <= 10:
+            self.x = 10
+        else:
+            self.x = self.x - 20
+        self.avatar.setGeometry(self.x, self.y, self.h, self.w)
+        self.avatar.show()
+
+    def move_right(self):
+        if self.x >= 879:
+            self.x = 879
+        else:
+            self.x = self.x + 20
+        self.avatar.setGeometry(self.x, self.y, self.h, self.w)
+        self.avatar.show()
 
 
-    def keyPressEvent(self, event):
-        x = self.label.x()
-        y = self.label.y()
-        if event.key() == Qt.Key_Left:
-            self.label.move(x - 15, y)
-        elif event.key() == Qt.Key_Up:
-            self.label.move(x, y - 15)
-        elif event.key() == Qt.Key_Right:
-            self.label.move(x + 15, y)
-        elif event.key() == Qt.Key_Down:
-            self.label.move(x, y + 15)
