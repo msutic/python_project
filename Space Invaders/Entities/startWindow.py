@@ -4,6 +4,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from Entities.spaceship import Spaceship
 from Entities.alien import Alien
 from PyQt5.QtCore import Qt, QTimer
+from Entities.bullets import Bullet
 
 
 class StartWindow(QWidget):
@@ -95,6 +96,17 @@ class StartGameSingleplayer(QWidget):
             self.avatar.move_left()
         elif event.key() == Qt.Key_D:
             self.avatar.move_right()
+        elif event.key() == Qt.Key_Space:
+            self.attack()
+            timer1 = QTimer(self)
+            timer1.timeout.connect(self.on_timeout1)
+            timer1.start(50)
+
+    def on_timeout1(self):
+        self.bullet.move_up()
+
+    def attack(self):
+        self.bullet = Bullet(self, 'images/bullet-resized.png', self.avatar.x + 22, self.avatar.y - 12, 45, 45)
 
 
     def init_ui(self):
