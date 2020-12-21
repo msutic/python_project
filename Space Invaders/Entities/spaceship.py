@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
 
 
-class Spaceship():
+class Spaceship:
     def __init__(self, screen: QWidget, img, x, y, h, w):
         self.x = x
         self.y = y
@@ -19,16 +19,16 @@ class Spaceship():
         self.avatar.show()
 
     def move_left(self):
-        if self.x <= 10:
-            self.x = 10
+        if self.x <= 15:
+            self.x = 15
         else:
             self.x = self.x - 20
         self.avatar.setGeometry(self.x, self.y, self.h, self.w)
         self.avatar.show()
 
     def move_right(self):
-        if self.x >= 879:
-            self.x = 879
+        if self.x >= 895:
+            self.x = 895
         else:
             self.x = self.x + 20
         self.avatar.setGeometry(self.x, self.y, self.h, self.w)

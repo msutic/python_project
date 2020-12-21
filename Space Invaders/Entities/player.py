@@ -1,6 +1,9 @@
-import Entities.spaceship
+from PyQt5.QtWidgets import QWidget
 
-class Player:
-    def __init__(self):
-        lives = 3
-        level = 1
+from Entities.spaceship import Spaceship
+
+
+class Player(Spaceship):
+    def __init__(self, screen: QWidget, img, x, y, h, w):
+        super().__init__(screen, img, x, y, h, w)
+
