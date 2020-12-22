@@ -1,4 +1,4 @@
-from Entities import bullet
+from Entities import Bullet
 
 
 class Storage:
@@ -8,5 +8,6 @@ class Storage:
     def get_bullets(self):
         return self.bullets
 
-    def add_bullet(self, bullet: bullet):
+    def add_bullet(self, bullet: Bullet):
         self.bullets.append(bullet)
+

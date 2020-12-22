@@ -1,6 +1,6 @@
 import sys
 
-from client.startWindow import *
+from client import StartWindow
 from PyQt5.QtWidgets import QApplication
 
 if __name__ == '__main__':
