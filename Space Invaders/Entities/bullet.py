@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QLabel, QWidget
 
 
 class Bullet:
+
     def __init__(self, screen: QWidget, img, x, y, h, w):
         self.x = x
         self.y = y

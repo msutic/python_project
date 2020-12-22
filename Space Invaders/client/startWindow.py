@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow
+from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 from client.singleplayer import StartGameSingleplayer
 
@@ -12,23 +12,7 @@ class StartWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("Space Invaders")
-        self.setWindowIcon(QIcon('images/icon.png'))
-
-        self.bg_label = QLabel(self)
-        self.movie = QMovie("images/ng-colab-space_day.gif")
-        self.bg_label.setMovie(self.movie)
-        self.bg_label.setGeometry(0, 0, 800, 600)
-        self.movie.start()
-        # self.background = QPixmap('images/backgroundImg.jpg')
-        # self.bg_label.setPixmap(self.background)
-        self.setFixedSize(800, 600)
-
-        self.header = QLabel(self)
-        self.header.setGeometry(QtCore.QRect(0, 0, 800, 261))
-        self.header.setPixmap(QPixmap("images/logo1.png"))
-        self.header.setAlignment(QtCore.Qt.AlignCenter)
-
+        self.set_window()
         self.buttons()
         self.center()
         self.show()
@@ -71,6 +55,24 @@ class StartWindow(QMainWindow):
         self.exit_button.setFont(font)
         self.exit_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.exit_button.clicked.connect(qApp.quit)
+
+    def set_window(self):
+        self.setWindowTitle("Space Invaders")
+        self.setWindowIcon(QIcon('images/icon.png'))
+
+        self.bg_label = QLabel(self)
+        self.movie = QMovie("images/ng-colab-space_day.gif")
+        self.bg_label.setMovie(self.movie)
+        self.bg_label.setGeometry(0, 0, 800, 600)
+        self.movie.start()
+        # self.background = QPixmap('images/backgroundImg.jpg')
+        # self.bg_label.setPixmap(self.background)
+        self.setFixedSize(800, 600)
+
+        self.header = QLabel(self)
+        self.header.setGeometry(QtCore.QRect(0, 0, 800, 261))
+        self.header.setPixmap(QPixmap("images/logo1.png"))
+        self.header.setAlignment(QtCore.Qt.AlignCenter)
 
     def center(self):
         qr = self.frameGeometry()

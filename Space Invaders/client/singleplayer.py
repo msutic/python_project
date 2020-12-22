@@ -1,19 +1,20 @@
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QWidget, QLabel, QMessageBox
+from PyQt5.QtWidgets import QWidget, QLabel, QMessageBox, QMainWindow
 from PyQt5.QtCore import Qt, QTimer, QRect
 
 from Entities.alien import Alien
-from Entities.bullets import Bullet
+from Entities.bullet import Bullet
 from Entities.player import Player
+from Database import storage
 
 
-class StartGameSingleplayer(QWidget):
+class StartGameSingleplayer(QMainWindow):
     counter = 0
 
     def __init__(self):
         super().__init__()
-
+        self.bullets = []
         self.init_ui()
 
     def keyPressEvent(self, event):
@@ -32,6 +33,9 @@ class StartGameSingleplayer(QWidget):
 
     def attack(self):
         self.bullet = Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45)
+        #self.bullets.append(self.bullet.bullet)
+        #for  in self.bullets:
+
 
     def init_ui(self):
         self.setFixedSize(950, 778)
@@ -41,6 +45,7 @@ class StartGameSingleplayer(QWidget):
         self.bgLabel = QLabel(self)
         self.background = QPixmap('images/bg-resized2.jpg')
         self.bgLabel.setPixmap(self.background)
+        self.bgLabel.setGeometry(0, 0, 950, 778)
 
         self.player = Player(self, 'images/spacecraft.png', 15, 680, 131, 91)
 
@@ -132,6 +137,30 @@ class StartGameSingleplayer(QWidget):
         self.alienc10 = Alien(self, 'images/alien3-resized.png', 680, 205, 50, 45)
         self.alienc11 = Alien(self, 'images/alien3-resized.png', 750, 205, 50, 45)
 
+        self.aliend1 = Alien(self, 'images/alien3-resized.png', 50, 255, 50, 45)
+        self.aliend2 = Alien(self, 'images/alien3-resized.png', 120, 255, 50, 45)
+        self.aliend3 = Alien(self, 'images/alien3-resized.png', 190, 255, 50, 45)
+        self.aliend4 = Alien(self, 'images/alien3-resized.png', 260, 255, 50, 45)
+        self.aliend5 = Alien(self, 'images/alien3-resized.png', 330, 255, 50, 45)
+        self.aliend6 = Alien(self, 'images/alien3-resized.png', 400, 255, 50, 45)
+        self.aliend7 = Alien(self, 'images/alien3-resized.png', 470, 255, 50, 45)
+        self.aliend8 = Alien(self, 'images/alien3-resized.png', 540, 255, 50, 45)
+        self.aliend9 = Alien(self, 'images/alien3-resized.png', 610, 255, 50, 45)
+        self.aliend10 = Alien(self, 'images/alien3-resized.png', 680, 255, 50, 45)
+        self.aliend11 = Alien(self, 'images/alien3-resized.png', 750, 255, 50, 45)
+
+        self.aliene1 = Alien(self, 'images/alien3-resized.png', 50, 305, 50, 45)
+        self.aliene2 = Alien(self, 'images/alien3-resized.png', 120, 305, 50, 45)
+        self.aliene3 = Alien(self, 'images/alien3-resized.png', 190, 305, 50, 45)
+        self.aliene4 = Alien(self, 'images/alien3-resized.png', 260, 305, 50, 45)
+        self.aliene5 = Alien(self, 'images/alien3-resized.png', 330, 305, 50, 45)
+        self.aliene6 = Alien(self, 'images/alien3-resized.png', 400, 305, 50, 45)
+        self.aliene7 = Alien(self, 'images/alien3-resized.png', 470, 305, 50, 45)
+        self.aliene8 = Alien(self, 'images/alien3-resized.png', 540, 305, 50, 45)
+        self.aliene9 = Alien(self, 'images/alien3-resized.png', 610, 305, 50, 45)
+        self.aliene10 = Alien(self, 'images/alien3-resized.png', 680, 305, 50, 45)
+        self.aliene11 = Alien(self, 'images/alien3-resized.png', 750, 305, 50, 45)
+
         self.aliens = []
         self.aliens.append(self.alien1)
         self.aliens.append(self.alien2)
@@ -169,14 +198,40 @@ class StartGameSingleplayer(QWidget):
         self.aliens.append(self.alienc10)
         self.aliens.append(self.alienc11)
 
+        self.aliens.append(self.aliend1)
+        self.aliens.append(self.aliend2)
+        self.aliens.append(self.aliend3)
+        self.aliens.append(self.aliend4)
+        self.aliens.append(self.aliend5)
+        self.aliens.append(self.aliend6)
+        self.aliens.append(self.aliend7)
+        self.aliens.append(self.aliend8)
+        self.aliens.append(self.aliend9)
+        self.aliens.append(self.aliend10)
+        self.aliens.append(self.aliend11)
+
+        self.aliens.append(self.aliene1)
+        self.aliens.append(self.aliene2)
+        self.aliens.append(self.aliene3)
+        self.aliens.append(self.aliene4)
+        self.aliens.append(self.aliene5)
+        self.aliens.append(self.aliene6)
+        self.aliens.append(self.aliene7)
+        self.aliens.append(self.aliene8)
+        self.aliens.append(self.aliene9)
+        self.aliens.append(self.aliene10)
+        self.aliens.append(self.aliene11)
+
+        self.set_timer = 500
         timer = QTimer(self)
         timer.timeout.connect(self.on_timeout)
-        timer.start(200)
+        timer.start(self.set_timer)
 
     def on_timeout(self):
-        if self.counter == 5:
+        if self.counter == 3:
             for alien in self.aliens:
                 alien.move_down()
+            self.set_timer -= 200
             self.counter = 0
 
         if self.alien1.direction_left:
