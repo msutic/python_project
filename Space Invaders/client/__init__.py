@@ -1,11 +1,28 @@
+import sys
+from multiprocessing import Process
+
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow
+from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow, QApplication
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 from client.Singleplayer import StartGameSingleplayer
 
 
+def __start_game_process__():
+    process = Process(target=__start_game__, args=())
+    process.daemon = True
+    process.start()
+
+
+def __start_game__():
+    app = QApplication(sys.argv)
+    game = StartGameSingleplayer()
+    game.show()
+    sys.exit(app.exec_())
+
+
 class StartWindow(QMainWindow):
 
+    enabled = True
     def __init__(self):
         super().__init__()
 
@@ -16,6 +33,10 @@ class StartWindow(QMainWindow):
         self.buttons()
         self.center()
         self.show()
+
+    def on_start_button_clicked(self):
+        __start_game_process__()
+        self.setEnabled(self.enabled)
 
     def buttons(self):
         self.start_game_button = QPushButton(self)
@@ -29,7 +50,7 @@ class StartWindow(QMainWindow):
         self.start_game_button.setFont(font)
         self.start_game_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
-        self.start_game_button.clicked.connect(self.start_game_dialog)
+        self.start_game_button.clicked.connect(self.on_start_button_clicked)
 
         self.mp_button = QPushButton(self)
         self.mp_button.setText("multiplayer")

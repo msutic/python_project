@@ -1,6 +1,8 @@
+import sys
+
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow
+from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow, QApplication
 from PyQt5.QtCore import Qt, QTimer, QRect
 
 from Entities.Alien import Alien
@@ -135,8 +137,8 @@ class StartGameSingleplayer(QMainWindow):
     def attack(self):
         for bullet in self.bullets:
             bullet.move_up()
-
-    def closeEvent(self, event):
+    '''
+        def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Message',
                                      "Are you sure to quit?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
@@ -145,3 +147,10 @@ class StartGameSingleplayer(QMainWindow):
             self.hide()
         else:
             event.ignore()
+    '''
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    sp = StartGameSingleplayer()
+    sys.exit(app.exec_())
