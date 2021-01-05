@@ -9,6 +9,7 @@ from Entities.Alien import Alien
 from Entities.Bullet import Bullet
 from Entities.Player import Player
 from Database import Storage
+from Entities.Shield import Shield
 
 
 class StartGameSingleplayer(QMainWindow):
@@ -18,12 +19,14 @@ class StartGameSingleplayer(QMainWindow):
         super().__init__()
         self.bullets = []
         self.aliens = []
+        self.shields = []
         self.init_ui()
 
     def init_ui(self):
         self.init_window()
         self.labels()
         self.init_aliens()
+        self.init_shield()
 
         self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91)
 
@@ -52,6 +55,15 @@ class StartGameSingleplayer(QMainWindow):
         timer = QTimer(self)
         timer.timeout.connect(self.on_timeout)
         timer.start(self.set_timer)
+
+    def init_shield(self):
+        for i in range (4):
+            self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105))
+
+            self.set_timer = 500
+            timer = QTimer(self)
+            timer.timeout.connect(self.on_timeout)
+            timer.start(self.set_timer)
 
     def on_timeout(self):
         if self.counter == 3:
@@ -113,6 +125,7 @@ class StartGameSingleplayer(QMainWindow):
         self.hiscore_label.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
+
         self.hi_score = QLabel(self)
         self.hi_score.setText("0")
         self.hi_score.setGeometry(QRect(920, 10, 111, 21))
@@ -125,6 +138,17 @@ class StartGameSingleplayer(QMainWindow):
         self.score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                  "font: 75 15pt \"Fixedsys\";")
 
+        self.current_level = QLabel(self)
+        self.current_level.setText("Current level: ")
+        self.current_level.setGeometry(QRect(420, 10, 111, 20))
+        self.current_level.setStyleSheet("color: rgb(255, 255, 255);\n"
+                                         "font: 75 15pt \"Fixedsys\";")
+
+        self.current_score = QLabel(self)
+        self.current_score.setText("0")
+        self.current_score.setGeometry(QRect(540, 10, 111, 20))
+        self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
+                                         "font: 75 15pt \"Fixedsys\";")
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_A:
             self.player.move_left()
