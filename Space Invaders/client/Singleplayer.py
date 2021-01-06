@@ -15,9 +15,11 @@ from Entities.Shield import Shield
 class StartGameSingleplayer(QMainWindow):
     counter = 0
 
+
     def __init__(self):
         super().__init__()
         self.bullets = []
+        self.bullets_enemy = []
         self.aliens = []
         self.shields = []
         self.init_ui()
@@ -59,12 +61,12 @@ class StartGameSingleplayer(QMainWindow):
     def init_shield(self):
         for i in range (4):
             self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105))
-
-            self.set_timer = 500
-            timer = QTimer(self)
-            timer.timeout.connect(self.on_timeout)
-            timer.start(self.set_timer)
-
+        """""
+        self.set_timer = 500
+        timer = QTimer(self)
+        timer.timeout.connect(self.on_timeout)
+        timer.start(self.set_timer)
+        """""
     def on_timeout(self):
         if self.counter == 3:
             for alien in self.aliens:
@@ -161,17 +163,27 @@ class StartGameSingleplayer(QMainWindow):
     def attack(self):
         for bullet in self.bullets:
             bullet.move_up()
-    '''
-        def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Message',
-                                     "Are you sure to quit?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
+            # ovo moram da doradim ne radi bas dobro, treba mi neki brojac ???
+            for shield in self.shields:
+                    if bullet.x > 50 and bullet.x < 135:
+                        self.shields[0].avatar.hide()
+                        self.shield0 = Shield(self, 'images/shield2.png', 50, 546, 85, 105)
+                        bullet.avatar.hide()
+                    if bullet.x > 310 and bullet.x < 395:
+                        self.shields[1].avatar.hide()
+                        self.shield1 = Shield(self, 'images/shield2.png', 310, 546, 85, 105)
+                        bullet.avatar.hide()
+                    if bullet.x > 570 and bullet.x < 655:
+                        self.shields[2].avatar.hide()
+                        self.shield2 = Shield(self, 'images/shield2.png', 570, 546, 85, 105)
+                        bullet.avatar.hide()
+                    if bullet.x > 830 and bullet.x < 915:
+                        self.shields[3].avatar.hide()
+                        self.shield3 = Shield(self, 'images/shield2.png', 830, 546, 85, 105)
+                        bullet.avatar.hide()
 
-        if reply == QMessageBox.Yes:
-            self.hide()
-        else:
-            event.ignore()
-    '''
+
+
 
 
 if __name__ == '__main__':

@@ -10,3 +10,7 @@ class Bullet(MovableObject):
     def move_up(self):
         self.y = self.y - 10
         self.avatar.setGeometry(self.x, self.y, self.w, self.h)
+
+    def move_down(self):
+        self.y = self.y + 10
+        self.avatar.setGeometry(self.x, self.y, self.w, self.h)
