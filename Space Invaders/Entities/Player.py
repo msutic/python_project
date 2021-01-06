@@ -4,5 +4,5 @@ from Entities.Spaceship import Spaceship
 
 class Player(Spaceship):
 
-    def __init__(self, screen: QWidget, img, x, y, w, h):
-        super().__init__(screen, img, x, y, w, h)
+    def __init__(self, screen: QWidget, img, x, y, w, h, velocity: int):
+        super().__init__(screen=screen, img=img, x=x, y=y, w=w, h=h, velocity=velocity)

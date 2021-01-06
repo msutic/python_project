@@ -1,17 +1,22 @@
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QLabel
+from PyQt5.QtWidgets import QWidget
+
+from Entities.ScreenObject import ScreenObject
 
 
-class MovableObject:
+class MovableObject(ScreenObject):
 
-    def __init__(self, screen: QWidget, img, x, y, w, h):
-        self.x = x
-        self.y = y
-        self.h = h
-        self.w = w
-        self.img = img
-        self.avatar = QLabel(screen)
-        self.pixmap = QPixmap(self.img)
-        self.avatar.setPixmap(self.pixmap)
-        self.avatar.setGeometry(self.x, self.y, self.w, self.h)
-        self.avatar.show()
+    def __init__(self, screen: QWidget, img, x, y, w, h, velocity: int):
+        super().__init__(screen=screen, img=img, x=x, y=y, w=w, h=h)
+        self.velocity = velocity
+
+    def move_left(self):
+        pass
+
+    def move_right(self):
+        pass
+
+    def move_down(self):
+        pass
+
+    def move_up(self):
+        pass
