@@ -11,6 +11,10 @@ from Entities.Player import Player
 from Database import Storage
 from Entities.Shield import Shield
 
+from time import  sleep
+
+import random
+
 
 class StartGameSingleplayer(QMainWindow):
     counter = 0
@@ -30,13 +34,24 @@ class StartGameSingleplayer(QMainWindow):
         self.init_window()
         self.labels()
         self.init_aliens()
-        self.init_shield()
 
+        self.timer2 = QTimer(self)
+        self.timer2.timeout.connect(self.init_alien_attack)
+        self.timer2.start(1200)
+
+        self.timer3 = QTimer(self)
+        self.timer3.timeout.connect(self.alien_attack)
+        self.timer3.start(60)
+
+        self.init_shield()
         self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91)
 
         self.timer1 = QTimer(self)
         self.timer1.timeout.connect(self.attack)
         self.timer1.timeout.connect(self.destroy_enemy)
+
+
+
 
     def init_window(self):
         self.setFixedSize(950, 778)
@@ -133,13 +148,13 @@ class StartGameSingleplayer(QMainWindow):
 
         self.hi_score = QLabel(self)
         self.hi_score.setText('0')
-        self.hi_score.setGeometry(QRect(920, 10, 111, 21))
+        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                     "font: 75 15pt \"Fixedsys\";")
 
         self.score = QLabel(self)
-        self.score.setText("0")
-        self.score.setGeometry(QRect(920, 40, 111, 16))
+        self.score.setText(str(self.total_point))
+        self.score.setGeometry(QRect(910, 40, 111, 16))
         self.score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                  "font: 75 15pt \"Fixedsys\";")
 
@@ -150,7 +165,7 @@ class StartGameSingleplayer(QMainWindow):
                                          "font: 75 15pt \"Fixedsys\";")
 
         self.current_score = QLabel(self)
-        self.current_score.setText(str(self.total_point))
+        self.current_score.setText("0")
         self.current_score.setGeometry(QRect(540, 10, 111, 20))
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
@@ -162,6 +177,24 @@ class StartGameSingleplayer(QMainWindow):
         elif event.key() == Qt.Key_Space:
             self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
             self.timer1.start(10)
+    """""
+    def init_alien_attack(self):
+        for i in range(11):
+            napadac = random.randint(0, 55)
+            self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
+            self.timer1.start(10)
+    """
+
+    def init_alien_attack(self):
+        napadac = random.randint(0, 54)
+        self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
+
+    def alien_attack(self):
+
+        for bullet in self.bullets_enemy:
+            bullet.move_down()
+
+
 
     def destroy_enemy(self):
         for bullet in self.bullets:
@@ -184,25 +217,54 @@ class StartGameSingleplayer(QMainWindow):
             # ovo moram da doradim ne radi bas dobro, treba mi neki brojac ???
             for shield in self.shields:
                     if bullet.x > 50 and bullet.x < 135:
-                        self.shields[0].avatar.hide()
-                        self.shield0 = Shield(self, 'images/shield2.png', 50, 546, 85, 105)
-                        bullet.avatar.hide()
-                        self.total_point += 10
+                        count_shield0  += 1
+
+                        if count_shield0 == 1:
+                            self.shields[0].avatar.hide()
+                            self.shield0 = Shield(self, 'images/shield2.png', 50, 546, 85, 105)
+                            bullet.avatar.hide()
+                            #self.bullets.remove(bullet)
+                            self.score.setText(str(self.total_point + 10))
+
+                        if count_shield0 == 2:
+                            self.shield0.avatar.hide()
+                            self.shield4 = Shield(self, 'images/lives.png', 50, 546, 85, 105)
+                            bullet.avatar.hide()
+                            #self.bullets.remove(bullet)
+                            self.score.setText(str(self.total_point + 10))
+
+                        if count_shield0 == 3:
+                            self.shield4.avatar.hide()
+                            self.shield8 = Shield(self, 'images/icon.png', 50, 546, 85, 105)
+                            bullet.avatar.hide()
+                            #self.bullets.remove(bullet)
+                            self.score.setText(str(self.total_point + 10))
+
+                        if count_shield0 == 4:
+                            self.shield8.avatar.hide()
+                            #self.shield8 = Shield(self, 'images/icon.png', 50, 546, 85, 105)
+                            bullet.avatar.hide()
+                            #self.bullets.remove(bullet)
+                            #self.score.setText(str(self.total_point + 10))
+
+
+
+
                     if bullet.x > 310 and bullet.x < 395:
                         self.shields[1].avatar.hide()
-                        self.shield1 = Shield(self, 'images/shield2.png', 310, 546, 85, 105)
+                        self.shield1 = Shield(self, 'images/lives.png', 310, 546, 85, 105)
                         bullet.avatar.hide()
-                        self.total_point += 10
+                        self.score.setText(str(self.total_point + 10))
                     if bullet.x > 570 and bullet.x < 655:
                         self.shields[2].avatar.hide()
-                        self.shield2 = Shield(self, 'images/shield2.png', 570, 546, 85, 105)
+                        self.shield2 = Shield(self, 'images/lives.png', 570, 546, 85, 105)
                         bullet.avatar.hide()
-                        self.total_point += 10
+                        self.score.setText(str(self.total_point + 10))
                     if bullet.x > 830 and bullet.x < 915:
                         self.shields[3].avatar.hide()
-                        self.shield3 = Shield(self, 'images/shield2.png', 830, 546, 85, 105)
+                        self.shield3 = Shield(self, 'images/lives.png', 830, 546, 85, 105)
                         bullet.avatar.hide()
-                        self.total_point += 10
+                        self.score.setText(str(self.total_point + 10))
 
 
 
