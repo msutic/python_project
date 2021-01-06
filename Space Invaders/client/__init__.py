@@ -4,9 +4,10 @@ from multiprocessing import Process
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow, QApplication
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
-from client.Singleplayer import StartGameSingleplayer
 
+from client.SelectWindow import SelectWindow
 
+'''
 def __start_game_process__():
     process = Process(target=__start_game__, args=())
     process.daemon = True
@@ -18,7 +19,7 @@ def __start_game__():
     game = StartGameSingleplayer()
     game.show()
     sys.exit(app.exec_())
-
+'''
 
 class StartWindow(QMainWindow):
 
@@ -35,7 +36,11 @@ class StartWindow(QMainWindow):
         self.show()
 
     def on_start_button_clicked(self):
-        __start_game_process__()
+        #__start_game_process__()
+        app = QApplication(sys.argv)
+        game = SelectWindow()
+        game.show()
+        sys.exit(app.exec_())
         self.setEnabled(self.enabled)
 
     def buttons(self):
@@ -101,11 +106,12 @@ class StartWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+'''
     def start_game_dialog(self):
         self.a = StartGameSingleplayer()
         self.a.show()
         #self.hide()
-
+'''
 
 
 
