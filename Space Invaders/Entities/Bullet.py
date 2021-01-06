@@ -12,5 +12,5 @@ class Bullet(MovableObject):
         self.avatar.setGeometry(self.x, self.y, self.h, self.w)
 
     def move_up(self):
-        self.y = self.y + self.velocity
+        self.y = self.y - self.velocity
         self.avatar.setGeometry(self.x, self.y, self.h, self.w)

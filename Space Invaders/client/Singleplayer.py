@@ -25,7 +25,7 @@ class StartGameSingleplayer(QMainWindow):
         self.labels()
         self.init_aliens()
 
-        self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91)
+        self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91, 20)
 
         self.timer1 = QTimer(self)
         self.timer1.timeout.connect(self.attack)
@@ -42,22 +42,22 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_aliens(self):
         for i in range(11):
-            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49))
-            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45))
+            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49, 1))
+            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45, 1))
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45, 1))
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45, 1))
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45, 1))
 
         self.set_timer = 500
         timer = QTimer(self)
         timer.timeout.connect(self.on_timeout)
-        timer.start(self.set_timer)
+        timer.start(40)
 
     def on_timeout(self):
         if self.counter == 3:
             for alien in self.aliens:
                 alien.move_down()
-            self.set_timer -= 200
+            # self.set_timer -= 200
             self.counter = 0
 
         if self.aliens[0].direction_left:
@@ -131,7 +131,7 @@ class StartGameSingleplayer(QMainWindow):
         elif event.key() == Qt.Key_D:
             self.player.move_right()
         elif event.key() == Qt.Key_Space:
-            self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
+            self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45, 10))
             self.timer1.start(10)
 
     def attack(self):
