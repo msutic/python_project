@@ -18,11 +18,13 @@ class StartGameSingleplayer(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.total_point = 0
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
         self.shields = []
         self.init_ui()
+
 
     def init_ui(self):
         self.init_window()
@@ -34,6 +36,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.timer1 = QTimer(self)
         self.timer1.timeout.connect(self.attack)
+        self.timer1.timeout.connect(self.destroy_enemy)
 
     def init_window(self):
         self.setFixedSize(950, 778)
@@ -129,7 +132,7 @@ class StartGameSingleplayer(QMainWindow):
 
 
         self.hi_score = QLabel(self)
-        self.hi_score.setText("0")
+        self.hi_score.setText('0')
         self.hi_score.setGeometry(QRect(920, 10, 111, 21))
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                     "font: 75 15pt \"Fixedsys\";")
@@ -147,7 +150,7 @@ class StartGameSingleplayer(QMainWindow):
                                          "font: 75 15pt \"Fixedsys\";")
 
         self.current_score = QLabel(self)
-        self.current_score.setText("0")
+        self.current_score.setText(str(self.total_point))
         self.current_score.setGeometry(QRect(540, 10, 111, 20))
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
@@ -160,7 +163,22 @@ class StartGameSingleplayer(QMainWindow):
             self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
             self.timer1.start(10)
 
+    def destroy_enemy(self):
+        for bullet in self.bullets:
+            for alien in self.aliens:
+                if bullet.x > alien.x and bullet.x < alien.x + 45:
+                    if bullet.y > alien.y and bullet.y < alien.y + 45:
+                            bullet.avatar.hide()
+                            self.bullets.remove(bullet)
+                            alien.avatar.hide()
+                            self.aliens.remove(alien)
+
+
     def attack(self):
+        count_shield0 = 0
+        count_shield1 = 0
+        count_shield2 = 0
+        count_shield3 = 0
         for bullet in self.bullets:
             bullet.move_up()
             # ovo moram da doradim ne radi bas dobro, treba mi neki brojac ???
@@ -169,18 +187,24 @@ class StartGameSingleplayer(QMainWindow):
                         self.shields[0].avatar.hide()
                         self.shield0 = Shield(self, 'images/shield2.png', 50, 546, 85, 105)
                         bullet.avatar.hide()
+                        self.total_point += 10
                     if bullet.x > 310 and bullet.x < 395:
                         self.shields[1].avatar.hide()
                         self.shield1 = Shield(self, 'images/shield2.png', 310, 546, 85, 105)
                         bullet.avatar.hide()
+                        self.total_point += 10
                     if bullet.x > 570 and bullet.x < 655:
                         self.shields[2].avatar.hide()
                         self.shield2 = Shield(self, 'images/shield2.png', 570, 546, 85, 105)
                         bullet.avatar.hide()
+                        self.total_point += 10
                     if bullet.x > 830 and bullet.x < 915:
                         self.shields[3].avatar.hide()
                         self.shield3 = Shield(self, 'images/shield2.png', 830, 546, 85, 105)
                         bullet.avatar.hide()
+                        self.total_point += 10
+
+
 
 
 
