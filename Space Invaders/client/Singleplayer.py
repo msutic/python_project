@@ -14,8 +14,10 @@ from Database import Storage
 class StartGameSingleplayer(QMainWindow):
     counter = 0
 
-    def __init__(self):
+    def __init__(self,player_id,player_spacecraft):
         super().__init__()
+        self.player_id=player_id
+        self.player_spacecraft=player_spacecraft
         self.bullets = []
         self.aliens = []
         self.init_ui()
@@ -25,7 +27,14 @@ class StartGameSingleplayer(QMainWindow):
         self.labels()
         self.init_aliens()
 
-        self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91)
+        if self.player_spacecraft == "SILVER_X 177p":
+            self.player = Player(self, 'images/sc11.png', 15, 655, 62, 62)
+        elif self.player_spacecraft == "purpleZ AAx9":
+            self.player = Player(self, 'images/in_game_spaceship.png', 15, 655, 72, 72)
+        elif self.player_spacecraft == "military-aircraft-POWER":
+            self.player = Player(self, 'images/sc3.png', 15, 655, 72, 72)
+        elif self.player_spacecraft == "SpaceX-air4p66":
+            self.player = Player(self, 'images/sc41.png', 15, 655, 72, 72)
 
         self.timer1 = QTimer(self)
         self.timer1.timeout.connect(self.attack)

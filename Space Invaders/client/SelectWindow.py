@@ -7,15 +7,18 @@ from PyQt5.QtGui import QPixmap, QIcon
 from client import Singleplayer
 
 
-def __start_game_process__():
-    process = Process(target=__start_game__, args=())
+def __start_game_process__(player_id,player_spacecraft):
+    process = Process(target=__start_game__, args=(player_id,player_spacecraft))
     process.daemon = True
     process.start()
 
 
-def __start_game__():
+def __start_game__(player_id, player_spacecraft):
     app = QApplication(sys.argv)
-    game = Singleplayer.StartGameSingleplayer()
+    game = Singleplayer.StartGameSingleplayer(
+        player_id=player_id,
+        player_spacecraft=player_spacecraft
+    )
     game.show()
     sys.exit(app.exec_())
 
@@ -93,8 +96,10 @@ class SelectWindow(QMainWindow):
             msg.setWindowTitle('Error')
             msg.exec_()
         else:
+            player_id = self.nickname_input.text()
+            player_spacecraft = self.selected_spacecraft.currentText()
             self.close()
-            __start_game_process__()
+            __start_game_process__(player_id,player_spacecraft)
 
 
 if __name__ == "__main__":
