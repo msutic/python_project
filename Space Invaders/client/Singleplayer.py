@@ -33,7 +33,7 @@ class StartGameSingleplayer(QMainWindow):
     def init_window(self):
         self.setFixedSize(950, 778)
         self.setWindowIcon(QIcon('images/icon.png'))
-        self.setWindowTitle('Space Invaders [singleplayer mode]')
+        self.setWindowTitle('Space Invaders [singleplayer mode] v1.0')
 
         self.bgLabel = QLabel(self)
         self.background = QPixmap('images/bg-resized2.jpg')

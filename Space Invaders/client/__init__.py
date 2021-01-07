@@ -13,7 +13,6 @@ class StartWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
         self.init_ui()
 
     def init_ui(self):
@@ -66,7 +65,7 @@ class StartWindow(QMainWindow):
         self.exit_button.clicked.connect(qApp.quit)
 
     def set_window(self):
-        self.setWindowTitle("Space Invaders")
+        self.setWindowTitle("Space Invaders v1.0")
         self.setWindowIcon(QIcon('images/icon.png'))
 
         self.bg_label = QLabel(self)
@@ -86,6 +85,9 @@ class StartWindow(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def closeEvent(self, event):
+        self.select.close()
 
 '''
     def start_game_dialog(self):

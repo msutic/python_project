@@ -2,7 +2,7 @@ import sys
 from multiprocessing import Process
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QLineEdit, QMessageBox
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 
 from client import Singleplayer
 
@@ -27,9 +27,12 @@ class SelectWindow(QMainWindow):
 
         self.init_ui()
         self.show()
+        self.nickname_input.setFocus()
 
     def init_ui(self):
         self.setFixedSize(682, 516)
+        self.setWindowTitle('SELECT - Space Invaders v1.0')
+        self.setWindowIcon(QIcon('icon.png'))
 
         self.background = QLabel(self)
         # if bg is not shown then in line below change to '../images/bg-res...' in QPixmap
