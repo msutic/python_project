@@ -7,23 +7,10 @@ from PyQt5.QtGui import QPixmap, QIcon, QMovie
 
 from client.SelectWindow import SelectWindow
 
-'''
-def __start_game_process__():
-    process = Process(target=__start_game__, args=())
-    process.daemon = True
-    process.start()
-
-
-def __start_game__():
-    app = QApplication(sys.argv)
-    game = StartGameSingleplayer()
-    game.show()
-    sys.exit(app.exec_())
-'''
 
 class StartWindow(QMainWindow):
-
     enabled = True
+
     def __init__(self):
         super().__init__()
 
@@ -36,12 +23,8 @@ class StartWindow(QMainWindow):
         self.show()
 
     def on_start_button_clicked(self):
-        #__start_game_process__()
-        app = QApplication(sys.argv)
-        game = SelectWindow()
-        game.show()
-        sys.exit(app.exec_())
-        self.setEnabled(self.enabled)
+        self.select = SelectWindow()
+        self.select.show()
 
     def buttons(self):
         self.start_game_button = QPushButton(self)
@@ -91,8 +74,6 @@ class StartWindow(QMainWindow):
         self.bg_label.setMovie(self.movie)
         self.bg_label.setGeometry(0, 0, 800, 600)
         self.movie.start()
-        # self.background = QPixmap('images/backgroundImg.jpg')
-        # self.bg_label.setPixmap(self.background)
         self.setFixedSize(800, 600)
 
         self.header = QLabel(self)

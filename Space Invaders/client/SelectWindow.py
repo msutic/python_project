@@ -1,7 +1,7 @@
 import sys
 from multiprocessing import Process
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QLineEdit
+from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QLineEdit, QMessageBox
 from PyQt5.QtGui import QPixmap
 
 from client import Singleplayer
@@ -19,6 +19,7 @@ def __start_game__():
     game.show()
     sys.exit(app.exec_())
 
+
 class SelectWindow(QMainWindow):
 
     def __init__(self):
@@ -30,10 +31,10 @@ class SelectWindow(QMainWindow):
     def init_ui(self):
         self.setFixedSize(682, 516)
 
-        self.bgLabel = QLabel(self)
-        self.background = QPixmap('../images/bg-resized2.jpg')
-        self.bgLabel.setPixmap(self.background)
-        self.bgLabel.setGeometry(0, 0, 950, 778)
+        self.background = QLabel(self)
+        # if bg is not shown then in line below change to '../images/bg-res...' in QPixmap
+        self.background.setPixmap(QPixmap('images/bg-resized2.jpg'))
+        self.background.setGeometry(0, 0, 950, 778)
 
         self.gridLayoutWidget = QtWidgets.QWidget(self)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(60, 90, 561, 211))
@@ -71,7 +72,7 @@ class SelectWindow(QMainWindow):
         "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), "
                                               "stop:1 rgba(255, 255, 255, 255));")
 
-        self.spacecraft_preview.setPixmap(QPixmap("../images/spacecraft.png"))
+        self.spacecraft_preview.setPixmap(QPixmap("images/spacecraft.png"))
         self.spacecraft_preview.setAlignment(QtCore.Qt.AlignCenter)
         self.gridLayout_2.addWidget(self.spacecraft_preview, 3, 1, 1, 1)
 
@@ -83,10 +84,17 @@ class SelectWindow(QMainWindow):
         self._button_start.clicked.connect(self.on_start_button_clicked)
 
     def on_start_button_clicked(self):
-        __start_game_process__()
+        if self.nickname_input.text() == "" or self.nickname_input.text() == " ":
+            msg = QMessageBox()
+            msg.setText("please enter your nickname...")
+            msg.setWindowTitle('Error')
+            msg.exec_()
+        else:
+            self.close()
+            __start_game_process__()
+
 
 if __name__ == "__main__":
-
     app = QApplication(sys.argv)
     win = SelectWindow()
     sys.exit(app.exec_())
