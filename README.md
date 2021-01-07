@@ -1,1 +1,1 @@
-# Recreation of Space Invaders (1968) game done in Pyhon
+# Recreation of Space Invaders (1968) game done in Python
