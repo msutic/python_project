@@ -23,6 +23,7 @@ class StartGameSingleplayer(QMainWindow):
     def __init__(self):
         super().__init__()
         self.total_point = 0
+        self.current_level = 0
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
@@ -36,12 +37,12 @@ class StartGameSingleplayer(QMainWindow):
         self.init_aliens()
 
         self.timer2 = QTimer(self)
-        self.timer2.timeout.connect(self.init_alien_attack)
-        self.timer2.start(1200)
+        #self.timer2.timeout.connect(self.init_alien_attack)
+        #self.timer2.start(1200)
 
         self.timer3 = QTimer(self)
-        self.timer3.timeout.connect(self.alien_attack)
-        self.timer3.start(60)
+        #self.timer3.timeout.connect(self.alien_attack)
+        #self.timer3.start(60)
 
         self.init_shield()
         self.player = Player(self, 'images/spacecraft.png', 15, 655, 131, 91)
@@ -177,13 +178,7 @@ class StartGameSingleplayer(QMainWindow):
         elif event.key() == Qt.Key_Space:
             self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
             self.timer1.start(10)
-    """""
-    def init_alien_attack(self):
-        for i in range(11):
-            napadac = random.randint(0, 55)
-            self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
-            self.timer1.start(10)
-    """
+
 
     def init_alien_attack(self):
         napadac = random.randint(0, 54)
@@ -205,7 +200,8 @@ class StartGameSingleplayer(QMainWindow):
                             self.bullets.remove(bullet)
                             alien.avatar.hide()
                             self.aliens.remove(alien)
-
+                            self.total_point += 10
+                            self.score.setText(str(self.total_point))
 
     def attack(self):
         count_shield0 = 0
@@ -217,54 +213,69 @@ class StartGameSingleplayer(QMainWindow):
             # ovo moram da doradim ne radi bas dobro, treba mi neki brojac ???
             for shield in self.shields:
                     if bullet.x > 50 and bullet.x < 135:
-                        count_shield0  += 1
+
+                        count_shield0 += 1
 
                         if count_shield0 == 1:
                             self.shields[0].avatar.hide()
                             self.shield0 = Shield(self, 'images/shield2.png', 50, 546, 85, 105)
                             bullet.avatar.hide()
-                            #self.bullets.remove(bullet)
-                            self.score.setText(str(self.total_point + 10))
 
                         if count_shield0 == 2:
                             self.shield0.avatar.hide()
-                            self.shield4 = Shield(self, 'images/lives.png', 50, 546, 85, 105)
+                            self.shield4 = Shield(self, 'images/shield3.png', 50, 546, 85, 105)
                             bullet.avatar.hide()
-                            #self.bullets.remove(bullet)
-                            self.score.setText(str(self.total_point + 10))
 
+                       
+
+
+
+
+                        """
                         if count_shield0 == 3:
                             self.shield4.avatar.hide()
-                            self.shield8 = Shield(self, 'images/icon.png', 50, 546, 85, 105)
+                            self.shield8 = Shield(self, 'images/shield4.png', 50, 546, 85, 105)
                             bullet.avatar.hide()
-                            #self.bullets.remove(bullet)
-                            self.score.setText(str(self.total_point + 10))
 
                         if count_shield0 == 4:
                             self.shield8.avatar.hide()
-                            #self.shield8 = Shield(self, 'images/icon.png', 50, 546, 85, 105)
                             bullet.avatar.hide()
-                            #self.bullets.remove(bullet)
-                            #self.score.setText(str(self.total_point + 10))
+                        """
+
+                    elif bullet.x > 310 and bullet.x < 395:
+                        count_shield1 += 1
+
+                        if count_shield1 == 1:
+                            self.shields[1].avatar.hide()
+                            self.shield1 = Shield(self, 'images/shield2.png', 310, 546, 85, 105)
+                            bullet.avatar.hide()
+
+                        if count_shield1 == 2:
+                            self.shield1.avatar.hide()
+                            self.shield5 = Shield(self, 'images/shield3.png', 310, 546, 85, 105)
+                            bullet.avatar.hide()
+
+                        if count_shield1 == 3:
+                            self.shield5.avatar.hide()
+                            self.shield9 = Shield(self, 'images/shield4.png', 310, 546, 85, 105)
+                            bullet.avatar.hide()
+
+                        if count_shield1 == 4:
+                            self.shield9.avatar.hide()
+                            bullet.avatar.hide()
 
 
-
-
-                    if bullet.x > 310 and bullet.x < 395:
-                        self.shields[1].avatar.hide()
-                        self.shield1 = Shield(self, 'images/lives.png', 310, 546, 85, 105)
-                        bullet.avatar.hide()
-                        self.score.setText(str(self.total_point + 10))
+                    """"
                     if bullet.x > 570 and bullet.x < 655:
                         self.shields[2].avatar.hide()
                         self.shield2 = Shield(self, 'images/lives.png', 570, 546, 85, 105)
                         bullet.avatar.hide()
-                        self.score.setText(str(self.total_point + 10))
+
                     if bullet.x > 830 and bullet.x < 915:
                         self.shields[3].avatar.hide()
                         self.shield3 = Shield(self, 'images/lives.png', 830, 546, 85, 105)
                         bullet.avatar.hide()
-                        self.score.setText(str(self.total_point + 10))
+                    """
 
 
 

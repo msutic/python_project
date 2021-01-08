@@ -101,6 +101,8 @@ class StartWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+
+
     def start_game_dialog(self):
         self.a = StartGameSingleplayer()
         self.a.show()
