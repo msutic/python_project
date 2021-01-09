@@ -2,8 +2,6 @@ from time import sleep
 
 from PyQt5.QtCore import pyqtSignal, QObject, QThread, pyqtSlot
 from PyQt5.QtWidgets import QLabel
-from Database import Storage
-from Entities import Bullet
 
 
 class ShootBullet(QObject):
@@ -14,7 +12,6 @@ class ShootBullet(QObject):
 
         self.threadWorking = True
         self.bullets = []
-        # self.storage = storage
 
         self.thread = QThread()
         self.moveToThread(self.thread)
@@ -23,8 +20,12 @@ class ShootBullet(QObject):
     def start(self):
         self.thread.start()
 
-    def add_bullet(self, label: QLabel):
-        self.bullets.append(label)
+    def add_bullet(self, bullet: QLabel):
+        self.bullets.append(bullet)
+
+    def remove_bullet(self, bullet: QLabel):
+        if bullet in self.bullets:
+            self.bullets.remove(bullet)
 
     @pyqtSlot()
     def __work__(self):

@@ -66,7 +66,6 @@ class StartGameSingleplayer(QMainWindow):
 
 
         # self.timer1 = QTimer(self)
-        # self.timer1.timeout.connect(self.attack)
         # self.timer1.timeout.connect(self.destroy_enemy)
 
     def init_window(self):
@@ -185,9 +184,12 @@ class StartGameSingleplayer(QMainWindow):
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
-    def move_laser_up(self, laserLabel: QLabel, newX, newY):
-        if newY > 0:
-            laserLabel.move(newX, newY)
+    def move_laser_up(self, bullet: QLabel, new_x, new_y):
+        if new_y > 0:
+            bullet.move(new_x, new_y)
+        else:
+            bullet.hide()
+            self.shootingThread.remove_bullet(bullet)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_A:
