@@ -86,10 +86,16 @@ class StartWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    # HEAD
     def closeEvent(self, event):
         self.select.close()
 
+
 '''
+=======
+
+
+>>>>>>> arch
     def start_game_dialog(self):
         self.a = StartGameSingleplayer()
         self.a.show()
