@@ -4,7 +4,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLabel
 
 
-class CollisionBulletAlien(QObject):
+class CollisionPlayerBullet(QObject):
 
     collision_occured = pyqtSignal(QLabel, QLabel)
 
@@ -48,7 +48,7 @@ class CollisionBulletAlien(QObject):
 
                 for bullet in self.bullets:
                     bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                    bullet_xy_end = [bullet.geometry().x() + 50, bullet.geometry().y() + 50]
+                    bullet_xy_end = [bullet.geometry().x() + 30, bullet.geometry().y() + 30]
 
                     bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
                     bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
