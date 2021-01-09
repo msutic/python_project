@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow, QApplication
-from PyQt5.QtCore import Qt, QTimer, QRect
+from PyQt5.QtCore import Qt, QTimer, QRect, pyqtSlot
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
@@ -13,18 +13,26 @@ from Entities.Shield import Shield
 
 import random
 
+from client.shooting import ShootBullet
+
 
 class StartGameSingleplayer(QMainWindow):
     counter = 0
 
     def __init__(self,player_id,player_spacecraft):
         super().__init__()
-        self.player_id=player_id
-        self.player_spacecraft=player_spacecraft
+        self.player_id = player_id
+        self.player_spacecraft = player_spacecraft
 
         self.total_point = 0
         self.current_level = 0
         self.current_lives = 0
+
+        self.shootingThread = ShootBullet()
+        self.shootingThread.updated_position.connect(self.move_laser_up)
+        self.shootingThread.start()
+
+
         # arch
         self.bullets = []
         self.bullets_enemy = []
@@ -38,18 +46,17 @@ class StartGameSingleplayer(QMainWindow):
         self.labels()
         self.init_aliens()
         self.init_shield()
+        # self.timer2 = QTimer(self)
+        # self.timer2.timeout.connect(self.init_alien_attack)
+        # self.timer2.start(1200)
 
-        self.timer2 = QTimer(self)
-        self.timer2.timeout.connect(self.init_alien_attack)
-        self.timer2.start(1200)
-
-        self.timer3 = QTimer(self)
-        self.timer3.timeout.connect(self.alien_attack)
-        self.timer3.timeout.connect(self.destroy_player)
-        self.timer3.start(60)
+        # self.timer3 = QTimer(self)
+        # self.timer3.timeout.connect(self.alien_attack)
+        # self.timer3.timeout.connect(self.destroy_player)
+        # self.timer3.start(60)
 
         if self.player_spacecraft == "SILVER_X 177p":
-            self.player = Player(self, 'images/sc11.png', 15, 655, 62, 62)
+            self.player = Player(self, 'images/sc11.png', 15, 655, 72, 72)
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(self, 'images/in_game_spaceship.png', 15, 655, 72, 72)
         elif self.player_spacecraft == "military-aircraft-POWER":
@@ -57,11 +64,10 @@ class StartGameSingleplayer(QMainWindow):
         elif self.player_spacecraft == "SpaceX-air4p66":
             self.player = Player(self, 'images/sc41.png', 15, 655, 72, 72)
 
-        self.timer1 = QTimer(self)
-        self.timer1.timeout.connect(self.attack)
-        self.timer1.timeout.connect(self.destroy_enemy)
 
-
+        # self.timer1 = QTimer(self)
+        # self.timer1.timeout.connect(self.attack)
+        # self.timer1.timeout.connect(self.destroy_enemy)
 
     def init_window(self):
         self.setFixedSize(950, 778)
@@ -179,14 +185,24 @@ class StartGameSingleplayer(QMainWindow):
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
+    def move_laser_up(self, laserLabel: QLabel, newX, newY):
+        if newY > 0:
+            laserLabel.move(newX, newY)
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_A:
             self.player.move_left()
         elif event.key() == Qt.Key_D:
             self.player.move_right()
         elif event.key() == Qt.Key_Space:
-            self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
-            self.timer1.start(12)
+            self.shootingThread.add_bullet(
+                Bullet(self,
+                       'images/bullett.png',
+                       self.player.x + 45/2,
+                       self.player.y - 40,
+                       45,
+                       45).avatar
+            )
 
     def destroy_enemy(self):
         for bullet in self.bullets:
@@ -215,7 +231,9 @@ class StartGameSingleplayer(QMainWindow):
                         #sys.exit()
                     print(str(self.current_lives))
 
-    def attack(self):
+    def attack(self, bullet: QLabel, bullet_x, bullet_y):
+        bullet.move(bullet_x, bullet_y)
+
         for bullet in self.bullets:
             bullet.move_up()
 
