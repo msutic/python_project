@@ -62,12 +62,8 @@ class StartGameSingleplayer(QMainWindow):
         self.labels()
         self.init_aliens()
         self.init_shield()
-        # self.timer2 = QTimer(self)
-        # self.timer2.timeout.connect(self.init_alien_attack)
-        # self.timer2.start(1200)
 
         # self.timer3 = QTimer(self)
-        # self.timer3.timeout.connect(self.alien_attack)
         # self.timer3.timeout.connect(self.destroy_player)
         # self.timer3.start(60)
 
@@ -106,11 +102,6 @@ class StartGameSingleplayer(QMainWindow):
             self.alien_movement_thread.add_alien(self.aliens[i])
             self.alien_attack_thread.add_alien(self.aliens[i])
 
-        # self.set_timer = 500
-        # timer = QTimer(self)
-        # timer.timeout.connect(self.on_timeout)
-        # timer.start(self.set_timer)
-
     def init_shield(self):
         for i in range(4):
             self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105))
@@ -127,17 +118,6 @@ class StartGameSingleplayer(QMainWindow):
             self.set_timer -= 200
             self.counter = 0
 
-        if self.aliens[0].direction_left:
-            for alien in self.aliens:
-                alien.move_left()
-            if self.aliens[0].x - 20 < 10:
-                self.counter += 1
-                Alien.direction_left = False
-        else:
-            for alien in self.aliens:
-                alien.move_right()
-            if self.aliens[len(self.aliens) - 1].x + 20 > 900:
-                Alien.direction_left = True
 
     def labels(self):
         self.pause_label = QLabel(self)
@@ -375,11 +355,6 @@ class StartGameSingleplayer(QMainWindow):
                     self.bullets.remove(bullet)
 
         self.destroy_enemy()
-
-    def init_alien_attack(self):
-        napadac = random.randint(1, 15)
-        if self.aliens[napadac] not in self.remove_aliens:
-            self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
 
     def alien_attack(self, bullet_x, bullet_y):
         self.alien_attack_thread.add_bullet(
