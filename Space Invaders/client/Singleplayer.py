@@ -2,18 +2,18 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow, QApplication
-from PyQt5.QtCore import Qt, QTimer, QRect, pyqtSlot
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication
+from PyQt5.QtCore import Qt, QTimer, QRect
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
 from Entities.Player import Player
-from Database import Storage
 from Entities.Shield import Shield
 
 import random
 
-from client.shooting import ShootBullet
+from utilities.alien_threading import AlienMovement
+from utilities.shooting import ShootBullet
 
 
 class StartGameSingleplayer(QMainWindow):
@@ -32,6 +32,10 @@ class StartGameSingleplayer(QMainWindow):
         self.shootingThread.updated_position.connect(self.move_laser_up)
         self.shootingThread.start()
 
+        self.alien_movement_thread = AlienMovement()
+        self.alien_movement_thread.updated.connect(self.alien_movement)
+        self.alien_movement_thread.start()
+
 
         # arch
         self.bullets = []
@@ -40,6 +44,10 @@ class StartGameSingleplayer(QMainWindow):
         self.remove_aliens = []
         self.shields = []
         self.init_ui()
+
+    def alien_movement(self, alien: QLabel, new_x, new_y):
+        alien.move(new_x, new_y)
+
 
     def init_ui(self):
         self.init_window()
@@ -80,16 +88,19 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_aliens(self):
         for i in range(11):
-            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49))
-            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45))
+            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49).avatar)
+            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45).avatar)
 
-        self.set_timer = 500
-        timer = QTimer(self)
-        timer.timeout.connect(self.on_timeout)
-        timer.start(self.set_timer)
+        for i in range(55):
+            self.alien_movement_thread.add_alien(self.aliens[i])
+
+        # self.set_timer = 500
+        # timer = QTimer(self)
+        # timer.timeout.connect(self.on_timeout)
+        # timer.start(self.set_timer)
 
     def init_shield(self):
         for i in range(4):
