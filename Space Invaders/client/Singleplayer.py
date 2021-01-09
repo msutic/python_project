@@ -12,7 +12,7 @@ from Entities.Shield import Shield
 
 import random
 
-from utilities.alien_threading import AlienMovement
+from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.shooting import ShootBullet
 
 
@@ -35,6 +35,14 @@ class StartGameSingleplayer(QMainWindow):
         self.alien_movement_thread = AlienMovement()
         self.alien_movement_thread.updated.connect(self.alien_movement)
         self.alien_movement_thread.start()
+
+        self.alien_attack_thread = AlienAttack()
+        self.alien_attack_thread.init_bullet.connect(self.alien_attack)
+        self.alien_attack_thread.start()
+
+        self.alien_shoot_bullet_thread = BulletMove()
+        self.alien_shoot_bullet_thread.update_position.connect(self.shoot_bullet)
+        self.alien_shoot_bullet_thread.start()
 
 
         # arch
@@ -96,6 +104,7 @@ class StartGameSingleplayer(QMainWindow):
 
         for i in range(55):
             self.alien_movement_thread.add_alien(self.aliens[i])
+            self.alien_attack_thread.add_alien(self.aliens[i])
 
         # self.set_timer = 500
         # timer = QTimer(self)
@@ -372,12 +381,29 @@ class StartGameSingleplayer(QMainWindow):
         if self.aliens[napadac] not in self.remove_aliens:
             self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
 
-    def alien_attack(self):
+    def alien_attack(self, bullet_x, bullet_y):
+        self.alien_attack_thread.add_bullet(
+            Bullet(self,
+                   'images/bullett.png',
+                   bullet_x,
+                   bullet_y,
+                   45,
+                   45).avatar
+        )
 
-        for bullet in self.bullets_enemy:
-            bullet.move_down()
+        for avatar in self.alien_attack_thread.bullets:
+            avatar.hide()
 
-        self.destroy_player()
+        self.alien_shoot_bullet_thread.add_bullet(
+            Bullet(self,
+                   'images/bullett.png',
+                   bullet_x,
+                   bullet_y,
+                   45,
+                   45).avatar)
+
+    def shoot_bullet(self, bullet: QLabel, bullet_x, bullet_y):
+            bullet.move(bullet_x, bullet_y)
 
 
 if __name__ == '__main__':
