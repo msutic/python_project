@@ -30,6 +30,9 @@ class AlienMovement(QObject):
     def add_alien(self, alien: QLabel):
         self.aliens.append(alien)
 
+    def remove_alien(self, alien:QLabel):
+        self.aliens.remove(alien)
+
     @pyqtSlot()
     def _work_(self):
         while self.threadWorking:
@@ -116,6 +119,9 @@ class AlienAttack(QObject):
 
     def add_alien(self, alien:QLabel):
         self.aliens.append(alien)
+
+    def remove_alien(self, alien:QLabel):
+        self.aliens.remove(alien)
 
     def add_bullet(self, bullet:QLabel):
         self.bullets.append(bullet)
