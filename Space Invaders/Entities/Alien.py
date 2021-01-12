@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QWidget, QLabel
 
 
 class Alien:
-    direction_left = True
 
     def __init__(self, screen: QWidget, img, x, y, h, w):
         self.x = x

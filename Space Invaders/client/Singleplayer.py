@@ -2,16 +2,17 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow, QApplication
-from PyQt5.QtCore import Qt, QTimer, QRect
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
+from PyQt5.QtCore import Qt, QRect
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
 from Entities.Player import Player
-from Database import Storage
 from Entities.Shield import Shield
 
-import random
+from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
+from utilities.collision_handler import CollisionPlayerBullet
+from utilities.shooting import ShootBullet
 
 
 class StartGameSingleplayer(QMainWindow):
@@ -19,12 +20,15 @@ class StartGameSingleplayer(QMainWindow):
 
     def __init__(self,player_id,player_spacecraft):
         super().__init__()
-        self.player_id=player_id
-        self.player_spacecraft=player_spacecraft
+        self.player_id = player_id
+        self.player_spacecraft = player_spacecraft
 
         self.total_point = 0
         self.current_level = 0
         self.current_lives = 0
+
+        self.init_threads()
+
         # arch
         self.bullets = []
         self.bullets_enemy = []
@@ -33,23 +37,52 @@ class StartGameSingleplayer(QMainWindow):
         self.shields = []
         self.init_ui()
 
+    def alien_movement(self, alien: QLabel, new_x, new_y):
+        alien.move(new_x, new_y)
+
+    def init_threads(self):
+        self.shootingThread = ShootBullet()
+        self.shootingThread.updated_position.connect(self.move_laser_up)
+        self.shootingThread.start()
+
+        self.alien_movement_thread = AlienMovement()
+        self.alien_movement_thread.updated.connect(self.alien_movement)
+        self.alien_movement_thread.start()
+
+        self.alien_attack_thread = AlienAttack()
+        self.alien_attack_thread.init_bullet.connect(self.alien_attack)
+        self.alien_attack_thread.start()
+
+        self.alien_shoot_bullet_thread = BulletMove()
+        self.alien_shoot_bullet_thread.update_position.connect(self.shoot_bullet)
+        self.alien_shoot_bullet_thread.start()
+
+        self.collision_bullet_alien = CollisionPlayerBullet()
+        self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
+        self.collision_bullet_alien.start()
+
+    def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel):
+        self.total_point += 10
+        self.score.setText(str(self.total_point))
+        alien.hide()
+        bullet.hide()
+        if alien in self.aliens:
+            self.aliens.remove(alien)
+            self.alien_movement_thread.remove_alien(alien)
+            self.alien_attack_thread.remove_alien(alien)
+
     def init_ui(self):
         self.init_window()
         self.labels()
         self.init_aliens()
         self.init_shield()
 
-        self.timer2 = QTimer(self)
-        self.timer2.timeout.connect(self.init_alien_attack)
-        self.timer2.start(1200)
-
-        self.timer3 = QTimer(self)
-        self.timer3.timeout.connect(self.alien_attack)
-        self.timer3.timeout.connect(self.destroy_player)
-        self.timer3.start(60)
+        # self.timer3 = QTimer(self)
+        # self.timer3.timeout.connect(self.destroy_player)
+        # self.timer3.start(60)
 
         if self.player_spacecraft == "SILVER_X 177p":
-            self.player = Player(self, 'images/sc11.png', 15, 655, 62, 62)
+            self.player = Player(self, 'images/sc11.png', 15, 655, 72, 72)
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(self, 'images/in_game_spaceship.png', 15, 655, 72, 72)
         elif self.player_spacecraft == "military-aircraft-POWER":
@@ -57,11 +90,8 @@ class StartGameSingleplayer(QMainWindow):
         elif self.player_spacecraft == "SpaceX-air4p66":
             self.player = Player(self, 'images/sc41.png', 15, 655, 72, 72)
 
-        self.timer1 = QTimer(self)
-        self.timer1.timeout.connect(self.attack)
-        self.timer1.timeout.connect(self.destroy_enemy)
-
-
+        # self.timer1 = QTimer(self)
+        # self.timer1.timeout.connect(self.destroy_enemy)
 
     def init_window(self):
         self.setFixedSize(950, 778)
@@ -75,16 +105,17 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_aliens(self):
         for i in range(11):
-            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49))
-            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45))
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45))
+            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49).avatar)
+            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45).avatar)
 
-        self.set_timer = 500
-        timer = QTimer(self)
-        timer.timeout.connect(self.on_timeout)
-        timer.start(self.set_timer)
+        for i in range(55):
+            self.alien_movement_thread.add_alien(self.aliens[i])
+            self.alien_attack_thread.add_alien(self.aliens[i])
+            self.shootingThread.add_alien((self.aliens[i]))
+            self.collision_bullet_alien.add_alien(self.aliens[i])
 
     def init_shield(self):
         for i in range(4):
@@ -101,18 +132,6 @@ class StartGameSingleplayer(QMainWindow):
                 alien.move_down()
             self.set_timer -= 200
             self.counter = 0
-
-        if self.aliens[0].direction_left:
-            for alien in self.aliens:
-                alien.move_left()
-            if self.aliens[0].x - 20 < 10:
-                self.counter += 1
-                Alien.direction_left = False
-        else:
-            for alien in self.aliens:
-                alien.move_right()
-            if self.aliens[len(self.aliens) - 1].x + 20 > 900:
-                Alien.direction_left = True
 
     def labels(self):
         self.pause_label = QLabel(self)
@@ -179,14 +198,30 @@ class StartGameSingleplayer(QMainWindow):
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
+    def move_laser_up(self, bullet: QLabel, new_x, new_y):
+        if new_y > 0:
+            bullet.move(new_x, new_y)
+        else:
+            bullet.hide()
+            self.shootingThread.remove_bullet(bullet)
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_A:
             self.player.move_left()
         elif event.key() == Qt.Key_D:
             self.player.move_right()
         elif event.key() == Qt.Key_Space:
-            self.bullets.append(Bullet(self, 'images/bullett.png', self.player.x + 8, self.player.y - 23, 45, 45))
-            self.timer1.start(12)
+            bullet = Bullet(
+               self,
+               'images/bullett.png',
+               self.player.x + 45/2,
+               self.player.y - 40,
+               30,
+               38).avatar
+
+            self.shootingThread.add_bullet(bullet)
+
+            self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy(self):
         for bullet in self.bullets:
@@ -215,7 +250,9 @@ class StartGameSingleplayer(QMainWindow):
                         #sys.exit()
                     print(str(self.current_lives))
 
-    def attack(self):
+    def attack(self, bullet: QLabel, bullet_x, bullet_y):
+        bullet.move(bullet_x, bullet_y)
+
         for bullet in self.bullets:
             bullet.move_up()
 
@@ -334,19 +371,21 @@ class StartGameSingleplayer(QMainWindow):
                     bullet.avatar.hide()
                     self.bullets.remove(bullet)
 
-        self.destroy_enemy()
+    def alien_attack(self, bullet_x, bullet_y):
+        bullet = Bullet(
+            self,
+            'images/bullett.png',
+            bullet_x,
+            bullet_y,
+            45,
+            45).avatar
 
-    def init_alien_attack(self):
-        napadac = random.randint(1, 15)
-        if self.aliens[napadac] not in self.remove_aliens:
-            self.bullets_enemy.append(Bullet(self, 'images/bullett.png', self.aliens[napadac].x - 8, self.aliens[napadac].y + 23, 45, 45))
+        self.alien_attack_thread.add_bullet(bullet)
 
-    def alien_attack(self):
+        self.alien_shoot_bullet_thread.add_bullet(bullet)
 
-        for bullet in self.bullets_enemy:
-            bullet.move_down()
-
-        self.destroy_player()
+    def shoot_bullet(self, bullet: QLabel, bullet_x, bullet_y):
+            bullet.move(bullet_x, bullet_y)
 
 
 if __name__ == '__main__':
