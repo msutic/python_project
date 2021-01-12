@@ -1,6 +1,6 @@
 import random
 
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import QLabel
 
 import time
@@ -19,6 +19,11 @@ class AlienMovement(QObject):
         self.aliens = []
         self.direction_left = True
         self.direction_right = False
+        self.direction_down = False
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.enable_downward)
+        self.timer.start(500)
 
         self.thread = QThread()
         self.moveToThread(self.thread)
@@ -33,9 +38,19 @@ class AlienMovement(QObject):
     def remove_alien(self, alien:QLabel):
         self.aliens.remove(alien)
 
+    def enable_downward(self):
+        self.direction_down = True
+
     @pyqtSlot()
     def _work_(self):
         while self.threadWorking:
+            # if self.direction_down:
+            #     for alien in self.aliens:
+            #         alien_pos = alien.geometry()
+            #         alien_x = alien_pos.x()
+            #         alien_y = alien_pos.y()
+            #         self.updated.emit(alien, alien_x, alien_y + 5)
+
             if self.direction_left:
                 for alien in self.aliens:
                     alien_pos = alien.geometry()
@@ -44,7 +59,7 @@ class AlienMovement(QObject):
                     if alien_x > 10:
                         self.direction_left = True
                         self.direction_right = False
-                        self.updated.emit(alien, alien_x - 5, alien_y)
+                        self.updated.emit(alien, alien_x - 2, alien_y)
                     else:
                         self.direction_left = False
                         self.direction_right = True
@@ -58,13 +73,13 @@ class AlienMovement(QObject):
                     if alien_x < 890:
                         self.direction_right = True
                         self.direction_left = False
-                        self.updated.emit(alien, alien_x + 5, alien_y)
+                        self.updated.emit(alien, alien_x + 2, alien_y)
                     else:
                         self.direction_right = False
                         self.direction_left = True
                         break
 
-            time.sleep(0.5)
+            time.sleep(0.005)
 
 
 class BulletMove(QObject):

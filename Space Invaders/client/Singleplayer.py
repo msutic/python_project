@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtCore import Qt, QRect, QTimer
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
@@ -12,6 +12,7 @@ from Entities.Shield import Shield
 
 from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.collision_handler import CollisionPlayerBullet
+from utilities.key_notifier import KeyNotifier
 from utilities.shooting import ShootBullet
 
 
@@ -37,6 +38,10 @@ class StartGameSingleplayer(QMainWindow):
         self.shields = []
         self.init_ui()
 
+    def enable_shooting(self):
+        if not self.allowed_to_shoot:
+            self.able_to_shoot = True
+
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
 
@@ -60,6 +65,33 @@ class StartGameSingleplayer(QMainWindow):
         self.collision_bullet_alien = CollisionPlayerBullet()
         self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
         self.collision_bullet_alien.start()
+
+        self.key_notifier = KeyNotifier()
+        self.key_notifier.key_signal.connect(self.__update_position__)
+        self.key_notifier.start()
+
+    def __update_position__(self, key):
+        player_position = self.player.avatar.geometry()
+
+        if key == Qt.Key_D:
+            self.player.avatar.setGeometry(
+                player_position.x() + 5, player_position.y(), player_position.width(), player_position.height()
+            )
+        if key == Qt.Key_A:
+            self.player.avatar.setGeometry(
+                player_position.x() - 5, player_position.y(), player_position.width(), player_position.height()
+            )
+        if key == Qt.Key_Space:
+                bullet = Bullet(
+                    self,
+                    'images/bullett.png',
+                    player_position.x() + 45 / 2,
+                    player_position.y() - 40,
+                    30,
+                    38).avatar
+
+                self.shootingThread.add_bullet(bullet)
+                self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel):
         self.total_point += 10
@@ -206,22 +238,15 @@ class StartGameSingleplayer(QMainWindow):
             self.shootingThread.remove_bullet(bullet)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_A:
-            self.player.move_left()
-        elif event.key() == Qt.Key_D:
-            self.player.move_right()
-        elif event.key() == Qt.Key_Space:
-            bullet = Bullet(
-               self,
-               'images/bullett.png',
-               self.player.x + 45/2,
-               self.player.y - 40,
-               30,
-               38).avatar
+        self.key_notifier.add_key(event.key())
+        # if event.key() == Qt.Key_A:
+        #     self.player.move_left()
+        # elif event.key() == Qt.Key_D:
+        #     self.player.move_right()
+        # if event.key() == Qt.Key_Space:
 
-            self.shootingThread.add_bullet(bullet)
-
-            self.collision_bullet_alien.add_bullet(bullet)
+    def keyReleaseEvent(self, event):
+        self.key_notifier.rem_key(event.key())
 
     def destroy_enemy(self):
         for bullet in self.bullets:
