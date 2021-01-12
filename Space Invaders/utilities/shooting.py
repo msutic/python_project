@@ -45,4 +45,4 @@ class ShootBullet(QObject):
                 bullet_y = bulletGeo.y() - 5
                 self.updated_position.emit(bullet, bullet_x, bullet_y)
 
-            sleep(0.001)
+            sleep(0.01)
