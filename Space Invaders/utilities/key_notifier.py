@@ -15,7 +15,7 @@ class KeyNotifier(QObject):
         self.able_to_shoot = False
 
         self.shoot_cooldown = QTimer()
-        self.shoot_cooldown.setInterval(200)
+        self.shoot_cooldown.setInterval(250)
         self.shoot_cooldown.timeout.connect(self.reset_cooldown)
         self.shoot_cooldown.start()
 

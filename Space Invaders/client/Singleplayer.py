@@ -70,19 +70,21 @@ class StartGameSingleplayer(QMainWindow):
         player_position = self.player.avatar.geometry()
 
         if key == Qt.Key_D:
-            self.player.avatar.setGeometry(
-                player_position.x() + 5, player_position.y(), player_position.width(), player_position.height()
-            )
+            if not player_position.x() + player_position.width() + 10 > 950:
+                self.player.avatar.setGeometry(
+                    player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                )
         if key == Qt.Key_A:
-            self.player.avatar.setGeometry(
-                player_position.x() - 5, player_position.y(), player_position.width(), player_position.height()
-            )
+            if not player_position.x() - 10 < 0:
+                self.player.avatar.setGeometry(
+                    player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                )
         if key == Qt.Key_Space:
                 bullet = Bullet(
                     self,
                     'images/bullett.png',
-                    player_position.x() + 45 / 2,
-                    player_position.y() - 40,
+                    player_position.x() + player_position.width() / 4,
+                    player_position.y() - 20,
                     30,
                     38).avatar
 
@@ -110,7 +112,7 @@ class StartGameSingleplayer(QMainWindow):
         # self.timer3.start(60)
 
         if self.player_spacecraft == "SILVER_X 177p":
-            self.player = Player(self, 'images/sc11.png', 15, 655, 72, 72)
+            self.player = Player(self, 'images/sc11.png', 15, 655, 90, 72)
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(self, 'images/in_game_spaceship.png', 15, 655, 72, 72)
         elif self.player_spacecraft == "military-aircraft-POWER":
@@ -406,7 +408,7 @@ class StartGameSingleplayer(QMainWindow):
         self.alien_shoot_bullet_thread.add_bullet(bullet)
 
     def shoot_bullet(self, bullet: QLabel, bullet_x, bullet_y):
-            bullet.move(bullet_x, bullet_y)
+        bullet.move(bullet_x, bullet_y)
 
 
 if __name__ == '__main__':
