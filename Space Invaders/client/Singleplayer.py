@@ -38,10 +38,6 @@ class StartGameSingleplayer(QMainWindow):
         self.shields = []
         self.init_ui()
 
-    def enable_shooting(self):
-        if not self.allowed_to_shoot:
-            self.able_to_shoot = True
-
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
 

@@ -1,10 +1,12 @@
 import sys
 from multiprocessing import Process
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QLineEdit, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 
 from client import Singleplayer
+from utilities.sc_selection import SpaceshipSelection
 
 
 def __start_game_process__(player_id,player_spacecraft):
@@ -28,9 +30,17 @@ class SelectWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.select_spaceship_thread = SpaceshipSelection()
+        self.select_spaceship_thread.selection_changed.connect(self.update_img)
+        self.select_spaceship_thread.start()
+
         self.init_ui()
         self.show()
         self.nickname_input.setFocus()
+
+    @pyqtSlot(str)
+    def update_img(self, name: str):
+        self.spacecraft_preview.setPixmap(QPixmap(name))
 
     def init_ui(self):
         self.setFixedSize(682, 516)
@@ -52,6 +62,8 @@ class SelectWindow(QMainWindow):
         self.selected_spacecraft.addItem("purpleZ AAx9")
         self.selected_spacecraft.addItem("military-aircraft-POWER")
         self.selected_spacecraft.addItem("SpaceX-air4p66")
+
+        self.select_spaceship_thread.spacecrafts = self.selected_spacecraft
 
         #self.selected_spacecraft.setItemText(4, "")
 
@@ -78,7 +90,9 @@ class SelectWindow(QMainWindow):
         "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), "
                                               "stop:1 rgba(255, 255, 255, 255));")
 
-        self.spacecraft_preview.setPixmap(QPixmap("images/spacecraft.png"))
+        # self.spacecraft_preview.setPixmap(QPixmap("images/spacecraft.png"))
+        # self.spacecraft_preview.setPixmap(QPixmap("images/in_game_spaceship.png"))
+        # self.spacecraft_preview.setPixmap(QPixmap("images/sc41.png"))
         self.spacecraft_preview.setAlignment(QtCore.Qt.AlignCenter)
         self.gridLayout_2.addWidget(self.spacecraft_preview, 3, 1, 1, 1)
 
