@@ -79,7 +79,7 @@ class AlienMovement(QObject):
                         self.direction_left = True
                         break
 
-            time.sleep(0.005)
+            time.sleep(0.05)
 
 
 class BulletMove(QObject):
