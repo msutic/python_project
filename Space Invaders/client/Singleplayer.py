@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
-from PyQt5.QtCore import Qt, QRect, QTimer
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
@@ -11,7 +11,7 @@ from Entities.Player import Player
 from Entities.Shield import Shield
 
 from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
-from utilities.collision_handler import CollisionPlayerBullet
+from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBullet
 from utilities.key_notifier import KeyNotifier
 from utilities.shooting import ShootBullet
 
@@ -66,6 +66,10 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier.key_signal.connect(self.__update_position__)
         self.key_notifier.start()
 
+        self.shield_destruct = CollisionAlienBullet()
+        self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
+        self.shield_destruct.start()
+
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
 
@@ -100,6 +104,19 @@ class StartGameSingleplayer(QMainWindow):
             self.aliens.remove(alien)
             self.alien_movement_thread.remove_alien(alien)
             self.alien_attack_thread.remove_alien(alien)
+
+    @pyqtSlot(QLabel, QLabel, int)
+    def update_shield(self, shield: QLabel, bullet: QLabel, counter: int):
+        if counter == 1:
+            shield.setPixmap(QPixmap("images/shield2"))
+        elif counter == 2:
+            shield.setPixmap(QPixmap("images/shield3"))
+        elif counter == 3:
+            shield.setPixmap(QPixmap("images/shield4"))
+        elif counter == 4:
+            shield.hide()
+
+        bullet.hide()
 
     def init_ui(self):
         self.init_window()
@@ -155,6 +172,10 @@ class StartGameSingleplayer(QMainWindow):
         self.count_shield1 = 0
         self.count_shield2 = 0
         self.count_shield3 = 0
+
+        for i in range(4):
+            self.shield_destruct.add_shield(self.shields[i].avatar)
+
 
     def on_timeout(self):
         if self.counter == 3:
@@ -406,6 +427,8 @@ class StartGameSingleplayer(QMainWindow):
         self.alien_attack_thread.add_bullet(bullet)
 
         self.alien_shoot_bullet_thread.add_bullet(bullet)
+
+        self.shield_destruct.add_bullet(bullet)
 
     def shoot_bullet(self, bullet: QLabel, bullet_x, bullet_y):
         bullet.move(bullet_x, bullet_y)
