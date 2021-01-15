@@ -43,13 +43,19 @@ class AlienMovement(QObject):
 
     @pyqtSlot()
     def _work_(self):
+        counter = 0
         while self.threadWorking:
-            # if self.direction_down:
-            #     for alien in self.aliens:
-            #         alien_pos = alien.geometry()
-            #         alien_x = alien_pos.x()
-            #         alien_y = alien_pos.y()
-            #         self.updated.emit(alien, alien_x, alien_y + 5)
+            if counter == 2:
+                counter = 0
+                for alien in self.aliens:
+                    alien_pos = alien.geometry()
+                    alien_x = alien_pos.x()
+                    alien_y = alien_pos.y()
+                    self.direction_left = False
+                    self.direction_right = False
+                    self.updated.emit(alien, alien_x, alien_y + 5)
+            else:
+                self.direction_right = True
 
             if self.direction_left:
                 for alien in self.aliens:
@@ -61,6 +67,7 @@ class AlienMovement(QObject):
                         self.direction_right = False
                         self.updated.emit(alien, alien_x - 2, alien_y)
                     else:
+                        counter += 1
                         self.direction_left = False
                         self.direction_right = True
                         break
