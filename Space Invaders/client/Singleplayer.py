@@ -115,6 +115,9 @@ class StartGameSingleplayer(QMainWindow):
             shield.setPixmap(QPixmap("images/shield4"))
         elif counter == 4:
             shield.hide()
+            if shield in self.shields:
+                self.shields.remove(shield)
+                self.shield_destruct.rem_shield(shield)
 
         bullet.hide()
 
@@ -166,7 +169,7 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_shield(self):
         for i in range(4):
-            self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105))
+            self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105).avatar)
 
         self.count_shield0 = 0
         self.count_shield1 = 0
@@ -174,7 +177,7 @@ class StartGameSingleplayer(QMainWindow):
         self.count_shield3 = 0
 
         for i in range(4):
-            self.shield_destruct.add_shield(self.shields[i].avatar)
+            self.shield_destruct.add_shield(self.shields[i])
 
 
     def on_timeout(self):
