@@ -117,7 +117,7 @@ class StartGameSingleplayer(QMainWindow):
             shield.hide()
             if shield in self.shields:
                 self.shields.remove(shield)
-                self.shield_destruct.rem_shield(shield)
+            self.shield_destruct.rem_shield(shield)
 
         bullet.hide()
 

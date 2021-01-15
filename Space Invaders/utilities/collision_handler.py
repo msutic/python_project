@@ -126,13 +126,15 @@ class CollisionAlienBullet(QObject):
                         if shield_y in bullet_y_coords:
                             for shield_x in shield_x_coordinates:
                                 if shield_x in bullet_x_coords:
+                                    print("POGODIO STIT", index)
                                     self.counter[index] += 1
+                                    print("BROJ POGODAKA: ", self.counter[index])
                                     shield_param = shield
-                                    # if self.counter[index] == 4:
-                                    #     self.rem_shield(shield)
                                     self.rem_bullet(bullet)
                                     self.collision_with_shield_occured.emit(shield_param, bullet, self.counter[index])
                                     collided = True
+                                    if self.counter[index] == 4:
+                                        self.counter.remove(self.counter[index])
                                     break
 
             sleep(0.05)
