@@ -105,11 +105,11 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_aliens(self):
         for i in range(11):
-            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49).avatar)
-            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 49, 67).avatar)
+            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 165, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 215, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 265, 50, 45).avatar)
+            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 315, 50, 45).avatar)
 
         for i in range(55):
             self.alien_movement_thread.add_alien(self.aliens[i])
