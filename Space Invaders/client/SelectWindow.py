@@ -6,6 +6,8 @@ from PyQt5.QtGui import QPixmap, QIcon
 
 from client import Singleplayer
 
+from config import cfg
+
 
 def __start_game_process__(player_id,player_spacecraft):
     process = Process(target=__start_game__, args=(player_id,player_spacecraft))
@@ -33,7 +35,7 @@ class SelectWindow(QMainWindow):
         self.nickname_input.setFocus()
 
     def init_ui(self):
-        self.setFixedSize(682, 516)
+        self.setFixedSize(cfg.SELECT_WINDOW_WIDTH, cfg.SELECT_WINDOW_HEIGHT)
         self.setWindowTitle('SELECT - Space Invaders v1.0')
         self.setWindowIcon(QIcon('icon.png'))
 

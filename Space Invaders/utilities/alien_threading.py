@@ -7,6 +7,8 @@ import time
 
 from Entities import Alien
 
+from config import cfg
+
 
 class AlienMovement(QObject):
 
@@ -44,7 +46,7 @@ class AlienMovement(QObject):
                     if alien_x > 10:
                         self.direction_left = True
                         self.direction_right = False
-                        self.updated.emit(alien, alien_x - 5, alien_y)
+                        self.updated.emit(alien, alien_x - cfg.ALIEN_X_VELOCITY, alien_y)
                     else:
                         self.direction_left = False
                         self.direction_right = True
@@ -58,7 +60,7 @@ class AlienMovement(QObject):
                     if alien_x < 890:
                         self.direction_right = True
                         self.direction_left = False
-                        self.updated.emit(alien, alien_x + 5, alien_y)
+                        self.updated.emit(alien, alien_x + cfg.ALIEN_Y_VELOCITY, alien_y)
                     else:
                         self.direction_right = False
                         self.direction_left = True
@@ -93,7 +95,7 @@ class BulletMove(QObject):
                 for bullet in self.bullets:
                     bullet_position = bullet.geometry()
                     bullet_x = bullet_position.x()
-                    bullet_y = bullet_position.y() + 10
+                    bullet_y = bullet_position.y() + cfg.ALIEN_BULLET_VELOCITY
                     self.update_position.emit(bullet, bullet_x, bullet_y)
 
             time.sleep(0.05)
@@ -137,7 +139,7 @@ class AlienAttack(QObject):
                 random_index = random.randint(0, len(self.aliens)-1)
                 alien = self.aliens[random_index]
                 alien_pos = alien.geometry()
-                bullet_x = alien_pos.x() + 45/2
+                bullet_x = alien_pos.x() + cfg.SECOND_ROW_ALIEN_WIDTH/4
                 bullet_y = alien_pos.y() + 45
                 self.init_bullet.emit(bullet_x, bullet_y)
 
