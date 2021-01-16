@@ -69,8 +69,21 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier.start()
 
         self.shield_destruct = CollisionAlienBullet()
+        self.shield_destruct.collision_with_player.connect(self.remove_life)
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
         self.shield_destruct.start()
+
+    def remove_life(self, bullet: QLabel, counter: int):
+        bullet.hide()
+        if counter == 1:
+            self.lives3_label.hide()
+
+        elif counter == 2:
+            self.lives2_label.hide()
+        elif counter == 3:
+            self.lives1_label.hide()
+
+        self.player.lives -= 1
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
@@ -141,7 +154,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(
@@ -150,7 +164,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "military-aircraft-POWER":
             self.player = Player(
@@ -159,7 +174,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "SpaceX-air4p66":
             self.player = Player(
@@ -168,8 +184,11 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
+
+        self.shield_destruct.player = self.player.avatar
 
         # self.timer1 = QTimer(self)
         # self.timer1.timeout.connect(self.destroy_enemy)
