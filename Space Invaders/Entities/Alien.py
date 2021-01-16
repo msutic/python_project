@@ -4,11 +4,12 @@ from PyQt5.QtWidgets import QWidget, QLabel
 
 class Alien:
 
-    def __init__(self, screen: QWidget, img, x, y, h, w):
+    def __init__(self, screen: QWidget, img, x, y, h, w, worth):
         self.x = x
         self.y = y
         self.h = h
         self.w = w
+        self.worth = worth
         self.img = img
         self.avatar = QLabel(screen)
         self.pixmap = QPixmap(self.img)

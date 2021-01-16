@@ -98,14 +98,15 @@ class StartGameSingleplayer(QMainWindow):
                 self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel):
-        self.total_point += 10
-        self.score.setText(str(self.total_point))
-        alien.hide()
         bullet.hide()
-        if alien in self.aliens:
-            self.aliens.remove(alien)
-            self.alien_movement_thread.remove_alien(alien)
-            self.alien_attack_thread.remove_alien(alien)
+        for a in self.aliens:
+            if a.avatar == alien:
+                alien.hide()
+                self.total_point += a.worth
+                self.score.setText(str(self.total_point))
+                self.aliens.remove(a)
+                self.alien_movement_thread.remove_alien(alien)
+                self.alien_attack_thread.remove_alien(alien)
 
     @pyqtSlot(QLabel, QLabel, int)
     def update_shield(self, shield: QLabel, bullet: QLabel, counter: int):
@@ -192,8 +193,9 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y,
                     cfg.FIRST_ROW_ALIEN_WIDTH,
-                    cfg.FIRST_ROW_ALIEN_HEIGHT
-                ).avatar
+                    cfg.FIRST_ROW_ALIEN_HEIGHT,
+                    100
+                )
             )
             self.aliens.append(
                 Alien(
@@ -202,8 +204,9 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 30,
                     cfg.SECOND_ROW_ALIEN_WIDTH,
-                    cfg.SECOND_ROW_ALIEN_HEIGHT
-                ).avatar
+                    cfg.SECOND_ROW_ALIEN_HEIGHT,
+                    50
+                )
             )
             self.aliens.append(
                 Alien(
@@ -212,8 +215,9 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 80,
                     cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT
-                ).avatar
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
             )
             self.aliens.append(
                 Alien(
@@ -222,8 +226,9 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 130,
                     cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT
-                ).avatar
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
             )
             self.aliens.append(
                 Alien(
@@ -232,15 +237,16 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 180,
                     cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT
-                ).avatar
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
             )
 
         for i in range(55):
-            self.alien_movement_thread.add_alien(self.aliens[i])
-            self.alien_attack_thread.add_alien(self.aliens[i])
-            self.shootingThread.add_alien((self.aliens[i]))
-            self.collision_bullet_alien.add_alien(self.aliens[i])
+            self.alien_movement_thread.add_alien(self.aliens[i].avatar)
+            self.alien_attack_thread.add_alien(self.aliens[i].avatar)
+            self.shootingThread.add_alien((self.aliens[i]).avatar)
+            self.collision_bullet_alien.add_alien(self.aliens[i].avatar)
 
     def init_shield(self):
         for i in range(4):
