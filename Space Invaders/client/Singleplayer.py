@@ -68,11 +68,7 @@ class StartGameSingleplayer(QMainWindow):
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                     "font: 75 15pt \"Fixedsys\";")
 
-        # logika za upis u fajl
 
-        #file1 = open("players.txt", "a")
-        #file1.write(self.player_id + "\n")
-        #file1.close()
 
 
     def alien_movement(self, alien: QLabel, new_x, new_y):
@@ -117,6 +113,13 @@ class StartGameSingleplayer(QMainWindow):
             self.lives2_label.hide()
         elif counter == 3:
             self.lives1_label.hide()
+            self.write_in_base()
+            msg = QMessageBox()
+            msg.setText("You lost...")
+            msg.setWindowTitle('Error')
+            msg.exec_()
+            sys.exit(app.exec_())
+
 
         self.player.lives -= 1
 
@@ -424,7 +427,7 @@ class StartGameSingleplayer(QMainWindow):
                         self.score.setText(str(self.total_point))
 
     def write_in_base(self):
-        self.file = open("players.txt", "w")
+        self.file = open("players.txt", "a")
         self.file.write(str(self.player_id) + " " + str(self.total_point) + "\n")
         self.file.close()
 
@@ -439,7 +442,7 @@ class StartGameSingleplayer(QMainWindow):
                         self.lives2_label.hide()
                     elif self.current_lives == 3:
                         self.lives1.label.hide()
-                        self.write_in_base()
+                       # self.write_in_base()
                         #sys.exit()
                     print(str(self.current_lives))
 
