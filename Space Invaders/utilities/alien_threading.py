@@ -152,6 +152,10 @@ class AlienAttack(QObject):
         if not self.can_shoot:
             self.can_shoot = True
 
+    def die(self):
+        self.thread_working = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         while self.thread_working:

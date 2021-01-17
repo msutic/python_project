@@ -100,6 +100,10 @@ class CollisionAlienBullet(QObject):
     def rem_shield(self, shield: QLabel):
         self.shields.remove(shield)
 
+    def die(self):
+        self.is_not_done = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
 

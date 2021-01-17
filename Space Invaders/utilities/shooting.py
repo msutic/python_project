@@ -35,6 +35,10 @@ class ShootBullet(QObject):
         if bullet in self.bullets:
             self.bullets.remove(bullet)
 
+    def die(self):
+        self.threadWorking = False
+        self.thread.quit()
+
     @pyqtSlot()
     def __work__(self):
         while self.threadWorking:
