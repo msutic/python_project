@@ -34,6 +34,10 @@ class CollisionPlayerBullet(QObject):
     def remove_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
 
+    def die(self):
+        self.is_not_done = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         while self.is_not_done:
