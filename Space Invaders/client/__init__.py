@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWind
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 
 from client.SelectWindow import SelectWindow
+from config import cfg
 
 
 class StartWindow(QMainWindow):
@@ -73,7 +74,7 @@ class StartWindow(QMainWindow):
         self.bg_label.setMovie(self.movie)
         self.bg_label.setGeometry(0, 0, 800, 600)
         self.movie.start()
-        self.setFixedSize(800, 600)
+        self.setFixedSize(cfg.START_WINDOW_WIDTH, cfg.START_WINDOW_HEIGHT)
 
         self.header = QLabel(self)
         self.header.setGeometry(QtCore.QRect(0, 0, 800, 261))

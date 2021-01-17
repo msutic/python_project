@@ -15,6 +15,8 @@ from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBul
 from utilities.key_notifier import KeyNotifier
 from utilities.shooting import ShootBullet
 
+from config import cfg
+
 
 class StartGameSingleplayer(QMainWindow):
     counter = 0
@@ -96,14 +98,15 @@ class StartGameSingleplayer(QMainWindow):
                 self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel):
-        self.total_point += 10
-        self.score.setText(str(self.total_point))
-        alien.hide()
         bullet.hide()
-        if alien in self.aliens:
-            self.aliens.remove(alien)
-            self.alien_movement_thread.remove_alien(alien)
-            self.alien_attack_thread.remove_alien(alien)
+        for a in self.aliens:
+            if a.avatar == alien:
+                alien.hide()
+                self.total_point += a.worth
+                self.score.setText(str(self.total_point))
+                self.aliens.remove(a)
+                self.alien_movement_thread.remove_alien(alien)
+                self.alien_attack_thread.remove_alien(alien)
 
     @pyqtSlot(QLabel, QLabel, int)
     def update_shield(self, shield: QLabel, bullet: QLabel, counter: int):
@@ -132,44 +135,131 @@ class StartGameSingleplayer(QMainWindow):
         # self.timer3.start(60)
 
         if self.player_spacecraft == "SILVER_X 177p":
-            self.player = Player(self, 'images/sc11.png', 15, 655, 90, 72)
+            self.player = Player(
+                self,
+                'images/sc11.png',
+                cfg.PLAYER_START_X,
+                cfg.PLAYER_START_Y,
+                cfg.SPACESHIP_WIDTH,
+                cfg.SPACESHIP_HEIGHT
+            )
         elif self.player_spacecraft == "purpleZ AAx9":
-            self.player = Player(self, 'images/in_game_spaceship.png', 15, 655, 72, 72)
+            self.player = Player(
+                self,
+                'images/in_game_spaceship.png',
+                cfg.PLAYER_START_X,
+                cfg.PLAYER_START_Y,
+                cfg.SPACESHIP_WIDTH,
+                cfg.SPACESHIP_HEIGHT
+            )
         elif self.player_spacecraft == "military-aircraft-POWER":
-            self.player = Player(self, 'images/sc3.png', 15, 655, 72, 72)
+            self.player = Player(
+                self,
+                'images/sc3.png',
+                cfg.PLAYER_START_X,
+                cfg.PLAYER_START_Y,
+                cfg.SPACESHIP_WIDTH,
+                cfg.SPACESHIP_HEIGHT
+            )
         elif self.player_spacecraft == "SpaceX-air4p66":
-            self.player = Player(self, 'images/sc41.png', 15, 655, 72, 72)
+            self.player = Player(
+                self,
+                'images/sc41.png',
+                cfg.PLAYER_START_X,
+                cfg.PLAYER_START_Y,
+                cfg.SPACESHIP_WIDTH,
+                cfg.SPACESHIP_HEIGHT
+            )
 
         # self.timer1 = QTimer(self)
         # self.timer1.timeout.connect(self.destroy_enemy)
 
     def init_window(self):
-        self.setFixedSize(950, 778)
+        self.setFixedSize(cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
         self.setWindowIcon(QIcon('images/icon.png'))
         self.setWindowTitle('Space Invaders [singleplayer mode] v1.0')
 
         self.bgLabel = QLabel(self)
         self.background = QPixmap('images/bg-resized2.jpg')
         self.bgLabel.setPixmap(self.background)
-        self.bgLabel.setGeometry(0, 0, 950, 778)
+        self.bgLabel.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
 
     def init_aliens(self):
         for i in range(11):
-            self.aliens.append(Alien(self, 'images/alienn-resized.png', 50 + 70 * i, 86, 67, 49).avatar)
-            self.aliens.append(Alien(self, 'images/alien2-resized.png', 50 + 70 * i, 155, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 205, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 255, 50, 45).avatar)
-            self.aliens.append(Alien(self, 'images/alien3-resized.png', 50 + 70 * i, 305, 50, 45).avatar)
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alienn-resized.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y,
+                    cfg.FIRST_ROW_ALIEN_WIDTH,
+                    cfg.FIRST_ROW_ALIEN_HEIGHT,
+                    100
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien2-resized.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 30,
+                    cfg.SECOND_ROW_ALIEN_WIDTH,
+                    cfg.SECOND_ROW_ALIEN_HEIGHT,
+                    50
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien3-resized.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 80,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien3-resized.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 130,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien3-resized.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 180,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
+                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    10
+                )
+            )
 
         for i in range(55):
-            self.alien_movement_thread.add_alien(self.aliens[i])
-            self.alien_attack_thread.add_alien(self.aliens[i])
-            self.shootingThread.add_alien((self.aliens[i]))
-            self.collision_bullet_alien.add_alien(self.aliens[i])
+            self.alien_movement_thread.add_alien(self.aliens[i].avatar)
+            self.alien_attack_thread.add_alien(self.aliens[i].avatar)
+            self.shootingThread.add_alien((self.aliens[i]).avatar)
+            self.collision_bullet_alien.add_alien(self.aliens[i].avatar)
 
     def init_shield(self):
         for i in range(4):
-            self.shields.append(Shield(self, 'images/shield.png', 50 + 260 * i, 546, 85, 105).avatar)
+            self.shields.append(
+                Shield(
+                    self,
+                    'images/shield.png',
+                    cfg.SHIELD_START_X + cfg.SHIELD_OFFSET_X * i,
+                    cfg.SHIELD_START_Y,
+                    cfg.SHIELD_WIDTH,
+                    cfg.SHIELD_HEIGHT
+                ).avatar
+            )
 
         self.count_shield0 = 0
         self.count_shield1 = 0
@@ -424,8 +514,9 @@ class StartGameSingleplayer(QMainWindow):
             'images/bullett.png',
             bullet_x,
             bullet_y,
-            45,
-            45).avatar
+            cfg.ALIEN_BULLET_WIDTH,
+            cfg.ALIEN_BULLET_HEIGHT
+        ).avatar
 
         self.alien_attack_thread.add_bullet(bullet)
 

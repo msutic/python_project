@@ -3,6 +3,8 @@ from time import sleep
 from PyQt5.QtCore import pyqtSignal, QObject, QThread, pyqtSlot
 from PyQt5.QtWidgets import QLabel
 
+from config import cfg
+
 
 class ShootBullet(QObject):
     updated_position = pyqtSignal(QLabel, int, int)
@@ -46,7 +48,7 @@ class ShootBullet(QObject):
             for bullet in self.bullets:
                 bulletGeo = bullet.geometry()
                 bullet_x = bulletGeo.x()
-                bullet_y = bulletGeo.y() - 5
+                bullet_y = bulletGeo.y() - cfg.BULLET_VELOCITY
                 self.updated_position.emit(bullet, bullet_x, bullet_y)
 
             sleep(0.01)
