@@ -43,6 +43,10 @@ class AlienMovement(QObject):
     def enable_downward(self):
         self.direction_down = True
 
+    def die(self):
+        self.threadWorking = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         counter = 0
@@ -110,6 +114,10 @@ class BulletMove(QObject):
     def add_bullet(self, bullet: QLabel):
         self.bullets.append(bullet)
 
+    def die(self):
+        self.thread_working = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         while self.thread_working:
@@ -153,6 +161,10 @@ class AlienAttack(QObject):
     def _enable_shoot_(self):
         if not self.can_shoot:
             self.can_shoot = True
+
+    def die(self):
+        self.thread_working = False
+        self.thread.quit()
 
     @pyqtSlot()
     def _work_(self):

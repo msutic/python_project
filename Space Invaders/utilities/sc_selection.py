@@ -21,6 +21,10 @@ class SpaceshipSelection(QObject):
     def start(self):
         self.thread.start()
 
+    def die(self):
+        self.is_not_done = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         img_src = ""
