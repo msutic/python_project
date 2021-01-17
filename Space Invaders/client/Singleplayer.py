@@ -1,8 +1,10 @@
 import sys
 
+import itertools
+
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut, QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
 
 from Entities.Alien import Alien
@@ -29,16 +31,49 @@ class StartGameSingleplayer(QMainWindow):
         self.total_point = 0
         self.current_level = 0
         self.current_lives = 0
+        self.max_player_score = 0
+        self.max_hiscore = []
+        self.player = ""
+        self.broj = 0
 
         self.init_threads()
 
         # arch
+        self.mynumbers = []
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
         self.remove_aliens = []
         self.shields = []
         self.init_ui()
+
+        # logika za citanje najboljeg rezultata
+        file = open("players.txt", "r")
+        lines = file.readlines()
+        for line in lines:
+            self.mynumbers.append(str(n) for n in line.strip().split(" "))
+
+        for a,b in self.mynumbers:
+            self.max_hiscore.append(int(b))
+
+        for i in range(len(self.max_hiscore)):
+            if self.broj < self.max_hiscore[i]:
+                self.broj = self.max_hiscore[i]
+
+        print("Najbolji rezultat ima  : " + str(self.broj) )
+
+        self.hi_score = QLabel(self)
+        self.hi_score.setText(str(self.broj))
+        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
+        self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
+                                    "font: 75 15pt \"Fixedsys\";")
+
+        # logika za upis u fajl
+
+        #file1 = open("players.txt", "a")
+        #file1.write(self.player_id + "\n")
+        #file1.close()
+
 
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
@@ -337,11 +372,7 @@ class StartGameSingleplayer(QMainWindow):
         self.hiscore_label.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
-        self.hi_score = QLabel(self)
-        self.hi_score.setText('0')
-        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
-        self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                    "font: 75 15pt \"Fixedsys\";")
+
 
         self.score = QLabel(self)
         self.score.setText(str(self.total_point))
@@ -392,6 +423,11 @@ class StartGameSingleplayer(QMainWindow):
                         self.total_point += 10
                         self.score.setText(str(self.total_point))
 
+    def write_in_base(self):
+        self.file = open("players.txt", "w")
+        self.file.write(str(self.player_id) + " " + str(self.total_point) + "\n")
+        self.file.close()
+
     def destroy_player(self):
         for bullet in self.bullets_enemy:
             if self.player.x - 20 < bullet.x < self.player.x + 131:
@@ -403,8 +439,16 @@ class StartGameSingleplayer(QMainWindow):
                         self.lives2_label.hide()
                     elif self.current_lives == 3:
                         self.lives1.label.hide()
+                        self.write_in_base()
                         #sys.exit()
                     print(str(self.current_lives))
+
+
+
+
+
+
+
 
     def attack(self, bullet: QLabel, bullet_x, bullet_y):
         bullet.move(bullet_x, bullet_y)
