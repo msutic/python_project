@@ -1,7 +1,7 @@
 from time import sleep
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QMessageBox
 
 
 class CollisionPlayerBullet(QObject):
