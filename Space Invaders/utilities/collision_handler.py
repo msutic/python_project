@@ -34,6 +34,10 @@ class CollisionPlayerBullet(QObject):
     def remove_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
 
+    def die(self):
+        self.is_not_done = False
+        self.thread.quit()
+
     @pyqtSlot()
     def _work_(self):
         while self.is_not_done:
@@ -72,6 +76,7 @@ class CollisionAlienBullet(QObject):
 
     collision_with_shield_occured = pyqtSignal(QLabel, QLabel, int)
     collision_with_player = pyqtSignal(QLabel, int)
+    game_over = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -101,6 +106,10 @@ class CollisionAlienBullet(QObject):
 
     def rem_shield(self, shield: QLabel):
         self.shields.remove(shield)
+
+    def die(self):
+        self.is_not_done = False
+        self.thread.quit()
 
     @pyqtSlot()
     def _work_(self):
@@ -163,6 +172,8 @@ class CollisionAlienBullet(QObject):
                                 self.rem_bullet(bullet)
                                 counter += 1
                                 self.collision_with_player.emit(bullet, counter)
+                                if counter == 3:
+                                    self.game_over.emit()
                                 collided1 = True
                                 break
 

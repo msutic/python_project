@@ -45,6 +45,7 @@ class StartGameSingleplayer(QMainWindow):
         self.aliens = []
         self.remove_aliens = []
         self.shields = []
+        self.lives = []
         self.init_ui()
 
         # logika za citanje najboljeg rezultata
@@ -102,16 +103,71 @@ class StartGameSingleplayer(QMainWindow):
         self.shield_destruct = CollisionAlienBullet()
         self.shield_destruct.collision_with_player.connect(self.remove_life)
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
+        self.shield_destruct.game_over.connect(self.game_over)
         self.shield_destruct.start()
+
+    def kill_threads(self):
+        self.shootingThread.die()
+        self.alien_movement_thread.die()
+        self.alien_attack_thread.die()
+        self.alien_shoot_bullet_thread.die()
+        self.collision_bullet_alien.die()
+        self.key_notifier.die()
+        self.shield_destruct.die()
+
+    def game_over(self):
+        print("GAME OVER")
+        print("SCORE: ", self.total_point)
+        self.kill_threads()
+
+        font = QtGui.QFont()
+        font.setFamily("Rockwell")
+        font.setPointSize(60)
+
+        self.game_over = QLabel(self)
+        self.bg = QPixmap('images/bg-resized.jpg')
+        self.game_over.setPixmap(self.bg)
+        self.game_over.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
+        self.game_over.show()
+
+        self.end_label = QLabel(self)
+        self.end_label.setText('GAME OVER')
+        self.end_label.setFont(font)
+        self.end_label.setStyleSheet("color: rgb(255, 255, 255);")
+        self.end_label.setGeometry(0, 100, 950, 100)
+        self.end_label.setAlignment(Qt.AlignCenter)
+        self.end_label.show()
+
+        font.setPointSize(20)
+
+        self.winner_label = QLabel(self)
+        self.winner_label.setFont(font)
+        self.winner_label.setText('winner: ' + self.player_id)
+        self.winner_label.setStyleSheet("color: rgb(255, 255, 255);")
+        self.winner_label.setGeometry(0, 300, 950, 30)
+        self.winner_label.setAlignment(Qt.AlignCenter)
+        self.winner_label.show()
+
+        self.end_score = QLabel(self)
+        self.end_score.setFont(font)
+        self.end_score.setText('total score: ' + str(self.total_point))
+        self.end_score.setStyleSheet("color: rgb(255, 255, 255);")
+        self.end_score.setGeometry(0, 340, 950, 30)
+        self.end_score.setAlignment(Qt.AlignCenter)
+        self.end_score.show()
+        # self.bgLabel.setPixmap(QPixmap('images/backgroundImg.jpg'))
+        # self.close()
 
     def remove_life(self, bullet: QLabel, counter: int):
         bullet.hide()
         if counter == 1:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives3_label.hide()
-
         elif counter == 2:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives2_label.hide()
         elif counter == 3:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives1_label.hide()
             self.write_in_base()
 
@@ -344,19 +400,20 @@ class StartGameSingleplayer(QMainWindow):
         self.pause_label.setAlignment(Qt.AlignCenter)
 
         self.lives1_label = QLabel(self)
-        self.lives1 = QPixmap('images/lives.png')
-        self.lives1_label.setPixmap(self.lives1)
+        self.lives1_label.setPixmap(QPixmap('images/lives.png'))
         self.lives1_label.setGeometry(QRect(10, 10, 31, 31))
 
         self.lives2_label = QLabel(self)
-        self.lives2 = QPixmap('images/lives.png')
-        self.lives2_label.setPixmap(self.lives2)
+        self.lives2_label.setPixmap(QPixmap('images/lives.png'))
         self.lives2_label.setGeometry(QRect(40, 10, 31, 31))
 
         self.lives3_label = QLabel(self)
-        self.lives3 = QPixmap('images/lives.png')
-        self.lives3_label.setPixmap(self.lives3)
+        self.lives3_label.setPixmap(QPixmap('images/lives.png'))
         self.lives3_label.setGeometry(QRect(70, 10, 31, 31))
+
+        self.lives.append(self.lives1_label)
+        self.lives.append(self.lives2_label)
+        self.lives.append(self.lives3_label)
 
         self.score_label = QLabel(self)
         self.score_label.setText("score: ")
