@@ -38,6 +38,7 @@ class StartGameSingleplayer(QMainWindow):
         self.aliens = []
         self.remove_aliens = []
         self.shields = []
+        self.lives = []
         self.init_ui()
 
     def alien_movement(self, alien: QLabel, new_x, new_y):
@@ -76,11 +77,13 @@ class StartGameSingleplayer(QMainWindow):
     def remove_life(self, bullet: QLabel, counter: int):
         bullet.hide()
         if counter == 1:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives3_label.hide()
-
         elif counter == 2:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives2_label.hide()
         elif counter == 3:
+            self.lives.remove(self.lives[len(self.lives)-1])
             self.lives1_label.hide()
 
         self.player.lives -= 1
@@ -311,19 +314,20 @@ class StartGameSingleplayer(QMainWindow):
         self.pause_label.setAlignment(Qt.AlignCenter)
 
         self.lives1_label = QLabel(self)
-        self.lives1 = QPixmap('images/lives.png')
-        self.lives1_label.setPixmap(self.lives1)
+        self.lives1_label.setPixmap(QPixmap('images/lives.png'))
         self.lives1_label.setGeometry(QRect(10, 10, 31, 31))
 
         self.lives2_label = QLabel(self)
-        self.lives2 = QPixmap('images/lives.png')
-        self.lives2_label.setPixmap(self.lives2)
+        self.lives2_label.setPixmap(QPixmap('images/lives.png'))
         self.lives2_label.setGeometry(QRect(40, 10, 31, 31))
 
         self.lives3_label = QLabel(self)
-        self.lives3 = QPixmap('images/lives.png')
-        self.lives3_label.setPixmap(self.lives3)
+        self.lives3_label.setPixmap(QPixmap('images/lives.png'))
         self.lives3_label.setGeometry(QRect(70, 10, 31, 31))
+
+        self.lives.append(self.lives1_label)
+        self.lives.append(self.lives2_label)
+        self.lives.append(self.lives3_label)
 
         self.score_label = QLabel(self)
         self.score_label.setText("score: ")
