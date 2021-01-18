@@ -12,4 +12,5 @@ dragan 950
 bojan 1220
 dragan 220
 milica 1320
-jovana 720jovana 940
+jovana 720
+stefan 510

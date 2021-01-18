@@ -114,11 +114,6 @@ class StartGameSingleplayer(QMainWindow):
         elif counter == 3:
             self.lives1_label.hide()
             self.write_in_base()
-            msg = QMessageBox()
-            msg.setText("You lost...")
-            msg.setWindowTitle('Error')
-            msg.exec_()
-            sys.exit(app.exec_())
 
 
         self.player.lives -= 1
