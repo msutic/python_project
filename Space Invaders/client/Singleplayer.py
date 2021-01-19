@@ -79,6 +79,10 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier.key_signal.connect(self.__update_position__)
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
         self.deus_ex.empower.connect(self.remove_power_object)
+        self.deus_ex.collision_occured.connect(self.add_power)
+
+    def add_power(self, player: QLabel, power: QLabel):
+        power.hide()
 
     def remove_power_object(self, power: QLabel):
         if power in self.powers:
@@ -194,6 +198,7 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.SPACESHIP_HEIGHT
             )
 
+        self.deus_ex.player = self.player.avatar
         # self.timer1 = QTimer(self)
         # self.timer1.timeout.connect(self.destroy_enemy)
 
