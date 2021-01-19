@@ -12,6 +12,7 @@ from Entities.Shield import Shield
 
 from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBullet
+from utilities.deus_ex import DeusEx
 from utilities.key_notifier import KeyNotifier
 from utilities.shooting import ShootBullet
 
@@ -30,47 +31,69 @@ class StartGameSingleplayer(QMainWindow):
         self.current_level = 0
         self.current_lives = 0
 
-        self.init_threads()
-
-        # arch
+        self.powers = []
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
         self.remove_aliens = []
         self.shields = []
+
+        self.shootingThread = ShootBullet()
+        self.alien_movement_thread = AlienMovement()
+        self.alien_attack_thread = AlienAttack()
+        self.alien_shoot_bullet_thread = BulletMove()
+        self.collision_bullet_alien = CollisionPlayerBullet()
+        self.key_notifier = KeyNotifier()
+        self.shield_destruct = CollisionAlienBullet()
+        self.deus_ex = DeusEx()
+
+        self.threads_connect()
+        self.start_threads()
+
+        self.empowerment_timer = QTimer()
+        self.empowerment_timer.timeout.connect(self.show_power)
+        self.empowerment_timer.start(2500)
+
         self.init_ui()
 
+    @pyqtSlot(QLabel, int, int)
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
 
-    def init_threads(self):
-        self.shootingThread = ShootBullet()
-        self.shootingThread.updated_position.connect(self.move_laser_up)
+    def start_threads(self):
         self.shootingThread.start()
-
-        self.alien_movement_thread = AlienMovement()
-        self.alien_movement_thread.updated.connect(self.alien_movement)
         self.alien_movement_thread.start()
-
-        self.alien_attack_thread = AlienAttack()
-        self.alien_attack_thread.init_bullet.connect(self.alien_attack)
         self.alien_attack_thread.start()
-
-        self.alien_shoot_bullet_thread = BulletMove()
-        self.alien_shoot_bullet_thread.update_position.connect(self.shoot_bullet)
         self.alien_shoot_bullet_thread.start()
-
-        self.collision_bullet_alien = CollisionPlayerBullet()
-        self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
         self.collision_bullet_alien.start()
-
-        self.key_notifier = KeyNotifier()
-        self.key_notifier.key_signal.connect(self.__update_position__)
         self.key_notifier.start()
-
-        self.shield_destruct = CollisionAlienBullet()
-        self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
         self.shield_destruct.start()
+        self.deus_ex.start()
+
+    def threads_connect(self):
+        self.shootingThread.updated_position.connect(self.move_laser_up)
+        self.alien_movement_thread.updated.connect(self.alien_movement)
+        self.alien_attack_thread.init_bullet.connect(self.alien_attack)
+        self.alien_shoot_bullet_thread.update_position.connect(self.shoot_bullet)
+        self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
+        self.key_notifier.key_signal.connect(self.__update_position__)
+        self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
+        self.deus_ex.empower.connect(self.remove_power_object)
+
+    def remove_power_object(self, power: QLabel):
+        if power in self.powers:
+            self.powers.remove(power)
+
+        power.hide()
+
+    def show_power(self):
+        empower = QLabel(self)
+        empower.setPixmap(QPixmap('images/lives.png'))
+        empower.setGeometry(300, 640, 100, 100)
+        empower.show()
+
+        self.powers.append(empower)
+        self.deus_ex.add_power(empower)
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
