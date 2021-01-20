@@ -14,3 +14,14 @@ dragan 220
 milica 1320
 jovana 720
 stefan 510
+dd 1660
+dd 220
+dd 750
+ww 1550
+ss 20
+ss 300
+dd 830
+ss 0
+dd 1340
+ss 1100
+dd 60

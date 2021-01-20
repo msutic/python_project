@@ -4,6 +4,7 @@ from Entities.Spaceship import Spaceship
 
 class Player(Spaceship):
 
-    def __init__(self, screen: QWidget, img, x, y, w, h, lives):
+    def __init__(self, screen: QWidget, img, x, y, w, h, lives: int = 3):
         super().__init__(screen=screen, img=img, x=x, y=y, w=w, h=h)
         self.lives = lives
+        self.armour = False
