@@ -1,7 +1,8 @@
 import sys
+from random import randint
 
 from PyQt5 import QtGui
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QMovie
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
 
@@ -79,10 +80,19 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier.key_signal.connect(self.__update_position__)
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
         self.deus_ex.empower.connect(self.remove_power_object)
-        self.deus_ex.collision_occured.connect(self.add_power)
+        self.deus_ex.collision_occured.connect(self.apply_power)
 
-    def add_power(self, player: QLabel, power: QLabel):
+    def apply_power(self, player: QLabel, power: QLabel, index: int):
         power.hide()
+        if index == 0:
+            # REMOVE 1 LIFE
+            pass
+        elif index == 1:
+            # ADD 1 LIFE
+            pass
+        elif index == 2:
+            # ADD SHIELD
+            pass
 
     def remove_power_object(self, power: QLabel):
         if power in self.powers:
@@ -91,13 +101,26 @@ class StartGameSingleplayer(QMainWindow):
         power.hide()
 
     def show_power(self):
+        rand_power_index = randint(0, 2)
         empower = QLabel(self)
-        empower.setPixmap(QPixmap('images/lives.png'))
-        empower.setGeometry(300, 640, 100, 100)
+        if rand_power_index == 0:
+            movie = QMovie("images/skull-resized.gif")
+            empower.setMovie(movie)
+            movie.start()
+        elif rand_power_index == 1:
+            empower.setPixmap(QPixmap('images/lives.png'))
+        elif rand_power_index == 2:
+            movie = QMovie("images/armor-resized.gif")
+            empower.setMovie(movie)
+            movie.start()
+
+        x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
+
+        empower.setGeometry(x_axis, 660, 45, 45)
         empower.show()
 
         self.powers.append(empower)
-        self.deus_ex.add_power(empower)
+        self.deus_ex.add_power(empower, rand_power_index)
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()

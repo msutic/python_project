@@ -9,13 +9,14 @@ from config import cfg
 class DeusEx(QObject):
 
     empower = pyqtSignal(QLabel)
-    collision_occured = pyqtSignal(QLabel, QLabel)
+    collision_occured = pyqtSignal(QLabel, QLabel, int)
 
     def __init__(self):
         super().__init__()
 
         self.is_not_done = True
         self.powers = []
+        self.index = 0
 
         self.player = QLabel()
 
@@ -30,8 +31,9 @@ class DeusEx(QObject):
         self.is_not_done = False
         self.thread.quit()
 
-    def add_power(self, power: QLabel):
+    def add_power(self, power: QLabel, index: int):
         self.powers.append(power)
+        self.index = index
         self.time_added = time()
 
     def rem_power(self, power: QLabel):
@@ -72,7 +74,7 @@ class DeusEx(QObject):
                         for player_x in player_x_coordinates:
                             if player_x in power_x_coords:
                                 self.rem_power(power)
-                                self.collision_occured.emit(self.player, power)
+                                self.collision_occured.emit(self.player, power, self.index)
                                 collided = True
                                 break
 
