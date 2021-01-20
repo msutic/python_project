@@ -120,10 +120,22 @@ class StartGameSingleplayer(QMainWindow):
         power.hide()
         if index == 0:
             # REMOVE 1 LIFE
+            self.player.lives -= 1
+            self.shield_destruct.counter_lives += 1
+            self.lives[len(self.lives)-1].hide()
+            self.lives.remove(self.lives[len(self.lives) - 1])
             pass
         elif index == 1:
             # ADD 1 LIFE
-            pass
+            if self.player.lives == 1:
+                self.player.lives += 1
+                self.shield_destruct.counter_lives -= 1
+                self.lives.append(self.lives2_label)
+            elif self.player.lives == 2:
+                self.player.lives += 1
+                self.shield_destruct.counter_lives -= 1
+                self.lives.append(self.lives3_label)
+            self.lives[len(self.lives) - 1].show()
         elif index == 2:
             # ADD SHIELD
             pass
@@ -223,7 +235,6 @@ class StartGameSingleplayer(QMainWindow):
             self.lives.remove(self.lives[len(self.lives)-1])
             self.lives1_label.hide()
             self.write_in_base()
-
 
         self.player.lives -= 1
 
@@ -331,6 +342,7 @@ class StartGameSingleplayer(QMainWindow):
             )
         self.deus_ex.player = self.player.avatar
         self.shield_destruct.player = self.player.avatar
+        self.shield_destruct.lives = self.player.lives
 
         # self.timer1 = QTimer(self)
         # self.timer1.timeout.connect(self.destroy_enemy)

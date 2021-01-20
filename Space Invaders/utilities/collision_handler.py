@@ -87,6 +87,7 @@ class CollisionAlienBullet(QObject):
         self.alien_bullets = []
         self.shields = []
         self.player = QLabel()
+        self.lives = 0
 
         self.thread = QThread()
         self.moveToThread(self.thread)
@@ -114,7 +115,7 @@ class CollisionAlienBullet(QObject):
     @pyqtSlot()
     def _work_(self):
 
-        counter = 0
+        self.counter_lives = 0
         while self.is_not_done:
             collided = False
             collided1 = False
@@ -170,11 +171,13 @@ class CollisionAlienBullet(QObject):
                         for player_x in player_x_coordinates:
                             if player_x in bullet_x_coords:
                                 self.rem_bullet(bullet)
-                                counter += 1
-                                self.collision_with_player.emit(bullet, counter)
-                                if counter == 3:
-                                    self.game_over.emit()
+                                self.counter_lives += 1
+                                self.collision_with_player.emit(bullet, self.counter_lives)
+
                                 collided1 = True
                                 break
+
+            if self.counter_lives == 3:
+                self.game_over.emit()
 
             sleep(0.05)
