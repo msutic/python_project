@@ -3,7 +3,8 @@ from random import randint
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut, QMessageBox
+
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
 
 from Entities.Alien import Alien
@@ -31,8 +32,17 @@ class StartGameSingleplayer(QMainWindow):
         self.total_point = 0
         self.current_level = 0
         self.current_lives = 0
+        self.max_player_score = 0
+        self.max_hiscore = []
+        self.player = ""
+        self.broj = 0
 
         self.powers = []
+        self.lives = []
+
+        # arch
+        self.mynumbers = []
+
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
@@ -57,6 +67,28 @@ class StartGameSingleplayer(QMainWindow):
 
         self.init_ui()
 
+
+        # logika za citanje najboljeg rezultata
+        file = open("players.txt", "r")
+        lines = file.readlines()
+        for line in lines:
+            self.mynumbers.append(str(n) for n in line.strip().split(" "))
+
+        for a,b in self.mynumbers:
+            self.max_hiscore.append(int(b))
+
+        for i in range(len(self.max_hiscore)):
+            if self.broj < self.max_hiscore[i]:
+                self.broj = self.max_hiscore[i]
+
+        print("Najbolji rezultat ima  : " + str(self.broj) )
+
+        self.hi_score = QLabel(self)
+        self.hi_score.setText(str(self.broj))
+        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
+        self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
+                                    "font: 75 15pt \"Fixedsys\";")
+
     @pyqtSlot(QLabel, int, int)
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
@@ -79,6 +111,8 @@ class StartGameSingleplayer(QMainWindow):
         self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
         self.key_notifier.key_signal.connect(self.__update_position__)
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
+        self.shield_destruct.collision_with_player.connect(self.remove_life)
+        self.shield_destruct.game_over.connect(self.game_over)
         self.deus_ex.empower.connect(self.remove_power_object)
         self.deus_ex.collision_occured.connect(self.apply_power)
 
@@ -121,6 +155,77 @@ class StartGameSingleplayer(QMainWindow):
 
         self.powers.append(empower)
         self.deus_ex.add_power(empower, rand_power_index)
+
+    def kill_threads(self):
+        self.shootingThread.die()
+        self.alien_movement_thread.die()
+        self.alien_attack_thread.die()
+        self.alien_shoot_bullet_thread.die()
+        self.collision_bullet_alien.die()
+        self.key_notifier.die()
+        self.shield_destruct.die()
+        self.deus_ex.die()
+
+        self.empowerment_timer.stop()
+
+    def game_over(self):
+        print("GAME OVER")
+        print("SCORE: ", self.total_point)
+        self.kill_threads()
+
+        font = QtGui.QFont()
+        font.setFamily("Rockwell")
+        font.setPointSize(60)
+
+        self.game_over = QLabel(self)
+        self.bg = QPixmap('images/bg-resized.jpg')
+        self.game_over.setPixmap(self.bg)
+        self.game_over.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
+        self.game_over.show()
+
+        self.end_label = QLabel(self)
+        self.end_label.setText('GAME OVER')
+        self.end_label.setFont(font)
+        self.end_label.setStyleSheet("color: rgb(255, 255, 255);")
+        self.end_label.setGeometry(0, 100, 950, 100)
+        self.end_label.setAlignment(Qt.AlignCenter)
+        self.end_label.show()
+
+        font.setPointSize(20)
+
+        self.winner_label = QLabel(self)
+        self.winner_label.setFont(font)
+        self.winner_label.setText('winner: ' + self.player_id)
+        self.winner_label.setStyleSheet("color: rgb(255, 255, 255);")
+        self.winner_label.setGeometry(0, 300, 950, 30)
+        self.winner_label.setAlignment(Qt.AlignCenter)
+        self.winner_label.show()
+
+        self.end_score = QLabel(self)
+        self.end_score.setFont(font)
+        self.end_score.setText('total score: ' + str(self.total_point))
+        self.end_score.setStyleSheet("color: rgb(255, 255, 255);")
+        self.end_score.setGeometry(0, 340, 950, 30)
+        self.end_score.setAlignment(Qt.AlignCenter)
+        self.end_score.show()
+        # self.bgLabel.setPixmap(QPixmap('images/backgroundImg.jpg'))
+        # self.close()
+
+    def remove_life(self, bullet: QLabel, counter: int):
+        bullet.hide()
+        if counter == 1:
+            self.lives.remove(self.lives[len(self.lives)-1])
+            self.lives3_label.hide()
+        elif counter == 2:
+            self.lives.remove(self.lives[len(self.lives)-1])
+            self.lives2_label.hide()
+        elif counter == 3:
+            self.lives.remove(self.lives[len(self.lives)-1])
+            self.lives1_label.hide()
+            self.write_in_base()
+
+
+        self.player.lives -= 1
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
@@ -191,7 +296,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(
@@ -200,7 +306,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "military-aircraft-POWER":
             self.player = Player(
@@ -209,7 +316,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
         elif self.player_spacecraft == "SpaceX-air4p66":
             self.player = Player(
@@ -218,10 +326,12 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
-                cfg.SPACESHIP_HEIGHT
+                cfg.SPACESHIP_HEIGHT,
+                3
             )
-
         self.deus_ex.player = self.player.avatar
+        self.shield_destruct.player = self.player.avatar
+
         # self.timer1 = QTimer(self)
         # self.timer1.timeout.connect(self.destroy_enemy)
 
@@ -320,7 +430,6 @@ class StartGameSingleplayer(QMainWindow):
         for i in range(4):
             self.shield_destruct.add_shield(self.shields[i])
 
-
     def on_timeout(self):
         if self.counter == 3:
             for alien in self.aliens:
@@ -343,19 +452,20 @@ class StartGameSingleplayer(QMainWindow):
         self.pause_label.setAlignment(Qt.AlignCenter)
 
         self.lives1_label = QLabel(self)
-        self.lives1 = QPixmap('images/lives.png')
-        self.lives1_label.setPixmap(self.lives1)
+        self.lives1_label.setPixmap(QPixmap('images/lives.png'))
         self.lives1_label.setGeometry(QRect(10, 10, 31, 31))
 
         self.lives2_label = QLabel(self)
-        self.lives2 = QPixmap('images/lives.png')
-        self.lives2_label.setPixmap(self.lives2)
+        self.lives2_label.setPixmap(QPixmap('images/lives.png'))
         self.lives2_label.setGeometry(QRect(40, 10, 31, 31))
 
         self.lives3_label = QLabel(self)
-        self.lives3 = QPixmap('images/lives.png')
-        self.lives3_label.setPixmap(self.lives3)
+        self.lives3_label.setPixmap(QPixmap('images/lives.png'))
         self.lives3_label.setGeometry(QRect(70, 10, 31, 31))
+
+        self.lives.append(self.lives1_label)
+        self.lives.append(self.lives2_label)
+        self.lives.append(self.lives3_label)
 
         self.score_label = QLabel(self)
         self.score_label.setText("score: ")
@@ -369,11 +479,7 @@ class StartGameSingleplayer(QMainWindow):
         self.hiscore_label.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
-        self.hi_score = QLabel(self)
-        self.hi_score.setText('0')
-        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
-        self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                    "font: 75 15pt \"Fixedsys\";")
+
 
         self.score = QLabel(self)
         self.score.setText(str(self.total_point))
@@ -424,6 +530,11 @@ class StartGameSingleplayer(QMainWindow):
                         self.total_point += 10
                         self.score.setText(str(self.total_point))
 
+    def write_in_base(self):
+        self.file = open("players.txt", "a")
+        self.file.write(str(self.player_id) + " " + str(self.total_point) + "\n")
+        self.file.close()
+
     def destroy_player(self):
         for bullet in self.bullets_enemy:
             if self.player.x - 20 < bullet.x < self.player.x + 131:
@@ -435,6 +546,7 @@ class StartGameSingleplayer(QMainWindow):
                         self.lives2_label.hide()
                     elif self.current_lives == 3:
                         self.lives1.label.hide()
+                       # self.write_in_base()
                         #sys.exit()
                     print(str(self.current_lives))
 
