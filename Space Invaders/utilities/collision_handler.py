@@ -77,6 +77,7 @@ class CollisionAlienBullet(QObject):
     collision_with_shield_occured = pyqtSignal(QLabel, QLabel, int)
     collision_with_player = pyqtSignal(QLabel, int)
     game_over = pyqtSignal()
+    armour_broke = pyqtSignal(QLabel)
 
     def __init__(self):
         super().__init__()
@@ -171,9 +172,11 @@ class CollisionAlienBullet(QObject):
                         for player_x in player_x_coordinates:
                             if player_x in bullet_x_coords:
                                 self.rem_bullet(bullet)
-                                self.counter_lives += 1
-                                self.collision_with_player.emit(bullet, self.counter_lives)
-
+                                if not self.player.armour:
+                                    self.counter_lives += 1
+                                    self.collision_with_player.emit(bullet, self.counter_lives)
+                                else:
+                                    self.armour_broke.emit(bullet)
                                 collided1 = True
                                 break
 

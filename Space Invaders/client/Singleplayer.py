@@ -113,8 +113,15 @@ class StartGameSingleplayer(QMainWindow):
         self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
         self.shield_destruct.collision_with_player.connect(self.remove_life)
         self.shield_destruct.game_over.connect(self.game_over)
+        self.shield_destruct.armour_broke.connect(self.remove_armour)
         self.deus_ex.empower.connect(self.remove_power_object)
         self.deus_ex.collision_occured.connect(self.apply_power)
+
+    def remove_armour(self, bullet: QLabel):
+        bullet.hide()
+        self.player.armour = False
+        self.shield_destruct.player.armour = False
+        self.armour_player.hide()
 
     def apply_power(self, player: QLabel, power: QLabel, index: int):
         power.hide()
@@ -138,7 +145,15 @@ class StartGameSingleplayer(QMainWindow):
             self.lives[len(self.lives) - 1].show()
         elif index == 2:
             # ADD SHIELD
-            pass
+            if self.player.armour == False:
+                self.player.armour = True
+                self.armour_player = QLabel(self)
+                self.armour_player.setPixmap(QPixmap('images/armour.png'))
+                self.armour_player.setGeometry(self.player.avatar.geometry().x() - 10, self.player.avatar.geometry().y() - 10,
+                                   100, 100)
+                self.armour_player.show()
+
+                self.shield_destruct.player.armour = True
 
     def remove_power_object(self, power: QLabel):
         if power in self.powers:
@@ -225,6 +240,9 @@ class StartGameSingleplayer(QMainWindow):
 
     def remove_life(self, bullet: QLabel, counter: int):
         bullet.hide()
+
+        self.player.lives -= 1
+
         if counter == 1:
             self.lives.remove(self.lives[len(self.lives)-1])
             self.lives3_label.hide()
@@ -236,21 +254,34 @@ class StartGameSingleplayer(QMainWindow):
             self.lives1_label.hide()
             self.write_in_base()
 
-        self.player.lives -= 1
-
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
 
         if key == Qt.Key_D:
-            if not player_position.x() + player_position.width() + 10 > 950:
-                self.player.avatar.setGeometry(
-                    player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
-                )
+            if self.player.armour == True:
+                if not player_position.x() + player_position.width() + 10 > 950:
+                    self.player.avatar.setGeometry(
+                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                    )
+                    self.armour_player.setGeometry(self.player.avatar.geometry().x() - 13, self.player.avatar.geometry().y() - 10, 100, 100)
+            else:
+                if not player_position.x() + player_position.width() + 10 > 950:
+                    self.player.avatar.setGeometry(
+                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                    )
         if key == Qt.Key_A:
-            if not player_position.x() - 10 < 0:
-                self.player.avatar.setGeometry(
-                    player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
-                )
+            if self.player.armour == True:
+                if not player_position.x() - 10 < 0:
+                    self.player.avatar.setGeometry(
+                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                    )
+                    self.armour_player.setGeometry(self.player.avatar.geometry().x() - 13, self.player.avatar.geometry().y() - 10, 100, 100)
+
+            else:
+                if not player_position.x() - 10 < 0:
+                    self.player.avatar.setGeometry(
+                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                    )
         if key == Qt.Key_Space:
                 bullet = Bullet(
                     self,

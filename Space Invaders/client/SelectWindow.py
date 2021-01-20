@@ -114,7 +114,7 @@ class SelectWindow(QMainWindow):
         else:
             player_id = self.nickname_input.text()
             player_spacecraft = self.selected_spacecraft.currentText()
-            self.close()
+            self.hide()
             __start_game_process__(player_id,player_spacecraft)
 
 
