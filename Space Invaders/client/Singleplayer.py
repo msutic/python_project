@@ -63,7 +63,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.empowerment_timer = QTimer()
         self.empowerment_timer.timeout.connect(self.show_power)
-        self.empowerment_timer.start(2500)
+        self.empowerment_timer.start(20000)
 
         self.init_ui()
 
@@ -120,18 +120,22 @@ class StartGameSingleplayer(QMainWindow):
     def remove_armour(self, bullet: QLabel):
         bullet.hide()
         self.player.armour = False
-        self.shield_destruct.player.armour = False
+        self.shield_destruct.player_armour = False
         self.armour_player.hide()
 
     def apply_power(self, player: QLabel, power: QLabel, index: int):
         power.hide()
         if index == 0:
             # REMOVE 1 LIFE
-            self.player.lives -= 1
-            self.shield_destruct.counter_lives += 1
-            self.lives[len(self.lives)-1].hide()
-            self.lives.remove(self.lives[len(self.lives) - 1])
-            pass
+            if not self.player.armour:
+                self.player.lives -= 1
+                self.shield_destruct.counter_lives += 1
+                self.lives[len(self.lives)-1].hide()
+                self.lives.remove(self.lives[len(self.lives) - 1])
+            else:
+                self.armour_player.hide()
+                self.player.armour = False
+                self.shield_destruct.player_armour = False
         elif index == 1:
             # ADD 1 LIFE
             if self.player.lives == 1:
@@ -153,7 +157,7 @@ class StartGameSingleplayer(QMainWindow):
                                    100, 100)
                 self.armour_player.show()
 
-                self.shield_destruct.player.armour = True
+                self.shield_destruct.player_armour = True
 
     def remove_power_object(self, power: QLabel):
         if power in self.powers:

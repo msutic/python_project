@@ -89,6 +89,7 @@ class CollisionAlienBullet(QObject):
         self.shields = []
         self.player = QLabel()
         self.lives = 0
+        self.player_armour = False
 
         self.thread = QThread()
         self.moveToThread(self.thread)
@@ -172,7 +173,7 @@ class CollisionAlienBullet(QObject):
                         for player_x in player_x_coordinates:
                             if player_x in bullet_x_coords:
                                 self.rem_bullet(bullet)
-                                if not self.player.armour:
+                                if not self.player_armour:
                                     self.counter_lives += 1
                                     self.collision_with_player.emit(bullet, self.counter_lives)
                                 else:
