@@ -67,8 +67,6 @@ class SelectWindow(QMainWindow):
 
         self.select_spaceship_thread.spacecrafts = self.selected_spacecraft
 
-        #self.selected_spacecraft.setItemText(4, "")
-
         self.gridLayout_2.addWidget(self.selected_spacecraft, 2, 1, 1, 1)
 
         self.select_ship_label = QLabel(self)
@@ -91,10 +89,6 @@ class SelectWindow(QMainWindow):
         self.spacecraft_preview.setStyleSheet("border-color: rgb(255, 228, 206);\n"
         "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), "
                                               "stop:1 rgba(255, 255, 255, 255));")
-
-        # self.spacecraft_preview.setPixmap(QPixmap("images/spacecraft.png"))
-        # self.spacecraft_preview.setPixmap(QPixmap("images/in_game_spaceship.png"))
-        # self.spacecraft_preview.setPixmap(QPixmap("images/sc41.png"))
         self.spacecraft_preview.setAlignment(QtCore.Qt.AlignCenter)
         self.gridLayout_2.addWidget(self.spacecraft_preview, 3, 1, 1, 1)
 
