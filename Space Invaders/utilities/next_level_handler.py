@@ -12,7 +12,7 @@ class NextLevel(QObject):
 
         self.is_not_done = True
 
-        self.current_level = 0
+        self.current_level = 1
         self.alien_number = 55
 
         self.thread = QThread()
@@ -31,6 +31,7 @@ class NextLevel(QObject):
         while self.is_not_done:
             if self.alien_number == 0:
                 print("PRELAZ NA SLEDECI NIVO")
+                sleep(4)
                 self.current_level += 1
                 self.next_level.emit(self.current_level)
 
