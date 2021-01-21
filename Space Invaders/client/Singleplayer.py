@@ -155,55 +155,55 @@ class StartGameSingleplayer(QMainWindow):
             self.aliens.append(
                 Alien(
                     self,
-                    'images/alienn-resized.png',
-                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    'images/alien_mother.png',
+                    cfg.ALIEN_START_X - 8 + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y,
                     cfg.FIRST_ROW_ALIEN_WIDTH,
                     cfg.FIRST_ROW_ALIEN_HEIGHT,
+                    500
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien_child.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y,
+                    cfg.SECOND_ROW_ALIEN_WIDTH,
+                    cfg.SECOND_ROW_ALIEN_HEIGHT,
+                    200
+                )
+            )
+            self.aliens.append(
+                Alien(
+                    self,
+                    'images/alien_grandchild.png',
+                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 60,
+                    cfg.THIRD_ROW_ALIEN_WIDTH,
+                    cfg.THIRD_ROW_ALIEN_HEIGHT,
                     100
                 )
             )
             self.aliens.append(
                 Alien(
                     self,
-                    'images/alien2-resized.png',
+                    'images/alien_middle.png',
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
-                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 30,
-                    cfg.SECOND_ROW_ALIEN_WIDTH,
-                    cfg.SECOND_ROW_ALIEN_HEIGHT,
+                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 120,
+                    cfg.FOURTH_ROW_ALIEN_WIDTH,
+                    cfg.FOURTH_ROW_ALIEN_HEIGHT,
                     50
                 )
             )
             self.aliens.append(
                 Alien(
                     self,
-                    'images/alien3-resized.png',
-                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
-                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 80,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
-                    10
-                )
-            )
-            self.aliens.append(
-                Alien(
-                    self,
-                    'images/alien3-resized.png',
-                    cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
-                    cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 130,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
-                    10
-                )
-            )
-            self.aliens.append(
-                Alien(
-                    self,
-                    'images/alien3-resized.png',
+                    'images/alien111.png',
                     cfg.ALIEN_START_X + cfg.ALIEN_OFFSET_X * i,
                     cfg.ALIEN_START_Y + cfg.ALIEN_OFFSET_Y + 180,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_WIDTH,
-                    cfg.THIRD_TO_FIFTH_ROW_ALIEN_HEIGHT,
+                    cfg.FIFTH_ROW_ALIEN_WIDTH,
+                    cfg.FIFTH_ROW_ALIEN_HEIGHT,
                     10
                 )
             )
