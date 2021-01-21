@@ -92,7 +92,7 @@ class AlienMovement(QObject):
                         self.direction_left = True
                         break
 
-            time.sleep(0.05)
+            time.sleep(cfg.MOVEMENT_SLEEP)
 
 
 class BulletMove(QObject):
@@ -113,6 +113,9 @@ class BulletMove(QObject):
 
     def add_bullet(self, bullet: QLabel):
         self.bullets.append(bullet)
+
+    def rem_bullet(self, bullet: QLabel):
+        self.bullets.remove(bullet)
 
     def die(self):
         self.thread_working = False
@@ -157,6 +160,9 @@ class AlienAttack(QObject):
 
     def add_bullet(self, bullet:QLabel):
         self.bullets.append(bullet)
+
+    def rem_bullet(self, bullet: QLabel):
+        self.bullets.remove(bullet)
 
     def _enable_shoot_(self):
         if not self.can_shoot:

@@ -173,7 +173,10 @@ class CollisionAlienBullet(QObject):
                                 self.rem_bullet(bullet)
                                 if not self.player_armour:
                                     self.counter_lives += 1
-                                    self.collision_with_player.emit(bullet, self.counter_lives)
+                                    if self.counter_lives == 3:
+                                        self.game_over.emit()
+                                    else:
+                                        self.collision_with_player.emit(bullet, self.counter_lives)
                                 else:
                                     self.armour_broke.emit(bullet)
                                 collided1 = True

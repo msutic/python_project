@@ -16,6 +16,7 @@ from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBullet
 from utilities.deus_ex import DeusEx
 from utilities.key_notifier import KeyNotifier
+from utilities.next_level_handler import NextLevel
 from utilities.shooting import ShootBullet
 
 from config import cfg
@@ -57,13 +58,14 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier = KeyNotifier()
         self.shield_destruct = CollisionAlienBullet()
         self.deus_ex = DeusEx()
+        self.level_handle = NextLevel()
 
         self.threads_connect()
         self.start_threads()
 
         self.empowerment_timer = QTimer()
         self.empowerment_timer.timeout.connect(self.show_power)
-        self.empowerment_timer.start(20000)
+        self.empowerment_timer.start(10000)
 
         self.init_ui()
 
@@ -206,6 +208,8 @@ class StartGameSingleplayer(QMainWindow):
                 )
             )
 
+        self.level_handle.alien_number = len(self.aliens)
+
         for i in range(55):
             self.alien_movement_thread.add_alien(self.aliens[i].avatar)
             self.alien_attack_thread.add_alien(self.aliens[i].avatar)
@@ -222,11 +226,11 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.SHIELD_START_Y,
                     cfg.SHIELD_WIDTH,
                     cfg.SHIELD_HEIGHT
-                ).avatar
+                )
             )
 
         for i in range(4):
-            self.shield_destruct.add_shield(self.shields[i])
+            self.shield_destruct.add_shield(self.shields[i].avatar)
 
     def start_threads(self):
         self.shootingThread.start()
@@ -237,6 +241,7 @@ class StartGameSingleplayer(QMainWindow):
         self.key_notifier.start()
         self.shield_destruct.start()
         self.deus_ex.start()
+        self.level_handle.start()
 
     def threads_connect(self):
         self.shootingThread.updated_position.connect(self.update_bullet)
@@ -251,6 +256,122 @@ class StartGameSingleplayer(QMainWindow):
         self.shield_destruct.armour_broke.connect(self.remove_armour)
         self.deus_ex.empower.connect(self.remove_power_object)
         self.deus_ex.collision_occured.connect(self.apply_power)
+        self.level_handle.next_level.connect(self.update_level)
+
+    def start_new_threads(self):
+        self.shootingThread = ShootBullet()
+
+        self.shootingThread.updated_position.connect(self.update_bullet)
+        self.shootingThread.start()
+
+        self.alien_movement_thread = AlienMovement()
+        self.alien_movement_thread.updated.connect(self.alien_movement)
+        self.alien_movement_thread.start()
+
+        self.alien_attack_thread = AlienAttack()
+        self.alien_attack_thread.init_bullet.connect(self.alien_attack)
+        self.alien_attack_thread.start()
+
+        self.alien_shoot_bullet_thread = BulletMove()
+        self.alien_shoot_bullet_thread.update_position.connect(self.shoot_bullet)
+        self.alien_shoot_bullet_thread.start()
+
+        self.collision_bullet_alien = CollisionPlayerBullet()
+        self.collision_bullet_alien.collision_occured.connect(self.destroy_enemy_collision)
+        self.collision_bullet_alien.start()
+
+        # self.key_notifier = KeyNotifier()
+        # self.key_notifier.key_signal.connect(self.__update_position__)
+        # self.key_notifier.start()
+
+        self.shield_destruct = CollisionAlienBullet()
+        self.shield_destruct.collision_with_shield_occured.connect(self.update_shield)
+        self.shield_destruct.collision_with_player.connect(self.remove_life)
+        self.shield_destruct.game_over.connect(self.game_over)
+        self.shield_destruct.armour_broke.connect(self.remove_armour)
+        self.shield_destruct.start()
+
+        self.deus_ex = DeusEx()
+        self.deus_ex.empower.connect(self.remove_power_object)
+        self.deus_ex.collision_occured.connect(self.apply_power)
+        self.deus_ex.start()
+
+        self.level_handle = NextLevel()
+        self.level_handle.current_level = int(self.current_score.text())
+        self.level_handle.next_level.connect(self.update_level)
+        self.level_handle.start()
+
+        self.deus_ex.player = self.player.avatar
+        self.shield_destruct.player = self.player.avatar
+        self.shield_destruct.lives = 3
+        self.player.lives = 3
+        if self.player.armour:
+            self.armour_player.hide()
+        self.player.armour = False
+
+        self.lives.append(self.lives1_label)
+        self.lives.append(self.lives2_label)
+        self.lives.append(self.lives3_label)
+
+        for life in self.lives:
+            life.show()
+
+        self.empowerment_timer.start(10000)
+
+    def update_level(self, level: int):
+        self.current_score.setText(str(level))
+
+        if cfg.MOVEMENT_SLEEP - 0.04 > 0.0001:
+            cfg.MOVEMENT_SLEEP -= 0.04
+
+        self.kill_threads()
+        self.free_resources()
+        self.start_new_threads()
+
+        self.init_aliens()
+        self.init_shield()
+
+    def free_resources(self):
+        self.aliens = []
+
+        for life in self.lives:
+            life.hide()
+        self.lives.remove(life)
+
+        print("shields in main len: ", len(self.shields))
+        for shield in self.shields:
+            shield.avatar.hide()
+
+        self.shields.clear()
+
+        print("shields in main len AFTER DELETE: ", len(self.shields))
+
+        print("shields in destruct len: ", len(self.shield_destruct.shields))
+        for shield in self.shield_destruct.shields:
+            shield.hide()
+
+        self.shield_destruct.shields.clear()
+        print("shields in destruct len AFTER DELETE: ", len(self.shield_destruct.shields))
+
+        self.shootingThread.bullets = []
+        self.collision_bullet_alien.bullets = []
+
+        self.alien_movement_thread.aliens = []
+        self.alien_attack_thread.aliens = []
+        self.shootingThread.aliens = []
+        self.collision_bullet_alien.aliens = []
+
+        for bullet in self.alien_attack_thread.bullets:
+            bullet.hide()
+        self.alien_attack_thread.rem_bullet(bullet)
+
+        for bullet in self.alien_shoot_bullet_thread.bullets:
+            bullet.hide()
+        self.alien_shoot_bullet_thread.rem_bullet(bullet)
+
+        for bullet in self.shield_destruct.alien_bullets:
+            bullet.hide()
+        self.shield_destruct.rem_bullet(bullet)
 
     def kill_threads(self):
         self.shootingThread.die()
@@ -258,10 +379,10 @@ class StartGameSingleplayer(QMainWindow):
         self.alien_attack_thread.die()
         self.alien_shoot_bullet_thread.die()
         self.collision_bullet_alien.die()
-        self.key_notifier.die()
+        #self.key_notifier.die()
         self.shield_destruct.die()
         self.deus_ex.die()
-
+        self.level_handle.die()
         self.empowerment_timer.stop()
 
     @pyqtSlot(int, int)
@@ -362,16 +483,16 @@ class StartGameSingleplayer(QMainWindow):
 
         self.player.lives -= 1
 
-        if counter == 1:
+        if self.player.lives == 2:
             self.lives.remove(self.lives[len(self.lives)-1])
             self.lives3_label.hide()
-        elif counter == 2:
+        elif self.player.lives == 1:
             self.lives.remove(self.lives[len(self.lives)-1])
             self.lives2_label.hide()
-        elif counter == 3:
-            self.lives.remove(self.lives[len(self.lives)-1])
-            self.lives1_label.hide()
-            self.write_in_base()
+        #elif counter == 3:
+        #    self.lives.remove(self.lives[len(self.lives)-1])
+        #    self.lives1_label.hide()
+        #    self.write_in_base()
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
@@ -423,6 +544,7 @@ class StartGameSingleplayer(QMainWindow):
                 self.aliens.remove(a)
                 self.alien_movement_thread.remove_alien(alien)
                 self.alien_attack_thread.remove_alien(alien)
+                self.level_handle.alien_number -= 1
 
     @pyqtSlot(QLabel, QLabel, int)
     def update_shield(self, shield: QLabel, bullet: QLabel, counter: int):
@@ -513,7 +635,7 @@ class StartGameSingleplayer(QMainWindow):
                                          "font: 75 15pt \"Fixedsys\";")
 
         self.current_score = QLabel(self)
-        self.current_score.setText("0")
+        self.current_score.setText("1")
         self.current_score.setGeometry(QRect(540, 10, 111, 20))
         self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
@@ -558,6 +680,8 @@ class StartGameSingleplayer(QMainWindow):
         self.end_score.setGeometry(0, 340, 950, 30)
         self.end_score.setAlignment(Qt.AlignCenter)
         self.end_score.show()
+
+        self.write_in_base()
 
     def write_in_base(self):
         self.file = open("players.txt", "a")
