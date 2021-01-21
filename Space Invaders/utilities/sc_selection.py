@@ -30,13 +30,13 @@ class SpaceshipSelection(QObject):
         img_src = ""
         while self.is_not_done:
             if self.spacecrafts.currentText() == "SILVER_X 177p":
-                img_src = "images/sc11.png"
+                img_src = "images/silver.png"
             elif self.spacecrafts.currentText() == "purpleZ AAx9":
-                img_src = "images/in_game_spaceship.png"
+                img_src = "images/purple.png"
             elif self.spacecrafts.currentText() == "military-aircraft-POWER":
-                img_src = "images/sc3.png"
+                img_src = "images/military.png"
             elif self.spacecrafts.currentText() == "SpaceX-air4p66":
-                img_src = "images/sc41.png"
+                img_src = "images/spacex.png"
 
             self.selection_changed.emit(img_src)
             time.sleep(0.05)

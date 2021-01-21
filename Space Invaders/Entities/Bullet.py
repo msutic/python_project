@@ -4,7 +4,7 @@ from Entities.MovableObject import MovableObject
 
 class Bullet(MovableObject):
 
-    def __init__(self, screen: QWidget, img, x, y, h, w):
+    def __init__(self, screen: QWidget, img, x, y, w, h):
         super().__init__(screen=screen, img=img, x=x, y=y, w=w, h=h)
 
     def move_up(self):

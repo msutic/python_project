@@ -3,7 +3,7 @@ from random import randint
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QShortcut, QMessageBox
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication
 
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
 
@@ -99,7 +99,7 @@ class StartGameSingleplayer(QMainWindow):
         if self.player_spacecraft == "SILVER_X 177p":
             self.player = Player(
                 self,
-                'images/sc11.png',
+                'images/silver.png',
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
@@ -109,7 +109,7 @@ class StartGameSingleplayer(QMainWindow):
         elif self.player_spacecraft == "purpleZ AAx9":
             self.player = Player(
                 self,
-                'images/in_game_spaceship.png',
+                'images/purple.png',
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
@@ -119,7 +119,7 @@ class StartGameSingleplayer(QMainWindow):
         elif self.player_spacecraft == "military-aircraft-POWER":
             self.player = Player(
                 self,
-                'images/sc3.png',
+                'images/military.png',
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
@@ -129,7 +129,7 @@ class StartGameSingleplayer(QMainWindow):
         elif self.player_spacecraft == "SpaceX-air4p66":
             self.player = Player(
                 self,
-                'images/sc41.png',
+                'images/spacex.png',
                 cfg.PLAYER_START_X,
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
@@ -297,7 +297,7 @@ class StartGameSingleplayer(QMainWindow):
         self.deus_ex.start()
 
         self.level_handle = NextLevel()
-        self.level_handle.current_level = int(self.current_score.text())
+        self.level_handle.current_level = int(self.current_level_value.text())
         self.level_handle.next_level.connect(self.update_level)
         self.level_handle.start()
 
@@ -319,10 +319,10 @@ class StartGameSingleplayer(QMainWindow):
         self.empowerment_timer.start(10000)
 
     def update_level(self, level: int):
-        self.current_score.setText(str(level))
+        self.current_level_value.setText(str(level))
 
-        if cfg.MOVEMENT_SLEEP - 0.04 > 0.0001:
-            cfg.MOVEMENT_SLEEP -= 0.04
+        if cfg.MOVEMENT_SLEEP - 0.01 >= 0.01:
+            cfg.MOVEMENT_SLEEP -= 0.01
 
         self.kill_threads()
         self.free_resources()
@@ -389,11 +389,11 @@ class StartGameSingleplayer(QMainWindow):
     def alien_attack(self, bullet_x, bullet_y):
         bullet = Bullet(
             self,
-            'images/bullett.png',
+            'images/final_bullet.png',
             bullet_x,
             bullet_y,
-            cfg.ALIEN_BULLET_WIDTH,
-            cfg.ALIEN_BULLET_HEIGHT
+            12,
+            50
         ).avatar
 
         self.alien_attack_thread.add_bullet(bullet)
@@ -525,11 +525,11 @@ class StartGameSingleplayer(QMainWindow):
         if key == Qt.Key_Space:
                 bullet = Bullet(
                     self,
-                    'images/bullett.png',
-                    player_position.x() + player_position.width() / 4,
-                    player_position.y() - 20,
-                    30,
-                    38).avatar
+                    'images/blue-fire.png',
+                    player_position.x() + player_position.width() / 2 - 5,
+                    player_position.y() - 22,
+                    12,
+                    55).avatar
 
                 self.shootingThread.add_bullet(bullet)
                 self.collision_bullet_alien.add_bullet(bullet)
@@ -634,10 +634,10 @@ class StartGameSingleplayer(QMainWindow):
         self.current_level.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
-        self.current_score = QLabel(self)
-        self.current_score.setText("1")
-        self.current_score.setGeometry(QRect(540, 10, 111, 20))
-        self.current_score.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.current_level_value = QLabel(self)
+        self.current_level_value.setText("1")
+        self.current_level_value.setGeometry(QRect(540, 10, 111, 20))
+        self.current_level_value.setStyleSheet("color: rgb(255, 255, 255);\n"
                                          "font: 75 15pt \"Fixedsys\";")
 
     def game_over(self):

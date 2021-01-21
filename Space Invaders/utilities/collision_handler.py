@@ -131,7 +131,7 @@ class CollisionAlienBullet(QObject):
 
                 for bullet in self.alien_bullets:
                     bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                    bullet_xy_end = [bullet.geometry().x() + 45, bullet.geometry().y() + 45]
+                    bullet_xy_end = [bullet.geometry().x() + 8, bullet.geometry().y() + 45]
 
                     bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
                     bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
@@ -159,7 +159,7 @@ class CollisionAlienBullet(QObject):
 
             for bullet in self.alien_bullets:
                 bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                bullet_xy_end = [bullet.geometry().x() + 45, bullet.geometry().y() + 45]
+                bullet_xy_end = [bullet.geometry().x() + 8, bullet.geometry().y() + 45]
 
                 bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
                 bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
