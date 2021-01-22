@@ -25,10 +25,18 @@ from config import cfg
 class StartGameSingleplayer(QMainWindow):
     counter = 0
 
-    def __init__(self,player_id,player_spacecraft):
+    def __init__(self,player_id: str, player_spacecraft: str, player2_id :str = "", player2_spacecraft: str = ""):
         super().__init__()
         self.player_id = player_id
         self.player_spacecraft = player_spacecraft
+
+        self.player2_id = player2_id
+        self.player2_spacecraft = player2_spacecraft
+
+        self.multiplayer_mode = False
+
+        if not self.player2_id == "":
+            self.multiplayer_mode = True
 
         self.total_point = 0
         self.current_level = 0
@@ -137,6 +145,49 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.SPACESHIP_HEIGHT,
                 3
             )
+
+        if self.multiplayer_mode:
+            if self.player2_spacecraft == "SILVER_X 177p":
+                self.player2 = Player(
+                    self,
+                    'images/silver.png',
+                    850,
+                    cfg.PLAYER_START_Y,
+                    cfg.SPACESHIP_WIDTH,
+                    cfg.SPACESHIP_HEIGHT,
+                    3
+                )
+            elif self.player2_spacecraft == "purpleZ AAx9":
+                self.player2 = Player(
+                    self,
+                    'images/purple.png',
+                    850,
+                    cfg.PLAYER_START_Y,
+                    cfg.SPACESHIP_WIDTH,
+                    cfg.SPACESHIP_HEIGHT,
+                    3
+                )
+            elif self.player2_spacecraft == "military-aircraft-POWER":
+                self.player2 = Player(
+                    self,
+                    'images/military.png',
+                    850,
+                    cfg.PLAYER_START_Y,
+                    cfg.SPACESHIP_WIDTH,
+                    cfg.SPACESHIP_HEIGHT,
+                    3
+                )
+            elif self.player2_spacecraft == "SpaceX-air4p66":
+                self.player2 = Player(
+                    self,
+                    'images/spacex.png',
+                    850,
+                    cfg.PLAYER_START_Y,
+                    cfg.SPACESHIP_WIDTH,
+                    cfg.SPACESHIP_HEIGHT,
+                    3
+                )
+
         self.deus_ex.player = self.player.avatar
         self.shield_destruct.player = self.player.avatar
         self.shield_destruct.lives = self.player.lives
@@ -518,6 +569,7 @@ class StartGameSingleplayer(QMainWindow):
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
+        player2_position = self.player2.avatar.geometry()
 
         if key == Qt.Key_D:
             if self.player.armour == True:
@@ -550,6 +602,50 @@ class StartGameSingleplayer(QMainWindow):
                     'images/blue-fire.png',
                     player_position.x() + player_position.width() / 2 - 5,
                     player_position.y() - 22,
+                    12,
+                    55).avatar
+
+                self.shootingThread.add_bullet(bullet)
+                self.collision_bullet_alien.add_bullet(bullet)
+
+        if self.multiplayer_mode:
+            if key == Qt.Key_Right:
+                if self.player2.armour == True:
+                    if not player2_position.x() + player2_position.width() + 10 > 950:
+                        self.player2.avatar.setGeometry(
+                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.height()
+                        )
+                        self.armour_player2.setGeometry(self.player2.avatar.geometry().x() - 13,
+                                                       self.player2.avatar.geometry().y() - 10, 100, 100)
+                else:
+                    if not player2_position.x() + player2_position.width() + 10 > 950:
+                        self.player2.avatar.setGeometry(
+                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.height()
+                        )
+            if key == Qt.Key_Left:
+                if self.player2.armour == True:
+                    if not player2_position.x() - 10 < 0:
+                        self.player2.avatar.setGeometry(
+                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.height()
+                        )
+                        self.armour_player2.setGeometry(self.player2.avatar.geometry().x() - 13,
+                                                       self.player2.avatar.geometry().y() - 10, 100, 100)
+
+                else:
+                    if not player2_position.x() - 10 < 0:
+                        self.player2.avatar.setGeometry(
+                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.height()
+                        )
+            if key == Qt.Key_K:
+                bullet = Bullet(
+                    self,
+                    'images/blue-fire.png',
+                    player2_position.x() + player2_position.width() / 2 - 5,
+                    player2_position.y() - 22,
                     12,
                     55).avatar
 

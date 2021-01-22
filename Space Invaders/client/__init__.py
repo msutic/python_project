@@ -15,6 +15,8 @@ class StartWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_ui()
+        self.sp = SelectWindow(1)
+        self.mp = SelectWindow(2)
 
     def init_ui(self):
         self.set_window()
@@ -23,8 +25,10 @@ class StartWindow(QMainWindow):
         self.show()
 
     def on_start_button_clicked(self):
-        self.select = SelectWindow()
-        self.select.show()
+        self.sp.show()
+
+    def run_multiplayer_select_screen(self):
+        self.mp.show()
 
     def buttons(self):
         self.start_game_button = QPushButton(self)
@@ -47,6 +51,7 @@ class StartWindow(QMainWindow):
             "border:2px solid beige; color: beige;font-size: 26px;")
         self.mp_button.setFont(font)
         self.mp_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.mp_button.clicked.connect(self.run_multiplayer_select_screen)
 
         self.htp_button = QPushButton(self)
         self.htp_button.setText("how to play")
@@ -89,7 +94,8 @@ class StartWindow(QMainWindow):
 
     # HEAD
     def closeEvent(self, event):
-        self.select.close()
+        self.sp.close()
+        self.mp.close()
 
 
 '''
