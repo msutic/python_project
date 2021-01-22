@@ -39,6 +39,7 @@ class StartGameSingleplayer(QMainWindow):
         self.broj = 0
 
         self.powers = []
+        self.power_shown = False
         self.lives = []
 
         # arch
@@ -334,27 +335,36 @@ class StartGameSingleplayer(QMainWindow):
     def free_resources(self):
         self.aliens = []
 
+        if self.power_shown:
+            self.power_shown = False
+
+
         for life in self.lives:
             life.hide()
         self.lives.remove(life)
 
-        print("shields in main len: ", len(self.shields))
+        for bullet in self.bullets:
+            bullet.hide()
+
+        self.bullets.clear()
+
         for shield in self.shields:
             shield.avatar.hide()
 
         self.shields.clear()
 
-        print("shields in main len AFTER DELETE: ", len(self.shields))
-
-        print("shields in destruct len: ", len(self.shield_destruct.shields))
         for shield in self.shield_destruct.shields:
             shield.hide()
 
         self.shield_destruct.shields.clear()
-        print("shields in destruct len AFTER DELETE: ", len(self.shield_destruct.shields))
 
-        self.shootingThread.bullets = []
-        self.collision_bullet_alien.bullets = []
+        for bullet in self.shootingThread.bullets:
+            bullet.hide()
+        self.shootingThread.bullets.clear()
+
+        for bullet in self.collision_bullet_alien.bullets:
+            bullet.hide()
+        self.collision_bullet_alien.bullets.clear()
 
         self.alien_movement_thread.aliens = []
         self.alien_attack_thread.aliens = []
@@ -372,6 +382,16 @@ class StartGameSingleplayer(QMainWindow):
         for bullet in self.shield_destruct.alien_bullets:
             bullet.hide()
         self.shield_destruct.rem_bullet(bullet)
+
+        for power in self.powers:
+            power.hide()
+
+        self.powers.clear()
+
+        for power in self.deus_ex.powers:
+            power.hide()
+
+        self.deus_ex.powers.clear()
 
     def kill_threads(self):
         self.shootingThread.die()
@@ -457,25 +477,25 @@ class StartGameSingleplayer(QMainWindow):
 
     def show_power(self):
         rand_power_index = randint(0, 2)
-        empower = QLabel(self)
+        self.empower = QLabel(self)
         if rand_power_index == 0:
             movie = QMovie("images/skull-resized.gif")
-            empower.setMovie(movie)
+            self.empower.setMovie(movie)
             movie.start()
         elif rand_power_index == 1:
-            empower.setPixmap(QPixmap('images/lives.png'))
+            self.empower.setPixmap(QPixmap('images/lives.png'))
         elif rand_power_index == 2:
             movie = QMovie("images/armor-resized.gif")
-            empower.setMovie(movie)
+            self.empower.setMovie(movie)
             movie.start()
 
         x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
 
-        empower.setGeometry(x_axis, 660, 45, 45)
-        empower.show()
+        self.empower.setGeometry(x_axis, 660, 45, 45)
+        self.empower.show()
 
-        self.powers.append(empower)
-        self.deus_ex.add_power(empower, rand_power_index)
+        self.powers.append(self.empower)
+        self.deus_ex.add_power(self.empower, rand_power_index)
 
     @pyqtSlot(QLabel, int)
     def remove_life(self, bullet: QLabel, counter: int):
@@ -649,11 +669,11 @@ class StartGameSingleplayer(QMainWindow):
         font.setFamily("Rockwell")
         font.setPointSize(60)
 
-        self.game_over = QLabel(self)
+        self.game_over_label = QLabel(self)
         self.bg = QPixmap('images/bg-resized.jpg')
-        self.game_over.setPixmap(self.bg)
-        self.game_over.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
-        self.game_over.show()
+        self.game_over_label.setPixmap(self.bg)
+        self.game_over_label.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
+        self.game_over_label.show()
 
         self.end_label = QLabel(self)
         self.end_label.setText('GAME OVER')

@@ -158,6 +158,8 @@ class CollisionAlienBullet(QObject):
             player_y_coordinates = range(player_xy_begin[1], player_xy_end[1])
 
             for bullet in self.alien_bullets:
+                if self.counter_lives == 3:
+                    break
                 bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
                 bullet_xy_end = [bullet.geometry().x() + 8, bullet.geometry().y() + 45]
 
@@ -167,6 +169,8 @@ class CollisionAlienBullet(QObject):
                 for player_y in player_y_coordinates:
                     if collided1:
                         break
+                    if self.counter_lives == 3:
+                        break
                     if player_y in bullet_y_coords:
                         for player_x in player_x_coordinates:
                             if player_x in bullet_x_coords:
@@ -174,7 +178,7 @@ class CollisionAlienBullet(QObject):
                                 if not self.player_armour:
                                     self.counter_lives += 1
                                     if self.counter_lives == 3:
-                                        self.game_over.emit()
+                                        break
                                     else:
                                         self.collision_with_player.emit(bullet, self.counter_lives)
                                 else:
