@@ -4,7 +4,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLabel, QMessageBox
 
 
-class CollisionPlayerBullet(QObject):
+class CollisionPlayerBullet(QThread):
 
     collision_occured = pyqtSignal(QLabel, QLabel)
 
@@ -15,12 +15,12 @@ class CollisionPlayerBullet(QObject):
         self.bullets = []
         self.aliens = []
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
+        # self.thread = QThread()
+        # self.moveToThread(self.thread)
+        # self.thread.started.connect(self._work_)
 
-    def start(self):
-        self.thread.start()
+    # def start(self):
+    #     self.thread.start()
 
     def add_alien(self, alien:QLabel):
         self.aliens.append(alien)
@@ -34,12 +34,12 @@ class CollisionPlayerBullet(QObject):
     def remove_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
 
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    # def die(self):
+    #     self.is_not_done = False
+    #     self.thread.quit()
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         while self.is_not_done:
             collided = False
 
@@ -72,7 +72,7 @@ class CollisionPlayerBullet(QObject):
             sleep(0.05)
 
 
-class CollisionAlienBullet(QObject):
+class CollisionAlienBullet(QThread):
 
     collision_with_shield_occured = pyqtSignal(QLabel, QLabel, int)
     collision_with_player = pyqtSignal(QLabel, int)
@@ -91,12 +91,12 @@ class CollisionAlienBullet(QObject):
         self.lives = 0
         self.player_armour = False
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
+    #     self.thread = QThread()
+    #     self.moveToThread(self.thread)
+    #     self.thread.started.connect(self._work_)
+    #
+    # def start(self):
+    #     self.thread.start()
 
     def add_bullet(self, bullet: QLabel):
         self.alien_bullets.append(bullet)
@@ -110,12 +110,12 @@ class CollisionAlienBullet(QObject):
     def rem_shield(self, shield: QLabel):
         self.shields.remove(shield)
 
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    # def die(self):
+    #     self.is_not_done = False
+    #     self.thread.quit()
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
 
         self.counter_lives = 0
         while self.is_not_done:

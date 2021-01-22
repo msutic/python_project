@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel
 from config import cfg
 
 
-class DeusEx(QObject):
+class DeusEx(QThread):
 
     empower = pyqtSignal(QLabel)
     collision_occured = pyqtSignal(QLabel, QLabel, int)
@@ -20,16 +20,16 @@ class DeusEx(QObject):
 
         self.player = QLabel()
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
+        # self.thread = QThread()
+        # self.moveToThread(self.thread)
+        # self.thread.started.connect(self._work_)
 
-    def start(self):
-        self.thread.start()
+    # def start(self):
+    #     self.thread.start()
 
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    # def die(self):
+    #     self.is_not_done = False
+    #     self.thread.quit()
 
     def add_power(self, power: QLabel, index: int):
         self.powers.append(power)
@@ -40,7 +40,7 @@ class DeusEx(QObject):
         self.powers.remove(power)
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         while self.is_not_done:
             collided = False
             time_now = time()

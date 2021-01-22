@@ -338,24 +338,20 @@ class StartGameSingleplayer(QMainWindow):
         if self.power_shown:
             self.power_shown = False
 
-
         for life in self.lives:
             life.hide()
-        self.lives.remove(life)
+        self.lives.clear()
 
         for bullet in self.bullets:
             bullet.hide()
-
         self.bullets.clear()
 
         for shield in self.shields:
             shield.avatar.hide()
-
         self.shields.clear()
 
         for shield in self.shield_destruct.shields:
             shield.hide()
-
         self.shield_destruct.shields.clear()
 
         for bullet in self.shootingThread.bullets:
@@ -373,15 +369,15 @@ class StartGameSingleplayer(QMainWindow):
 
         for bullet in self.alien_attack_thread.bullets:
             bullet.hide()
-        self.alien_attack_thread.rem_bullet(bullet)
+        self.alien_attack_thread.bullets.clear()
 
         for bullet in self.alien_shoot_bullet_thread.bullets:
             bullet.hide()
-        self.alien_shoot_bullet_thread.rem_bullet(bullet)
+        self.alien_shoot_bullet_thread.bullets.clear()
 
         for bullet in self.shield_destruct.alien_bullets:
             bullet.hide()
-        self.shield_destruct.rem_bullet(bullet)
+        self.shield_destruct.alien_bullets.clear()
 
         for power in self.powers:
             power.hide()
@@ -394,15 +390,15 @@ class StartGameSingleplayer(QMainWindow):
         self.deus_ex.powers.clear()
 
     def kill_threads(self):
-        self.shootingThread.die()
-        self.alien_movement_thread.die()
-        self.alien_attack_thread.die()
-        self.alien_shoot_bullet_thread.die()
-        self.collision_bullet_alien.die()
+        self.shootingThread.terminate()
+        self.alien_movement_thread.terminate()
+        self.alien_attack_thread.terminate()
+        self.alien_shoot_bullet_thread.terminate()
+        self.collision_bullet_alien.terminate()
         #self.key_notifier.die()
-        self.shield_destruct.die()
-        self.deus_ex.die()
-        self.level_handle.die()
+        self.shield_destruct.terminate()
+        self.deus_ex.terminate()
+        self.level_handle.terminate()
         self.empowerment_timer.stop()
 
     @pyqtSlot(int, int)

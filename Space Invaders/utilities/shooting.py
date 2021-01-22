@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel
 from config import cfg
 
 
-class ShootBullet(QObject):
+class ShootBullet(QThread):
     updated_position = pyqtSignal(QLabel, int, int)
     collision_detected = pyqtSignal(QLabel, QLabel)
 
@@ -17,12 +17,12 @@ class ShootBullet(QObject):
         self.bullets = []
         self.aliens = []
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self.__work__)
-
-    def start(self):
-        self.thread.start()
+    #     self.thread = QThread()
+    #     self.moveToThread(self.thread)
+    #     self.thread.started.connect(self.__work__)
+    #
+    # def start(self):
+    #     self.thread.start()
 
     def add_bullet(self, bullet: QLabel):
         self.bullets.append(bullet)
@@ -37,12 +37,12 @@ class ShootBullet(QObject):
         if bullet in self.bullets:
             self.bullets.remove(bullet)
 
-    def die(self):
-        self.threadWorking = False
-        self.thread.quit()
+    # def die(self):
+    #     self.threadWorking = False
+    #     self.thread.quit()
 
     @pyqtSlot()
-    def __work__(self):
+    def run(self):
         while self.threadWorking:
 
             for bullet in self.bullets:

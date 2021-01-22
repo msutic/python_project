@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtSlot
 
 
-class SpaceshipSelection(QObject):
+class SpaceshipSelection(QThread):
 
     selection_changed = pyqtSignal(str)
 
@@ -14,19 +14,19 @@ class SpaceshipSelection(QObject):
 
         self.spacecrafts = QtWidgets.QComboBox()
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
-
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    #     self.thread = QThread()
+    #     self.moveToThread(self.thread)
+    #     self.thread.started.connect(self._work_)
+    #
+    # def start(self):
+    #     self.thread.start()
+    #
+    # def die(self):
+    #     self.is_not_done = False
+    #     self.thread.quit()
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         img_src = ""
         while self.is_not_done:
             if self.spacecrafts.currentText() == "SILVER_X 177p":
