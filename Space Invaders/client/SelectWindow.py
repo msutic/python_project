@@ -169,11 +169,12 @@ class SelectWindow(QMainWindow):
                 player_spacecraft = self.selected_spacecraft.currentText()
                 self.hide()
                 __start_game_process__(player_id, player_spacecraft)
+                self.nickname_input.setText('')
         elif self.num_of_players == 2:
             if self.nickname_input.text() == "" or self.nickname_input.text() == " "\
                     or self.nickname_input2.text() == "" or self.nickname_input2.text() == " ":
                 msg = QMessageBox()
-                msg.setText("please enter your nickname...")
+                msg.setText("please enter your nicknames...")
                 msg.setWindowTitle('Error')
                 msg.exec_()
             else:
@@ -183,6 +184,8 @@ class SelectWindow(QMainWindow):
                 player2_spacecraft = self.selected_spacecraft2.currentText()
                 self.hide()
                 __start_mp_game_process__(player1_id, player1_spacecraft, player2_id, player2_spacecraft)
+                self.nickname_input.setText('')
+                self.nickname_input2.setText('')
 
 
 if __name__ == "__main__":

@@ -48,7 +48,8 @@ class StartGameSingleplayer(QMainWindow):
 
         self.powers = []
         self.power_shown = False
-        self.lives = []
+        self.lives_player1 = []
+        self.lives_player2 = []
 
         # arch
         self.mynumbers = []
@@ -361,9 +362,9 @@ class StartGameSingleplayer(QMainWindow):
             self.armour_player.hide()
         self.player.armour = False
 
-        self.lives.append(self.lives1_label)
-        self.lives.append(self.lives2_label)
-        self.lives.append(self.lives3_label)
+        self.lives_player1.append(self.lives1_label)
+        self.lives_player1.append(self.lives2_label)
+        self.lives_player1.append(self.lives3_label)
 
         for life in self.lives:
             life.show()
@@ -397,7 +398,7 @@ class StartGameSingleplayer(QMainWindow):
 
         for life in self.lives:
             life.hide()
-        self.lives.clear()
+        self.lives_player1.clear()
 
         for bullet in self.bullets:
             bullet.hide()
@@ -492,8 +493,8 @@ class StartGameSingleplayer(QMainWindow):
             if not self.player.armour:
                 self.player.lives -= 1
                 self.shield_destruct.counter_lives += 1
-                self.lives[len(self.lives)-1].hide()
-                self.lives.remove(self.lives[len(self.lives) - 1])
+                self.lives_player1[len(self.lives_player1)-1].hide()
+                self.lives_player1.remove(self.lives_player1[len(self.lives_player1) - 1])
             else:
                 self.armour_player.hide()
                 self.player.armour = False
@@ -503,12 +504,12 @@ class StartGameSingleplayer(QMainWindow):
             if self.player.lives == 1:
                 self.player.lives += 1
                 self.shield_destruct.counter_lives -= 1
-                self.lives.append(self.lives2_label)
+                self.lives_player1.append(self.lives2_label)
             elif self.player.lives == 2:
                 self.player.lives += 1
                 self.shield_destruct.counter_lives -= 1
-                self.lives.append(self.lives3_label)
-            self.lives[len(self.lives) - 1].show()
+                self.lives_player1.append(self.lives3_label)
+            self.lives_player1[len(self.lives_player1) - 1].show()
         elif index == 2:
             # ADD SHIELD
             if self.player.armour == False:
@@ -557,10 +558,10 @@ class StartGameSingleplayer(QMainWindow):
         self.player.lives -= 1
 
         if self.player.lives == 2:
-            self.lives.remove(self.lives[len(self.lives)-1])
+            self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
             self.lives3_label.hide()
         elif self.player.lives == 1:
-            self.lives.remove(self.lives[len(self.lives)-1])
+            self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
             self.lives2_label.hide()
         #elif counter == 3:
         #    self.lives.remove(self.lives[len(self.lives)-1])
@@ -569,7 +570,6 @@ class StartGameSingleplayer(QMainWindow):
 
     def __update_position__(self, key):
         player_position = self.player.avatar.geometry()
-        player2_position = self.player2.avatar.geometry()
 
         if key == Qt.Key_D:
             if self.player.armour == True:
@@ -609,6 +609,8 @@ class StartGameSingleplayer(QMainWindow):
                 self.collision_bullet_alien.add_bullet(bullet)
 
         if self.multiplayer_mode:
+            player2_position = self.player2.avatar.geometry()
+
             if key == Qt.Key_Right:
                 if self.player2.armour == True:
                     if not player2_position.x() + player2_position.width() + 10 > 950:
@@ -706,27 +708,58 @@ class StartGameSingleplayer(QMainWindow):
 
         font = QtGui.QFont()
         font.setFamily("Rockwell")
-        font.setPointSize(10)
+        font.setPointSize(15)
 
         self.pause_label.setFont(font)
         self.pause_label.setStyleSheet("color: rgb(255, 255, 255);")
         self.pause_label.setAlignment(Qt.AlignCenter)
 
+        self.player1_name = QLabel(self)
+        self.player1_name.setText(self.player_id)
+        self.player1_name.setGeometry(5, 10, 75, 30)
+        self.player1_name.setStyleSheet("color: blue")
+        self.player1_name.setFont(font)
+
         self.lives1_label = QLabel(self)
-        self.lives1_label.setPixmap(QPixmap('images/lives.png'))
-        self.lives1_label.setGeometry(QRect(10, 10, 31, 31))
+        self.lives1_label.setPixmap(QPixmap('images/lives-blue.png'))
+        self.lives1_label.setGeometry(QRect(80, 10, 31, 31))
 
         self.lives2_label = QLabel(self)
-        self.lives2_label.setPixmap(QPixmap('images/lives.png'))
-        self.lives2_label.setGeometry(QRect(40, 10, 31, 31))
+        self.lives2_label.setPixmap(QPixmap('images/lives-blue.png'))
+        self.lives2_label.setGeometry(QRect(110, 10, 31, 31))
 
         self.lives3_label = QLabel(self)
-        self.lives3_label.setPixmap(QPixmap('images/lives.png'))
-        self.lives3_label.setGeometry(QRect(70, 10, 31, 31))
+        self.lives3_label.setPixmap(QPixmap('images/lives-blue.png'))
+        self.lives3_label.setGeometry(QRect(140, 10, 31, 31))
 
-        self.lives.append(self.lives1_label)
-        self.lives.append(self.lives2_label)
-        self.lives.append(self.lives3_label)
+        self.lives_player1.append(self.lives1_label)
+        self.lives_player1.append(self.lives2_label)
+        self.lives_player1.append(self.lives3_label)
+
+        if self.multiplayer_mode:
+            self.player2_name = QLabel(self)
+            self.player2_name.setText(self.player2_id)
+            self.player2_name.setGeometry(5, 40, 75, 30)
+            self.player2_name.setStyleSheet("color: red")
+            self.player2_name.setFont(font)
+
+            self.lives1_label_p2 = QLabel(self)
+            self.lives1_label_p2.setPixmap(QPixmap('images/lives.png'))
+            self.lives1_label_p2.setGeometry(QRect(80, 40, 31, 31))
+
+            self.lives2_label_p2 = QLabel(self)
+            self.lives2_label_p2.setPixmap(QPixmap('images/lives.png'))
+            self.lives2_label_p2.setGeometry(QRect(110, 40, 31, 31))
+
+            self.lives3_label_p2 = QLabel(self)
+            self.lives3_label_p2.setPixmap(QPixmap('images/lives.png'))
+            self.lives3_label_p2.setGeometry(QRect(140, 40, 31, 31))
+
+            self.lives_player2.append(self.lives1_label_p2)
+            self.lives_player2.append(self.lives2_label_p2)
+            self.lives_player2.append(self.lives3_label_p2)
+
+        font.setPointSize(10)
 
         self.score_label = QLabel(self)
         self.score_label.setText("score: ")
