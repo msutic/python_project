@@ -1,6 +1,6 @@
 from time import sleep
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 
 
 class NextLevel(QThread):
@@ -14,17 +14,6 @@ class NextLevel(QThread):
 
         self.current_level = 1
         self.alien_number = 55
-
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self._work_)
-
-    # def start(self):
-    #     self.thread.start()
-    #
-    # def die(self):
-    #     self.is_not_done = False
-    #     self.thread.quit()
 
     @pyqtSlot()
     def run(self):

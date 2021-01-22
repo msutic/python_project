@@ -1,7 +1,7 @@
 import time
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 
 
 class SpaceshipSelection(QThread):
@@ -13,17 +13,6 @@ class SpaceshipSelection(QThread):
         self.is_not_done = True
 
         self.spacecrafts = QtWidgets.QComboBox()
-
-    #     self.thread = QThread()
-    #     self.moveToThread(self.thread)
-    #     self.thread.started.connect(self._work_)
-    #
-    # def start(self):
-    #     self.thread.start()
-    #
-    # def die(self):
-    #     self.is_not_done = False
-    #     self.thread.quit()
 
     @pyqtSlot()
     def run(self):

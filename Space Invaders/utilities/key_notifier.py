@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer, Qt
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QTimer, Qt
 
 import time
 
@@ -19,22 +19,11 @@ class KeyNotifier(QThread):
         self.shoot_cooldown.timeout.connect(self.reset_cooldown)
         self.shoot_cooldown.start()
 
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self.__work__)
-
-    # def start(self):
-    #     self.thread.start()
-
     def add_key(self, key):
         self.keys.append(key)
 
     def rem_key(self, key):
         self.keys.remove(key)
-
-    # def die(self):
-    #     self.is_done = True
-    #     self.thread.quit()
 
     def reset_cooldown(self):
         if not self.able_to_shoot:

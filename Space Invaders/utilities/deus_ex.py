@@ -1,6 +1,6 @@
 from time import time, sleep
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtSlot, QTimer
+from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt5.QtWidgets import QLabel
 
 from config import cfg
@@ -19,17 +19,6 @@ class DeusEx(QThread):
         self.index = 0
 
         self.player = QLabel()
-
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self._work_)
-
-    # def start(self):
-    #     self.thread.start()
-
-    # def die(self):
-    #     self.is_not_done = False
-    #     self.thread.quit()
 
     def add_power(self, power: QLabel, index: int):
         self.powers.append(power)

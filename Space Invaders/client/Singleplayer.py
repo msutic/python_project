@@ -322,8 +322,14 @@ class StartGameSingleplayer(QMainWindow):
     def update_level(self, level: int):
         self.current_level_value.setText(str(level))
 
-        if cfg.MOVEMENT_SLEEP - 0.01 >= 0.01:
-            cfg.MOVEMENT_SLEEP -= 0.01
+        if cfg.ALIEN_X_VELOCITY + 1 < 15:
+            cfg.ALIEN_X_VELOCITY += 1
+
+        if cfg.ALIEN_SHOOT_INTERVAL - 0.3 > 0:
+            cfg.ALIEN_SHOOT_INTERVAL -= 0.3
+
+        if cfg.ALIEN_BULLET_VELOCITY + 1 < 15:
+            cfg.ALIEN_BULLET_VELOCITY += 1
 
         self.kill_threads()
         self.free_resources()
@@ -696,6 +702,8 @@ class StartGameSingleplayer(QMainWindow):
         self.end_score.setGeometry(0, 340, 950, 30)
         self.end_score.setAlignment(Qt.AlignCenter)
         self.end_score.show()
+
+        self.free_resources()
 
         self.write_in_base()
 

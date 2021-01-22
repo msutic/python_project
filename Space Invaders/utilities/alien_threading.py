@@ -1,11 +1,9 @@
 import random
 
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLabel
 
 import time
-
-from Entities import Alien
 
 from config import cfg
 
@@ -21,31 +19,12 @@ class AlienMovement(QThread):
         self.aliens = []
         self.direction_left = True
         self.direction_right = False
-        self.direction_down = False
-
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.enable_downward)
-        self.timer.start(500)
-
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self._work_)
-
-    # def start(self):
-    #     self.thread.start()
 
     def add_alien(self, alien: QLabel):
         self.aliens.append(alien)
 
     def remove_alien(self, alien:QLabel):
         self.aliens.remove(alien)
-
-    def enable_downward(self):
-        self.direction_down = True
-
-    # def die(self):
-    #     self.threadWorking = False
-    #     self.thread.quit()
 
     @pyqtSlot()
     def run(self):
@@ -64,6 +43,7 @@ class AlienMovement(QThread):
                 self.direction_right = True
 
             if self.direction_left:
+                print('LEFT X VELOCITY: ', cfg.ALIEN_X_VELOCITY)
                 for alien in self.aliens:
                     alien_pos = alien.geometry()
                     alien_x = alien_pos.x()
@@ -79,6 +59,7 @@ class AlienMovement(QThread):
                         break
 
             elif self.direction_right:
+                print('RIGHT X VELOCITY: ', cfg.ALIEN_X_VELOCITY)
                 for alien in reversed(self.aliens):
                     alien_pos = alien.geometry()
                     alien_x = alien_pos.x()
@@ -104,22 +85,11 @@ class BulletMove(QThread):
 
         self.bullets = []
 
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self._work_)
-
-    # def start(self):
-    #     self.thread.start()
-
     def add_bullet(self, bullet: QLabel):
         self.bullets.append(bullet)
 
     def rem_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
-
-    # def die(self):
-    #     self.thread_working = False
-    #     self.thread.quit()
 
     @pyqtSlot()
     def run(self):
@@ -131,7 +101,7 @@ class BulletMove(QThread):
                     bullet_y = bullet_position.y() + cfg.ALIEN_BULLET_VELOCITY
                     self.update_position.emit(bullet, bullet_x, bullet_y)
 
-            time.sleep(0.05)
+            time.sleep(0.01)
 
 
 class AlienAttack(QThread):
@@ -140,17 +110,8 @@ class AlienAttack(QThread):
 
     def __init__(self):
         super().__init__()
-        # self.thread_working = True
         self.aliens = []
         self.bullets = []
-
-
-        # self.thread = QThread()
-        # self.moveToThread(self.thread)
-        # self.thread.started.connect(self._work_)
-
-    # def start(self):
-    #     self.thread.start()
 
     def add_alien(self, alien:QLabel):
         self.aliens.append(alien)
@@ -164,14 +125,6 @@ class AlienAttack(QThread):
     def rem_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
 
-    def _enable_shoot_(self):
-        if not self.can_shoot:
-            self.can_shoot = True
-
-    # def die(self):
-    #     self.thread_working = False
-    #     self.thread.quit()
-
     @pyqtSlot()
     def run(self):
         while 1:
@@ -183,4 +136,4 @@ class AlienAttack(QThread):
                 bullet_y = alien_pos.y() + 45
                 self.init_bullet.emit(bullet_x, bullet_y)
 
-            time.sleep(0.8)
+            time.sleep(cfg.ALIEN_SHOOT_INTERVAL)
