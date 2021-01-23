@@ -157,8 +157,8 @@ class CollisionAlienBullet(QThread):
                     for player_y in player_y_coordinates:
                         if collided1:
                             break
-                        if self.counter_lives[index] == 3:
-                            break
+                        # if self.counter_lives[index] == 3:
+                        #     break
                         if player_y in bullet_y_coords:
                             for player_x in player_x_coordinates:
                                 if player_x in bullet_x_coords:
@@ -166,8 +166,13 @@ class CollisionAlienBullet(QThread):
                                     if not self.player_armour[index]:
                                         self.counter_lives[index] += 1
                                         if self.counter_lives[index] == 3:
-                                            self.players.remove(player)
-                                            self.player_dead.emit(player)
+                                            self.rem_player(player)
+                                            self.counter_lives.remove(self.counter_lives[index])
+                                            if len(self.players) > 0:
+                                                self.player_dead.emit(player)
+                                            else:
+                                                self.game_over.emit()
+                                            collided1 = True
                                             break
                                         else:
                                             self.collision_with_player.emit(player, bullet, self.counter_lives[index])
@@ -175,8 +180,13 @@ class CollisionAlienBullet(QThread):
                                         self.armour_broke.emit(player, bullet)
                                     collided1 = True
                                     break
-
-                if self.counter_lives[index] == 3:
-                    self.game_over.emit()
+                if not collided1:
+                    if self.counter_lives[index] == 3:
+                        self.rem_player(player)
+                        self.counter_lives.remove(self.counter_lives[index])
+                        if len(self.players) > 0:
+                            self.player_dead.emit(player)
+                        else:
+                            self.game_over.emit()
 
             sleep(0.05)

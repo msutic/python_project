@@ -11,6 +11,7 @@ class Player(Spaceship):
         self.armour = False
         self.armour_label = 0
         self.lives_labels = []
+        self.is_dead = False
 
     def add_life(self):
         if self.lives < 3:

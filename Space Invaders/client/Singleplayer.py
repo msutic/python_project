@@ -361,37 +361,63 @@ class StartGameSingleplayer(QMainWindow):
         self.level_handle.next_level.connect(self.update_level)
         self.level_handle.start()
 
-        self.deus_ex.add_player(self.player1.avatar)
-
-        self.shield_destruct.add_player(self.player1.avatar)
-
-        self.player1.lives = 3
-
-        if self.player1.armour:
-            self.player1.armour_label.hide()
-            self.player1.armour = False
-
-        self.player1.add_life_label(self.lives1_label)
-        self.player1.add_life_label(self.lives2_label)
-        self.player1.add_life_label(self.lives3_label)
-
-        for life in self.player1.lives_labels:
-            life.show()
-
         if self.multiplayer_mode:
-            self.deus_ex.add_player(self.player2.avatar)
-            self.shield_destruct.add_player(self.player2.avatar)
-            self.player2.lives = 3
+            for player in self.players:
+                self.deus_ex.add_player(player.avatar)
+                self.shield_destruct.add_player(player.avatar)
+                player.lives = 3
 
-            if self.player2.armour:
-                self.player2.armour_label.hide()
-                self.player2.armour = False
+                if player.armour:
+                    player.armour_label.hide()
+                    player.armour = False
+
+            self.player1.add_life_label(self.lives1_label)
+            self.player1.add_life_label(self.lives2_label)
+            self.player1.add_life_label(self.lives3_label)
+
+            for life in self.player1.lives_labels:
+                life.show()
 
             self.player2.add_life_label(self.lives1_label_p2)
             self.player2.add_life_label(self.lives2_label_p2)
             self.player2.add_life_label(self.lives3_label_p2)
 
             for life in self.player2.lives_labels:
+                life.show()
+            # if len(self.players) == 1:
+            #     # ADD ONLY 1 PLAYER
+            #
+            # else:
+                # ADD BOTH PLAYERS
+            # self.deus_ex.add_player(self.player2.avatar)
+            # self.shield_destruct.add_player(self.player2.avatar)
+            # self.player2.lives = 3
+            #
+            # if self.player2.armour:
+            #     self.player2.armour_label.hide()
+            #     self.player2.armour = False
+            #
+            # self.player2.add_life_label(self.lives1_label_p2)
+            # self.player2.add_life_label(self.lives2_label_p2)
+            # self.player2.add_life_label(self.lives3_label_p2)
+            #
+            # for life in self.player2.lives_labels:
+            #     life.show()
+        else:
+            # ADD PLAYER
+            self.deus_ex.add_player(self.player1.avatar)
+            self.shield_destruct.add_player(self.player1.avatar)
+            self.player1.lives = 3
+
+            if self.player1.armour:
+                self.player1.armour_label.hide()
+                self.player1.armour = False
+
+            self.player1.add_life_label(self.lives1_label)
+            self.player1.add_life_label(self.lives2_label)
+            self.player1.add_life_label(self.lives3_label)
+
+            for life in self.player1.lives_labels:
                 life.show()
 
         self.empowerment_timer.start(10000)
@@ -493,7 +519,10 @@ class StartGameSingleplayer(QMainWindow):
 
         for p in self.players:
             if p.avatar == player:
+                p.is_dead = True
+
                 self.players.remove(p)
+                self.deus_ex.rem_player(player)
 
     @pyqtSlot(int, int)
     def alien_attack(self, bullet_x, bullet_y):
@@ -614,88 +643,90 @@ class StartGameSingleplayer(QMainWindow):
     def __update_position__(self, key):
         player_position = self.player1.avatar.geometry()
 
-        if key == Qt.Key_D:
-            if self.player1.armour == True:
-                if not player_position.x() + player_position.width() + 10 > 950:
-                    self.player1.avatar.setGeometry(
-                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
-                    )
-                    self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
-            else:
-                if not player_position.x() + player_position.width() + 10 > 950:
-                    self.player1.avatar.setGeometry(
-                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
-                    )
-        if key == Qt.Key_A:
-            if self.player1.armour == True:
-                if not player_position.x() - 10 < 0:
-                    self.player1.avatar.setGeometry(
-                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
-                    )
-                    self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
+        if not self.player1.is_dead:
+            if key == Qt.Key_D:
+                if self.player1.armour == True:
+                    if not player_position.x() + player_position.width() + 10 > 950:
+                        self.player1.avatar.setGeometry(
+                            player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
+                        )
+                        self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
+                else:
+                    if not player_position.x() + player_position.width() + 10 > 950:
+                        self.player1.avatar.setGeometry(
+                            player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
+                        )
+            if key == Qt.Key_A:
+                if self.player1.armour == True:
+                    if not player_position.x() - 10 < 0:
+                        self.player1.avatar.setGeometry(
+                            player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
+                        )
+                        self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
 
-            else:
-                if not player_position.x() - 10 < 0:
-                    self.player1.avatar.setGeometry(
-                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
-                    )
-        if key == Qt.Key_Space:
-                bullet = Bullet(
-                    self,
-                    'images/blue-fire.png',
-                    player_position.x() + player_position.width() / 2 - 5,
-                    player_position.y() - 22,
-                    12,
-                    55).avatar
+                else:
+                    if not player_position.x() - 10 < 0:
+                        self.player1.avatar.setGeometry(
+                            player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
+                        )
+            if key == Qt.Key_Space:
+                    bullet = Bullet(
+                        self,
+                        'images/blue-fire.png',
+                        player_position.x() + player_position.width() / 2 - 5,
+                        player_position.y() - 22,
+                        12,
+                        55).avatar
 
-                self.shootingThread.add_bullet(bullet)
-                self.collision_bullet_alien.add_bullet(bullet)
+                    self.shootingThread.add_bullet(bullet)
+                    self.collision_bullet_alien.add_bullet(bullet)
 
         if self.multiplayer_mode:
             player2_position = self.player2.avatar.geometry()
 
-            if key == Qt.Key_Right:
-                if self.player2.armour == True:
-                    if not player2_position.x() + player2_position.width() + 10 > 950:
-                        self.player2.avatar.setGeometry(
-                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
-                            player2_position.height()
-                        )
-                        self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
-                                                       self.player2.avatar.geometry().y() - 10, 100, 100)
-                else:
-                    if not player2_position.x() + player2_position.width() + 10 > 950:
-                        self.player2.avatar.setGeometry(
-                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
-                            player2_position.height()
-                        )
-            if key == Qt.Key_Left:
-                if self.player2.armour == True:
-                    if not player2_position.x() - 10 < 0:
-                        self.player2.avatar.setGeometry(
-                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
-                            player2_position.height()
-                        )
-                        self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
-                                                       self.player2.avatar.geometry().y() - 10, 100, 100)
+            if not self.player2.is_dead:
+                if key == Qt.Key_Right:
+                    if self.player2.armour == True:
+                        if not player2_position.x() + player2_position.width() + 10 > 950:
+                            self.player2.avatar.setGeometry(
+                                player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
+                                player2_position.height()
+                            )
+                            self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
+                                                           self.player2.avatar.geometry().y() - 10, 100, 100)
+                    else:
+                        if not player2_position.x() + player2_position.width() + 10 > 950:
+                            self.player2.avatar.setGeometry(
+                                player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
+                                player2_position.height()
+                            )
+                if key == Qt.Key_Left:
+                    if self.player2.armour == True:
+                        if not player2_position.x() - 10 < 0:
+                            self.player2.avatar.setGeometry(
+                                player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
+                                player2_position.height()
+                            )
+                            self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
+                                                           self.player2.avatar.geometry().y() - 10, 100, 100)
 
-                else:
-                    if not player2_position.x() - 10 < 0:
-                        self.player2.avatar.setGeometry(
-                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
-                            player2_position.height()
-                        )
-            if key == Qt.Key_K:
-                bullet = Bullet(
-                    self,
-                    'images/blue-fire.png',
-                    player2_position.x() + player2_position.width() / 2 - 5,
-                    player2_position.y() - 22,
-                    12,
-                    55).avatar
+                    else:
+                        if not player2_position.x() - 10 < 0:
+                            self.player2.avatar.setGeometry(
+                                player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
+                                player2_position.height()
+                            )
+                if key == Qt.Key_K:
+                    bullet = Bullet(
+                        self,
+                        'images/blue-fire.png',
+                        player2_position.x() + player2_position.width() / 2 - 5,
+                        player2_position.y() - 22,
+                        12,
+                        55).avatar
 
-                self.shootingThread.add_bullet(bullet)
-                self.collision_bullet_alien.add_bullet(bullet)
+                    self.shootingThread.add_bullet(bullet)
+                    self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel):
         bullet.hide()
