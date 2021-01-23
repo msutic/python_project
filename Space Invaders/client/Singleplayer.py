@@ -408,6 +408,9 @@ class StartGameSingleplayer(QMainWindow):
         if cfg.ALIEN_BULLET_VELOCITY + 1 < 15:
             cfg.ALIEN_BULLET_VELOCITY += 1
 
+        if cfg.SPACESHIP_VELOCITY + 1 < 30:
+            cfg.SPACESHIP_VELOCITY += 5
+
         self.kill_threads()
         self.free_resources()
         self.start_new_threads()
@@ -615,26 +618,26 @@ class StartGameSingleplayer(QMainWindow):
             if self.player1.armour == True:
                 if not player_position.x() + player_position.width() + 10 > 950:
                     self.player1.avatar.setGeometry(
-                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
                     self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
             else:
                 if not player_position.x() + player_position.width() + 10 > 950:
                     self.player1.avatar.setGeometry(
-                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
         if key == Qt.Key_A:
             if self.player1.armour == True:
                 if not player_position.x() - 10 < 0:
                     self.player1.avatar.setGeometry(
-                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
                     self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
 
             else:
                 if not player_position.x() - 10 < 0:
                     self.player1.avatar.setGeometry(
-                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
         if key == Qt.Key_Space:
                 bullet = Bullet(
