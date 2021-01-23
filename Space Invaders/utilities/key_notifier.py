@@ -55,4 +55,4 @@ class KeyNotifier(QThread):
                 else:
                     self.key_signal.emit(k)
 
-            time.sleep(0.009)
+            time.sleep(0.002)

@@ -33,7 +33,7 @@ class StartGameSingleplayer(QMainWindow):
         self.player2_id = player2_id
         self.player2_spacecraft = player2_spacecraft
 
-
+        self.players = []
 
         self.multiplayer_mode = False
 
@@ -104,7 +104,6 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_ui(self):
         self.init_window()
-
         self.init_aliens()
         self.init_shield()
 
@@ -191,12 +190,11 @@ class StartGameSingleplayer(QMainWindow):
                     3
                 )
 
-        self.players = []
         self.players.append(self.player1)
 
         self.deus_ex.add_player(self.player1.avatar)
         self.shield_destruct.add_player(self.player1.avatar)
-        self.shield_destruct.lives = self.player1.lives
+        # self.shield_destruct.lives = self.player1.lives
 
         if self.multiplayer_mode:
             self.players.append(self.player2)
@@ -323,6 +321,7 @@ class StartGameSingleplayer(QMainWindow):
         self.shield_destruct.collision_with_player.connect(self.remove_life)
         self.shield_destruct.game_over.connect(self.game_over)
         self.shield_destruct.armour_broke.connect(self.remove_armour)
+        self.shield_destruct.player_dead.connect(self.kill_player)
         self.deus_ex.empower.connect(self.remove_power_object)
         self.deus_ex.collision_occured.connect(self.apply_power)
         self.level_handle.next_level.connect(self.update_level)
@@ -370,20 +369,42 @@ class StartGameSingleplayer(QMainWindow):
         self.level_handle.next_level.connect(self.update_level)
         self.level_handle.start()
 
-        self.deus_ex.player = self.player.avatar
-        self.shield_destruct.player = self.player.avatar
-        self.shield_destruct.lives = 3
-        self.player.lives = 3
-        if self.player.armour:
-            self.armour_player.hide()
-        self.player.armour = False
+        self.deus_ex.add_player(self.player1.avatar)
 
-        self.lives_player1.append(self.lives1_label)
-        self.lives_player1.append(self.lives2_label)
-        self.lives_player1.append(self.lives3_label)
+        self.shield_destruct.add_player(self.player1.avatar)
 
-        for life in self.lives_player1:
+        # self.shield_destruct.lives = 3
+        self.player1.lives = 3
+
+        if self.player1.armour:
+            self.player1.armour_label.hide()
+            self.player1.armour = False
+
+        self.player1.add_life_label(self.lives1_label)
+        self.player1.add_life_label(self.lives2_label)
+        self.player1.add_life_label(self.lives3_label)
+        # self.lives_player1.append(self.lives1_label)
+        # self.lives_player1.append(self.lives2_label)
+        # self.lives_player1.append(self.lives3_label)
+
+        for life in self.player1.lives_labels:
             life.show()
+
+        if self.multiplayer_mode:
+            self.deus_ex.add_player(self.player2.avatar)
+            self.shield_destruct.add_player(self.player2.avatar)
+            self.player2.lives = 3
+
+            if self.player2.armour:
+                self.player2.armour_label.hide()
+                self.player2.armour = False
+
+            self.player2.add_life_label(self.lives1_label_p2)
+            self.player2.add_life_label(self.lives2_label_p2)
+            self.player2.add_life_label(self.lives3_label_p2)
+
+            for life in self.player2.lives_labels:
+                life.show()
 
         self.empowerment_timer.start(10000)
 
@@ -474,6 +495,14 @@ class StartGameSingleplayer(QMainWindow):
         self.deus_ex.terminate()
         self.level_handle.terminate()
         self.empowerment_timer.stop()
+
+    @pyqtSlot(QLabel)
+    def kill_player(self, player: QLabel):
+        player.hide()
+
+        for p in self.players:
+            if p.avatar == player:
+                self.players.remove(p)
 
     @pyqtSlot(int, int)
     def alien_attack(self, bullet_x, bullet_y):

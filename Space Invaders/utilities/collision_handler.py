@@ -67,6 +67,7 @@ class CollisionAlienBullet(QThread):
     collision_with_player = pyqtSignal(QLabel, QLabel, int)
     game_over = pyqtSignal()
     armour_broke = pyqtSignal(QLabel, QLabel)
+    player_dead = pyqtSignal(QLabel)
 
     def __init__(self):
         super().__init__()
@@ -101,8 +102,6 @@ class CollisionAlienBullet(QThread):
 
     @pyqtSlot()
     def run(self):
-
-        #self.counter_lives = 0
 
         self.counter_lives = [0, 0]
         while self.is_not_done:
@@ -167,6 +166,8 @@ class CollisionAlienBullet(QThread):
                                     if not self.player_armour[index]:
                                         self.counter_lives[index] += 1
                                         if self.counter_lives[index] == 3:
+                                            self.players.remove(player)
+                                            self.player_dead.emit(player)
                                             break
                                         else:
                                             self.collision_with_player.emit(player, bullet, self.counter_lives[index])
