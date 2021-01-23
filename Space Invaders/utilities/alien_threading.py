@@ -43,7 +43,6 @@ class AlienMovement(QThread):
                 self.direction_right = True
 
             if self.direction_left:
-                print('LEFT X VELOCITY: ', cfg.ALIEN_X_VELOCITY)
                 for alien in self.aliens:
                     alien_pos = alien.geometry()
                     alien_x = alien_pos.x()
@@ -59,7 +58,6 @@ class AlienMovement(QThread):
                         break
 
             elif self.direction_right:
-                print('RIGHT X VELOCITY: ', cfg.ALIEN_X_VELOCITY)
                 for alien in reversed(self.aliens):
                     alien_pos = alien.geometry()
                     alien_x = alien_pos.x()

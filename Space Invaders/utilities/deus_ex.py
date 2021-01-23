@@ -18,7 +18,7 @@ class DeusEx(QThread):
         self.powers = []
         self.index = 0
 
-        self.player = QLabel()
+        self.players = []
 
     def add_power(self, power: QLabel, index: int):
         self.powers.append(power)
@@ -27,6 +27,12 @@ class DeusEx(QThread):
 
     def rem_power(self, power: QLabel):
         self.powers.remove(power)
+
+    def add_player(self, player: QLabel):
+        self.players.append(player)
+
+    def rem_player(self, player: QLabel):
+        self.players.remove(player)
 
     @pyqtSlot()
     def run(self):
@@ -40,31 +46,32 @@ class DeusEx(QThread):
                         self.powers.remove(power)
                         self.empower.emit(power)
 
-            player_xy_begin = [self.player.geometry().x(), self.player.geometry().y()]
-            player_xy_end = [
-                self.player.geometry().x() + cfg.SPACESHIP_WIDTH,
-                self.player.geometry().y() + cfg.SPACESHIP_HEIGHT
-            ]
+            for player in self.players:
+                player_xy_begin = [player.geometry().x(), player.geometry().y()]
+                player_xy_end = [
+                    player.geometry().x() + cfg.SPACESHIP_WIDTH,
+                    player.geometry().y() + cfg.SPACESHIP_HEIGHT
+                ]
 
-            player_x_coordinates = range(player_xy_begin[0], player_xy_end[0])
-            player_y_coordinates = range(player_xy_begin[1], player_xy_end[1])
+                player_x_coordinates = range(player_xy_begin[0], player_xy_end[0])
+                player_y_coordinates = range(player_xy_begin[1], player_xy_end[1])
 
-            for power in self.powers:
-                power_xy_begin = [power.geometry().x(), power.geometry().y()]
-                power_xy_end = [power.geometry().x() + 30, power.geometry().y() + 30]
+                for power in self.powers:
+                    power_xy_begin = [power.geometry().x(), power.geometry().y()]
+                    power_xy_end = [power.geometry().x() + 30, power.geometry().y() + 30]
 
-                power_x_coords = range(power_xy_begin[0], power_xy_end[0])
-                power_y_coords = range(power_xy_begin[1], power_xy_end[1])
+                    power_x_coords = range(power_xy_begin[0], power_xy_end[0])
+                    power_y_coords = range(power_xy_begin[1], power_xy_end[1])
 
-                for player_y in player_y_coordinates:
-                    if collided:
-                        break
-                    if player_y in power_y_coords:
-                        for player_x in player_x_coordinates:
-                            if player_x in power_x_coords:
-                                self.rem_power(power)
-                                self.collision_occured.emit(self.player, power, self.index)
-                                collided = True
-                                break
+                    for player_y in player_y_coordinates:
+                        if collided:
+                            break
+                        if player_y in power_y_coords:
+                            for player_x in player_x_coordinates:
+                                if player_x in power_x_coords:
+                                    self.rem_power(power)
+                                    self.collision_occured.emit(player, power, self.index)
+                                    collided = True
+                                    break
 
             sleep(0.05)
