@@ -16,12 +16,12 @@ class KeyNotifier(QThread):
         self.able_to_shoot2 = False
 
         self.shoot_cooldown = QTimer()
-        self.shoot_cooldown.setInterval(250)
+        self.shoot_cooldown.setInterval(200)
         self.shoot_cooldown.timeout.connect(self.reset_cooldown)
         self.shoot_cooldown.start()
 
         self.shoot_cooldown2 = QTimer()
-        self.shoot_cooldown2.setInterval(250)
+        self.shoot_cooldown2.setInterval(200)
         self.shoot_cooldown2.timeout.connect(self.reset_cooldown2)
         self.shoot_cooldown2.start()
 
@@ -55,4 +55,4 @@ class KeyNotifier(QThread):
                 else:
                     self.key_signal.emit(k)
 
-            time.sleep(0.009)
+            time.sleep(0.002)

@@ -5,7 +5,7 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication
 
-from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSlot, QObject
 
 from Entities.Alien import Alien
 from Entities.Bullet import Bullet
@@ -25,13 +25,15 @@ from config import cfg
 class StartGameSingleplayer(QMainWindow):
     counter = 0
 
-    def __init__(self,player_id: str, player_spacecraft: str, player2_id :str = "", player2_spacecraft: str = ""):
+    def __init__(self, player_id: str, player_spacecraft: str, player2_id: str = "", player2_spacecraft: str = ""):
         super().__init__()
         self.player_id = player_id
         self.player_spacecraft = player_spacecraft
 
         self.player2_id = player2_id
         self.player2_spacecraft = player2_spacecraft
+
+        self.players = []
 
         self.multiplayer_mode = False
 
@@ -47,9 +49,6 @@ class StartGameSingleplayer(QMainWindow):
         self.broj = 0
 
         self.powers = []
-        self.power_shown = False
-        self.lives_player1 = []
-        self.lives_player2 = []
 
         # arch
         self.mynumbers = []
@@ -75,7 +74,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.empowerment_timer = QTimer()
         self.empowerment_timer.timeout.connect(self.show_power)
-        self.empowerment_timer.start(10000)
+        self.empowerment_timer.start(5000)
 
         self.init_ui()
 
@@ -92,7 +91,7 @@ class StartGameSingleplayer(QMainWindow):
             if self.broj < self.max_hiscore[i]:
                 self.broj = self.max_hiscore[i]
 
-        print("Najbolji rezultat ima  : " + str(self.broj) )
+        print("Najbolji rezultat ima  : " + str(self.broj))
 
         self.hi_score = QLabel(self)
         self.hi_score.setText(str(self.broj))
@@ -102,12 +101,11 @@ class StartGameSingleplayer(QMainWindow):
 
     def init_ui(self):
         self.init_window()
-        self.labels()
         self.init_aliens()
         self.init_shield()
 
         if self.player_spacecraft == "SILVER_X 177p":
-            self.player = Player(
+            self.player1 = Player(
                 self,
                 'images/silver.png',
                 cfg.PLAYER_START_X,
@@ -117,7 +115,7 @@ class StartGameSingleplayer(QMainWindow):
                 3
             )
         elif self.player_spacecraft == "purpleZ AAx9":
-            self.player = Player(
+            self.player1 = Player(
                 self,
                 'images/purple.png',
                 cfg.PLAYER_START_X,
@@ -127,7 +125,7 @@ class StartGameSingleplayer(QMainWindow):
                 3
             )
         elif self.player_spacecraft == "military-aircraft-POWER":
-            self.player = Player(
+            self.player1 = Player(
                 self,
                 'images/military.png',
                 cfg.PLAYER_START_X,
@@ -136,8 +134,8 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.SPACESHIP_HEIGHT,
                 3
             )
-        elif self.player_spacecraft == "SpaceX-air4p66":
-            self.player = Player(
+        else:
+            self.player1 = Player(
                 self,
                 'images/spacex.png',
                 cfg.PLAYER_START_X,
@@ -189,9 +187,17 @@ class StartGameSingleplayer(QMainWindow):
                     3
                 )
 
-        self.deus_ex.player = self.player.avatar
-        self.shield_destruct.player = self.player.avatar
-        self.shield_destruct.lives = self.player.lives
+        self.players.append(self.player1)
+
+        self.deus_ex.add_player(self.player1.avatar)
+        self.shield_destruct.add_player(self.player1.avatar)
+
+        if self.multiplayer_mode:
+            self.players.append(self.player2)
+            self.deus_ex.add_player(self.player2.avatar)
+            self.shield_destruct.add_player(self.player2.avatar)
+
+        self.labels()
 
     def init_window(self):
         self.setFixedSize(cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
@@ -307,6 +313,7 @@ class StartGameSingleplayer(QMainWindow):
         self.shield_destruct.collision_with_player.connect(self.remove_life)
         self.shield_destruct.game_over.connect(self.game_over)
         self.shield_destruct.armour_broke.connect(self.remove_armour)
+        self.shield_destruct.player_dead.connect(self.kill_player)
         self.deus_ex.empower.connect(self.remove_power_object)
         self.deus_ex.collision_occured.connect(self.apply_power)
         self.level_handle.next_level.connect(self.update_level)
@@ -354,20 +361,38 @@ class StartGameSingleplayer(QMainWindow):
         self.level_handle.next_level.connect(self.update_level)
         self.level_handle.start()
 
-        self.deus_ex.player = self.player.avatar
-        self.shield_destruct.player = self.player.avatar
-        self.shield_destruct.lives = 3
-        self.player.lives = 3
-        if self.player.armour:
-            self.armour_player.hide()
-        self.player.armour = False
+        self.deus_ex.add_player(self.player1.avatar)
 
-        self.lives_player1.append(self.lives1_label)
-        self.lives_player1.append(self.lives2_label)
-        self.lives_player1.append(self.lives3_label)
+        self.shield_destruct.add_player(self.player1.avatar)
 
-        for life in self.lives:
+        self.player1.lives = 3
+
+        if self.player1.armour:
+            self.player1.armour_label.hide()
+            self.player1.armour = False
+
+        self.player1.add_life_label(self.lives1_label)
+        self.player1.add_life_label(self.lives2_label)
+        self.player1.add_life_label(self.lives3_label)
+
+        for life in self.player1.lives_labels:
             life.show()
+
+        if self.multiplayer_mode:
+            self.deus_ex.add_player(self.player2.avatar)
+            self.shield_destruct.add_player(self.player2.avatar)
+            self.player2.lives = 3
+
+            if self.player2.armour:
+                self.player2.armour_label.hide()
+                self.player2.armour = False
+
+            self.player2.add_life_label(self.lives1_label_p2)
+            self.player2.add_life_label(self.lives2_label_p2)
+            self.player2.add_life_label(self.lives3_label_p2)
+
+            for life in self.player2.lives_labels:
+                life.show()
 
         self.empowerment_timer.start(10000)
 
@@ -383,6 +408,9 @@ class StartGameSingleplayer(QMainWindow):
         if cfg.ALIEN_BULLET_VELOCITY + 1 < 15:
             cfg.ALIEN_BULLET_VELOCITY += 1
 
+        if cfg.SPACESHIP_VELOCITY + 1 < 25:
+            cfg.SPACESHIP_VELOCITY += 1
+
         self.kill_threads()
         self.free_resources()
         self.start_new_threads()
@@ -393,12 +421,14 @@ class StartGameSingleplayer(QMainWindow):
     def free_resources(self):
         self.aliens = []
 
-        if self.power_shown:
-            self.power_shown = False
-
-        for life in self.lives:
+        for life in self.player1.lives_labels:
             life.hide()
-        self.lives_player1.clear()
+        self.player1.lives_labels.clear()
+
+        if self.multiplayer_mode:
+            for life in self.player2.lives_labels:
+                life.hide()
+            self.player2.lives_labels.clear()
 
         for bullet in self.bullets:
             bullet.hide()
@@ -439,12 +469,10 @@ class StartGameSingleplayer(QMainWindow):
 
         for power in self.powers:
             power.hide()
-
         self.powers.clear()
 
         for power in self.deus_ex.powers:
             power.hide()
-
         self.deus_ex.powers.clear()
 
     def kill_threads(self):
@@ -458,6 +486,14 @@ class StartGameSingleplayer(QMainWindow):
         self.deus_ex.terminate()
         self.level_handle.terminate()
         self.empowerment_timer.stop()
+
+    @pyqtSlot(QLabel)
+    def kill_player(self, player: QLabel):
+        player.hide()
+
+        for p in self.players:
+            if p.avatar == player:
+                self.players.remove(p)
 
     @pyqtSlot(int, int)
     def alien_attack(self, bullet_x, bullet_y):
@@ -478,49 +514,61 @@ class StartGameSingleplayer(QMainWindow):
     def alien_movement(self, alien: QLabel, new_x, new_y):
         alien.move(new_x, new_y)
 
-    @pyqtSlot(QLabel)
-    def remove_armour(self, bullet: QLabel):
+    @pyqtSlot(QLabel, QLabel)
+    def remove_armour(self, player: QLabel, bullet: QLabel):
         bullet.hide()
-        self.player.armour = False
-        self.shield_destruct.player_armour = False
-        self.armour_player.hide()
+        for p in self.players:
+            if p.avatar == player:
+                player_index = self.players.index(p)
+                p.armour = False
+                self.shield_destruct.player_armour[player_index] = False
+                p.armour_label.hide()
 
     @pyqtSlot(QLabel, QLabel, int)
     def apply_power(self, player: QLabel, power: QLabel, index: int):
         power.hide()
-        if index == 0:
-            # REMOVE 1 LIFE
-            if not self.player.armour:
-                self.player.lives -= 1
-                self.shield_destruct.counter_lives += 1
-                self.lives_player1[len(self.lives_player1)-1].hide()
-                self.lives_player1.remove(self.lives_player1[len(self.lives_player1) - 1])
-            else:
-                self.armour_player.hide()
-                self.player.armour = False
-                self.shield_destruct.player_armour = False
-        elif index == 1:
-            # ADD 1 LIFE
-            if self.player.lives == 1:
-                self.player.lives += 1
-                self.shield_destruct.counter_lives -= 1
-                self.lives_player1.append(self.lives2_label)
-            elif self.player.lives == 2:
-                self.player.lives += 1
-                self.shield_destruct.counter_lives -= 1
-                self.lives_player1.append(self.lives3_label)
-            self.lives_player1[len(self.lives_player1) - 1].show()
-        elif index == 2:
-            # ADD SHIELD
-            if self.player.armour == False:
-                self.player.armour = True
-                self.armour_player = QLabel(self)
-                self.armour_player.setPixmap(QPixmap('images/armour.png'))
-                self.armour_player.setGeometry(self.player.avatar.geometry().x() - 10, self.player.avatar.geometry().y() - 10,
-                                   100, 100)
-                self.armour_player.show()
 
-                self.shield_destruct.player_armour = True
+        for p in self.players:
+            if p.avatar == player:
+                player_index = self.players.index(p)
+                if index == 0:
+                    # REMOVE 1 LIFE
+                    if not p.armour:
+                        self.shield_destruct.counter_lives[player_index] += 1
+                        p.remove_life()
+                        p.rem_life_label()
+                    else:
+                        p.armour_label.hide()
+                        p.armour = False
+                        self.shield_destruct.player_armour[player_index] = False
+                elif index == 1:
+                    # ADD 1 LIFE
+                    if p.lives == 1:
+                        p.add_life()
+                        self.shield_destruct.counter_lives[player_index] -= 1
+                        if player_index == 0:
+                            p.add_life_label(self.lives2_label)
+                        if player_index == 1:
+                            p.add_life_label(self.lives2_label_p2)
+                    elif p.lives == 2:
+                        p.add_life()
+                        self.shield_destruct.counter_lives[player_index] -= 1
+                        if player_index == 0:
+                            p.add_life_label(self.lives3_label)
+                        if player_index == 1:
+                            p.add_life_label(self.lives3_label_p2)
+                    p.lives_labels[len(p.lives_labels)-1].show()
+                elif index == 2:
+                    # ADD ARMOUR
+                    if p.armour == False:
+                        p.armour = True
+                        p.armour_label = QLabel(self)
+                        p.armour_label.setPixmap(QPixmap('images/armour.png'))
+                        p.armour_label.setGeometry(p.avatar.geometry().x() - 10, p.avatar.geometry().y() - 10,
+                                           100, 100)
+                        p.armour_label.show()
+
+                        self.shield_destruct.player_armour[player_index] = True
 
     @pyqtSlot(QLabel)
     def remove_power_object(self, power: QLabel):
@@ -551,50 +599,45 @@ class StartGameSingleplayer(QMainWindow):
         self.powers.append(self.empower)
         self.deus_ex.add_power(self.empower, rand_power_index)
 
-    @pyqtSlot(QLabel, int)
-    def remove_life(self, bullet: QLabel, counter: int):
+    @pyqtSlot(QLabel, QLabel, int)
+    def remove_life(self, player: QLabel, bullet: QLabel, counter: int):
         bullet.hide()
 
-        self.player.lives -= 1
-
-        if self.player.lives == 2:
-            self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
-            self.lives3_label.hide()
-        elif self.player.lives == 1:
-            self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
-            self.lives2_label.hide()
-        #elif counter == 3:
-        #    self.lives.remove(self.lives[len(self.lives)-1])
-        #    self.lives1_label.hide()
-        #    self.write_in_base()
+        for p in self.players:
+            if p.avatar == player:
+                p.remove_life()
+                if p.lives == 2:
+                    p.rem_life_label()
+                elif p.lives == 1:
+                    p.rem_life_label()
 
     def __update_position__(self, key):
-        player_position = self.player.avatar.geometry()
+        player_position = self.player1.avatar.geometry()
 
         if key == Qt.Key_D:
-            if self.player.armour == True:
+            if self.player1.armour == True:
                 if not player_position.x() + player_position.width() + 10 > 950:
-                    self.player.avatar.setGeometry(
-                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                    self.player1.avatar.setGeometry(
+                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
-                    self.armour_player.setGeometry(self.player.avatar.geometry().x() - 13, self.player.avatar.geometry().y() - 10, 100, 100)
+                    self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
             else:
                 if not player_position.x() + player_position.width() + 10 > 950:
-                    self.player.avatar.setGeometry(
-                        player_position.x() + 10, player_position.y(), player_position.width(), player_position.height()
+                    self.player1.avatar.setGeometry(
+                        player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
         if key == Qt.Key_A:
-            if self.player.armour == True:
+            if self.player1.armour == True:
                 if not player_position.x() - 10 < 0:
-                    self.player.avatar.setGeometry(
-                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                    self.player1.avatar.setGeometry(
+                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
-                    self.armour_player.setGeometry(self.player.avatar.geometry().x() - 13, self.player.avatar.geometry().y() - 10, 100, 100)
+                    self.player1.armour_label.setGeometry(self.player1.avatar.geometry().x() - 13, self.player1.avatar.geometry().y() - 10, 100, 100)
 
             else:
                 if not player_position.x() - 10 < 0:
-                    self.player.avatar.setGeometry(
-                        player_position.x() - 10, player_position.y(), player_position.width(), player_position.height()
+                    self.player1.avatar.setGeometry(
+                        player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(), player_position.height()
                     )
         if key == Qt.Key_Space:
                 bullet = Bullet(
@@ -615,31 +658,31 @@ class StartGameSingleplayer(QMainWindow):
                 if self.player2.armour == True:
                     if not player2_position.x() + player2_position.width() + 10 > 950:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
-                        self.armour_player2.setGeometry(self.player2.avatar.geometry().x() - 13,
+                        self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
                                                        self.player2.avatar.geometry().y() - 10, 100, 100)
                 else:
                     if not player2_position.x() + player2_position.width() + 10 > 950:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
             if key == Qt.Key_Left:
                 if self.player2.armour == True:
                     if not player2_position.x() - 10 < 0:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
-                        self.armour_player2.setGeometry(self.player2.avatar.geometry().x() - 13,
+                        self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
                                                        self.player2.avatar.geometry().y() - 10, 100, 100)
 
                 else:
                     if not player2_position.x() - 10 < 0:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
             if key == Qt.Key_K:
@@ -732,9 +775,9 @@ class StartGameSingleplayer(QMainWindow):
         self.lives3_label.setPixmap(QPixmap('images/lives-blue.png'))
         self.lives3_label.setGeometry(QRect(140, 10, 31, 31))
 
-        self.lives_player1.append(self.lives1_label)
-        self.lives_player1.append(self.lives2_label)
-        self.lives_player1.append(self.lives3_label)
+        self.player1.add_life_label(self.lives1_label)
+        self.player1.add_life_label(self.lives2_label)
+        self.player1.add_life_label(self.lives3_label)
 
         if self.multiplayer_mode:
             self.player2_name = QLabel(self)
@@ -755,9 +798,9 @@ class StartGameSingleplayer(QMainWindow):
             self.lives3_label_p2.setPixmap(QPixmap('images/lives.png'))
             self.lives3_label_p2.setGeometry(QRect(140, 40, 31, 31))
 
-            self.lives_player2.append(self.lives1_label_p2)
-            self.lives_player2.append(self.lives2_label_p2)
-            self.lives_player2.append(self.lives3_label_p2)
+            self.player2.add_life_label(self.lives1_label_p2)
+            self.player2.add_life_label(self.lives2_label_p2)
+            self.player2.add_life_label(self.lives3_label_p2)
 
         font.setPointSize(10)
 

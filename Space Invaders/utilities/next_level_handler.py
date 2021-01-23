@@ -20,7 +20,7 @@ class NextLevel(QThread):
         while self.is_not_done:
             if self.alien_number == 0:
                 print("PRELAZ NA SLEDECI NIVO")
-                sleep(4)
+                sleep(2)
                 self.current_level += 1
                 self.next_level.emit(self.current_level)
 
