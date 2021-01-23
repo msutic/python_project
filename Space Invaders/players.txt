@@ -32,3 +32,16 @@ ss 3880
 ss 31060
 ss 12470
 dd 1290
+ss 790
+ss 340
+ss 120
+ff 0
+fff 0
+ss 0
+ss 0
+ss 0
+ff 0
+ss 0
+rr 0
+marke 0
+marke 430
