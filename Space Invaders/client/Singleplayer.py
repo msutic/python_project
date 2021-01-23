@@ -408,8 +408,8 @@ class StartGameSingleplayer(QMainWindow):
         if cfg.ALIEN_BULLET_VELOCITY + 1 < 15:
             cfg.ALIEN_BULLET_VELOCITY += 1
 
-        if cfg.SPACESHIP_VELOCITY + 1 < 30:
-            cfg.SPACESHIP_VELOCITY += 5
+        if cfg.SPACESHIP_VELOCITY + 1 < 25:
+            cfg.SPACESHIP_VELOCITY += 1
 
         self.kill_threads()
         self.free_resources()
@@ -658,7 +658,7 @@ class StartGameSingleplayer(QMainWindow):
                 if self.player2.armour == True:
                     if not player2_position.x() + player2_position.width() + 10 > 950:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
                         self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
@@ -666,14 +666,14 @@ class StartGameSingleplayer(QMainWindow):
                 else:
                     if not player2_position.x() + player2_position.width() + 10 > 950:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() + 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
             if key == Qt.Key_Left:
                 if self.player2.armour == True:
                     if not player2_position.x() - 10 < 0:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
                         self.player2.armour_label.setGeometry(self.player2.avatar.geometry().x() - 13,
@@ -682,7 +682,7 @@ class StartGameSingleplayer(QMainWindow):
                 else:
                     if not player2_position.x() - 10 < 0:
                         self.player2.avatar.setGeometry(
-                            player2_position.x() - 10, player2_position.y(), player2_position.width(),
+                            player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(), player2_position.width(),
                             player2_position.height()
                         )
             if key == Qt.Key_K:
