@@ -1,12 +1,12 @@
 from time import sleep
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QLabel, QMessageBox
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QLabel
 
 
-class CollisionPlayerBullet(QObject):
+class CollisionPlayerBullet(QThread):
 
-    collision_occured = pyqtSignal(QLabel, QLabel)
+    collision_occured = pyqtSignal(QLabel, QLabel, str)
 
     def __init__(self):
         super().__init__()
@@ -14,13 +14,7 @@ class CollisionPlayerBullet(QObject):
 
         self.bullets = []
         self.aliens = []
-
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
+        self.dict_list = []
 
     def add_alien(self, alien:QLabel):
         self.aliens.append(alien)
@@ -34,12 +28,14 @@ class CollisionPlayerBullet(QObject):
     def remove_bullet(self, bullet: QLabel):
         self.bullets.remove(bullet)
 
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    def add_item_to_list(self, item: dict):
+        self.dict_list.append(item)
+
+    def rem_item_from_list(self, item: dict):
+        self.dict_list.remove(item)
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         while self.is_not_done:
             collided = False
 
@@ -50,34 +46,58 @@ class CollisionPlayerBullet(QObject):
                 alien_x_coordinates = range(alien_xy_begin[0], alien_xy_end[0])
                 alien_y_coordinates = range(alien_xy_begin[1], alien_xy_end[1])
 
-                for bullet in self.bullets:
-                    bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                    bullet_xy_end = [bullet.geometry().x() + 30, bullet.geometry().y() + 30]
+                for item in self.dict_list:
+                    for key in item:
+                        # item[key] is a bullet, key is 'space' or 'k'
 
-                    bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
-                    bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
+                        bullet_xy_begin = [item[key].geometry().x(), item[key].geometry().y()]
+                        bullet_xy_end = [item[key].geometry().x() + 30, item[key].geometry().y() + 30]
 
-                    for alien_y in alien_y_coordinates:
-                        if collided:
-                            break
-                        if alien_y in bullet_y_coords:
-                            for alien_x in alien_x_coordinates:
-                                if alien_x in bullet_x_coords:
-                                    self.remove_alien(alien)
-                                    self.remove_bullet(bullet)
-                                    self.collision_occured.emit(alien, bullet)
-                                    collided = True
-                                    break
+                        bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
+                        bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
+
+                        for alien_y in alien_y_coordinates:
+                            if collided:
+                                break
+                            if alien_y in bullet_y_coords:
+                                for alien_x in alien_x_coordinates:
+                                    if alien_x in bullet_x_coords:
+                                        self.remove_alien(alien)
+                                        self.rem_item_from_list(item)
+                                        self.collision_occured.emit(alien, item[key], key)
+                                        collided = True
+                                        break
+
+                # for bullet in self.bullets:
+                #     bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
+                #     bullet_xy_end = [bullet.geometry().x() + 30, bullet.geometry().y() + 30]
+                #
+                #     bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
+                #     bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
+                #
+                #     for alien_y in alien_y_coordinates:
+                #         if collided:
+                #             break
+                #         if alien_y in bullet_y_coords:
+                #             for alien_x in alien_x_coordinates:
+                #                 if alien_x in bullet_x_coords:
+                #                     self.remove_alien(alien)
+                #                     self.remove_bullet(bullet)
+                #                     self.collision_occured.emit(alien, bullet)
+                #                     collided = True
+                #                     break
 
             sleep(0.05)
 
 
-class CollisionAlienBullet(QObject):
+class CollisionAlienBullet(QThread):
 
     collision_with_shield_occured = pyqtSignal(QLabel, QLabel, int)
-    collision_with_player = pyqtSignal(QLabel, int)
+    collision_with_player = pyqtSignal(QLabel, QLabel, int)
     game_over = pyqtSignal()
-    armour_broke = pyqtSignal(QLabel)
+    armour_broke = pyqtSignal(QLabel, QLabel)
+    player_dead = pyqtSignal(QLabel)
+    player_dead_bullet = pyqtSignal(QLabel, QLabel)
 
     def __init__(self):
         super().__init__()
@@ -87,16 +107,10 @@ class CollisionAlienBullet(QObject):
         self.counter = [0, 0, 0, 0]
         self.alien_bullets = []
         self.shields = []
-        self.player = QLabel()
+        self.players = []
         self.lives = 0
-        self.player_armour = False
-
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
+        self.player_armour = [False, False]
+        self.counter_lives = [0, 0]
 
     def add_bullet(self, bullet: QLabel):
         self.alien_bullets.append(bullet)
@@ -110,14 +124,16 @@ class CollisionAlienBullet(QObject):
     def rem_shield(self, shield: QLabel):
         self.shields.remove(shield)
 
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
+    def add_player(self, player: QLabel):
+        self.players.append(player)
+
+    def rem_player(self, player: QLabel):
+        self.players.remove(player)
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
 
-        self.counter_lives = 0
+        self.counter_lives = [0, 0]
         while self.is_not_done:
             collided = False
             collided1 = False
@@ -131,7 +147,7 @@ class CollisionAlienBullet(QObject):
 
                 for bullet in self.alien_bullets:
                     bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                    bullet_xy_end = [bullet.geometry().x() + 45, bullet.geometry().y() + 45]
+                    bullet_xy_end = [bullet.geometry().x() + 8, bullet.geometry().y() + 45]
 
                     bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
                     bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
@@ -151,35 +167,56 @@ class CollisionAlienBullet(QObject):
                                         self.counter.remove(self.counter[index])
                                     break
 
-            player_xy_begin = [self.player.geometry().x(), self.player.geometry().y()]
-            player_xy_end = [self.player.geometry().x() + 72, self.player.geometry().y() + 72]
+            for player in self.players:
+                index = self.players.index(player)
+                player_xy_begin = [player.geometry().x(), player.geometry().y()]
+                player_xy_end = [player.geometry().x() + 72, player.geometry().y() + 72]
 
-            player_x_coordinates = range(player_xy_begin[0], player_xy_end[0])
-            player_y_coordinates = range(player_xy_begin[1], player_xy_end[1])
+                player_x_coordinates = range(player_xy_begin[0], player_xy_end[0])
+                player_y_coordinates = range(player_xy_begin[1], player_xy_end[1])
 
-            for bullet in self.alien_bullets:
-                bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                bullet_xy_end = [bullet.geometry().x() + 45, bullet.geometry().y() + 45]
-
-                bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
-                bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
-
-                for player_y in player_y_coordinates:
-                    if collided1:
+                for bullet in self.alien_bullets:
+                    if self.counter_lives[index] == 3:
                         break
-                    if player_y in bullet_y_coords:
-                        for player_x in player_x_coordinates:
-                            if player_x in bullet_x_coords:
-                                self.rem_bullet(bullet)
-                                if not self.player_armour:
-                                    self.counter_lives += 1
-                                    self.collision_with_player.emit(bullet, self.counter_lives)
-                                else:
-                                    self.armour_broke.emit(bullet)
-                                collided1 = True
-                                break
+                    bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
+                    bullet_xy_end = [bullet.geometry().x() + 8, bullet.geometry().y() + 45]
 
-            if self.counter_lives == 3:
-                self.game_over.emit()
+                    bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
+                    bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
+
+                    for player_y in player_y_coordinates:
+                        if collided1:
+                            break
+                        # if self.counter_lives[index] == 3:
+                        #     break
+                        if player_y in bullet_y_coords:
+                            for player_x in player_x_coordinates:
+                                if player_x in bullet_x_coords:
+                                    self.rem_bullet(bullet)
+                                    if not self.player_armour[index]:
+                                        self.counter_lives[index] += 1
+                                        if self.counter_lives[index] == 3:
+                                            self.rem_player(player)
+                                            self.counter_lives.remove(self.counter_lives[index])
+                                            if len(self.players) > 0:
+                                                self.player_dead_bullet.emit(player, bullet)
+                                            else:
+                                                self.game_over.emit()
+                                            collided1 = True
+                                            break
+                                        else:
+                                            self.collision_with_player.emit(player, bullet, self.counter_lives[index])
+                                    else:
+                                        self.armour_broke.emit(player, bullet)
+                                    collided1 = True
+                                    break
+                if not collided1:
+                    if self.counter_lives[index] == 3:
+                        self.rem_player(player)
+                        self.counter_lives.remove(self.counter_lives[index])
+                        if len(self.players) > 0:
+                            self.player_dead.emit(player)
+                        else:
+                            self.game_over.emit()
 
             sleep(0.05)

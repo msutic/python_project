@@ -1,16 +1,14 @@
 import random
 
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QLabel
 
 import time
 
-from Entities import Alien
-
 from config import cfg
 
 
-class AlienMovement(QObject):
+class AlienMovement(QThread):
 
     updated = pyqtSignal(QLabel, int, int)
 
@@ -21,18 +19,6 @@ class AlienMovement(QObject):
         self.aliens = []
         self.direction_left = True
         self.direction_right = False
-        self.direction_down = False
-
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.enable_downward)
-        self.timer.start(500)
-
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
 
     def add_alien(self, alien: QLabel):
         self.aliens.append(alien)
@@ -40,15 +26,8 @@ class AlienMovement(QObject):
     def remove_alien(self, alien:QLabel):
         self.aliens.remove(alien)
 
-    def enable_downward(self):
-        self.direction_down = True
-
-    def die(self):
-        self.threadWorking = False
-        self.thread.quit()
-
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         counter = 0
         while self.threadWorking:
             if counter == 2:
@@ -92,10 +71,10 @@ class AlienMovement(QObject):
                         self.direction_left = True
                         break
 
-            time.sleep(0.05)
+            time.sleep(cfg.MOVEMENT_SLEEP)
 
 
-class BulletMove(QObject):
+class BulletMove(QThread):
     update_position = pyqtSignal(QLabel, int, int)
 
     def __init__(self):
@@ -104,22 +83,14 @@ class BulletMove(QObject):
 
         self.bullets = []
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
-
     def add_bullet(self, bullet: QLabel):
         self.bullets.append(bullet)
 
-    def die(self):
-        self.thread_working = False
-        self.thread.quit()
+    def rem_bullet(self, bullet: QLabel):
+        self.bullets.remove(bullet)
 
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         while self.thread_working:
             if len(self.bullets) > 0:
                 for bullet in self.bullets:
@@ -128,26 +99,17 @@ class BulletMove(QObject):
                     bullet_y = bullet_position.y() + cfg.ALIEN_BULLET_VELOCITY
                     self.update_position.emit(bullet, bullet_x, bullet_y)
 
-            time.sleep(0.05)
+            time.sleep(0.01)
 
 
-class AlienAttack(QObject):
+class AlienAttack(QThread):
     init_bullet = pyqtSignal(int, int)
     shoot = pyqtSignal(QLabel, int, int)
 
     def __init__(self):
         super().__init__()
-        self.thread_working = True
-
         self.aliens = []
         self.bullets = []
-
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
 
     def add_alien(self, alien:QLabel):
         self.aliens.append(alien)
@@ -158,17 +120,12 @@ class AlienAttack(QObject):
     def add_bullet(self, bullet:QLabel):
         self.bullets.append(bullet)
 
-    def _enable_shoot_(self):
-        if not self.can_shoot:
-            self.can_shoot = True
-
-    def die(self):
-        self.thread_working = False
-        self.thread.quit()
+    def rem_bullet(self, bullet: QLabel):
+        self.bullets.remove(bullet)
 
     @pyqtSlot()
-    def _work_(self):
-        while self.thread_working:
+    def run(self):
+        while 1:
             if len(self.aliens) > 0:
                 random_index = random.randint(0, len(self.aliens)-1)
                 alien = self.aliens[random_index]
@@ -177,4 +134,4 @@ class AlienAttack(QObject):
                 bullet_y = alien_pos.y() + 45
                 self.init_bullet.emit(bullet_x, bullet_y)
 
-            time.sleep(0.8)
+            time.sleep(cfg.ALIEN_SHOOT_INTERVAL)

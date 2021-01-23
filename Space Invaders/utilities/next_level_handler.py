@@ -1,9 +1,9 @@
 from time import sleep
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 
 
-class NextLevel(QObject):
+class NextLevel(QThread):
 
     next_level = pyqtSignal(int)
 
@@ -12,25 +12,15 @@ class NextLevel(QObject):
 
         self.is_not_done = True
 
-        self.current_level = 0
+        self.current_level = 1
         self.alien_number = 55
 
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.started.connect(self._work_)
-
-    def start(self):
-        self.thread.start()
-
-    def die(self):
-        self.is_not_done = False
-        self.thread.quit()
-
     @pyqtSlot()
-    def _work_(self):
+    def run(self):
         while self.is_not_done:
             if self.alien_number == 0:
                 print("PRELAZ NA SLEDECI NIVO")
+                sleep(3)
                 self.current_level += 1
                 self.next_level.emit(self.current_level)
 
