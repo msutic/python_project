@@ -49,9 +49,6 @@ class StartGameSingleplayer(QMainWindow):
         self.broj = 0
 
         self.powers = []
-        self.power_shown = False
-        self.lives_player1 = []
-        self.lives_player2 = []
 
         # arch
         self.mynumbers = []
@@ -194,16 +191,11 @@ class StartGameSingleplayer(QMainWindow):
 
         self.deus_ex.add_player(self.player1.avatar)
         self.shield_destruct.add_player(self.player1.avatar)
-        # self.shield_destruct.lives = self.player1.lives
 
         if self.multiplayer_mode:
             self.players.append(self.player2)
             self.deus_ex.add_player(self.player2.avatar)
             self.shield_destruct.add_player(self.player2.avatar)
-
-        #self.deus_ex.player = self.player.avatar
-        # self.shield_destruct.player = self.player.avatar
-        # self.shield_destruct.lives = self.player.lives
 
         self.labels()
 
@@ -373,7 +365,6 @@ class StartGameSingleplayer(QMainWindow):
 
         self.shield_destruct.add_player(self.player1.avatar)
 
-        # self.shield_destruct.lives = 3
         self.player1.lives = 3
 
         if self.player1.armour:
@@ -383,9 +374,6 @@ class StartGameSingleplayer(QMainWindow):
         self.player1.add_life_label(self.lives1_label)
         self.player1.add_life_label(self.lives2_label)
         self.player1.add_life_label(self.lives3_label)
-        # self.lives_player1.append(self.lives1_label)
-        # self.lives_player1.append(self.lives2_label)
-        # self.lives_player1.append(self.lives3_label)
 
         for life in self.player1.lives_labels:
             life.show()
@@ -430,12 +418,14 @@ class StartGameSingleplayer(QMainWindow):
     def free_resources(self):
         self.aliens = []
 
-        if self.power_shown:
-            self.power_shown = False
-
-        for life in self.lives_player1:
+        for life in self.player1.lives_labels:
             life.hide()
-        self.lives_player1.clear()
+        self.player1.lives_labels.clear()
+
+        if self.multiplayer_mode:
+            for life in self.player2.lives_labels:
+                life.hide()
+            self.player2.lives_labels.clear()
 
         for bullet in self.bullets:
             bullet.hide()
@@ -476,12 +466,10 @@ class StartGameSingleplayer(QMainWindow):
 
         for power in self.powers:
             power.hide()
-
         self.powers.clear()
 
         for power in self.deus_ex.powers:
             power.hide()
-
         self.deus_ex.powers.clear()
 
     def kill_threads(self):
@@ -543,13 +531,9 @@ class StartGameSingleplayer(QMainWindow):
                 if index == 0:
                     # REMOVE 1 LIFE
                     if not p.armour:
-                        #p.lives -= 1
                         self.shield_destruct.counter_lives[player_index] += 1
                         p.remove_life()
                         p.rem_life_label()
-                        #p.lives_labels[len(p.lives_labels)-1].hide()
-                        # self.lives_player1[len(self.lives_player1)-1].hide()
-                        # self.lives_player1.remove(self.lives_player1[len(self.lives_player1) - 1])
                     else:
                         p.armour_label.hide()
                         p.armour = False
@@ -570,13 +554,11 @@ class StartGameSingleplayer(QMainWindow):
                             p.add_life_label(self.lives3_label)
                         if player_index == 1:
                             p.add_life_label(self.lives3_label_p2)
-                    #self.lives_player1[len(self.lives_player1) - 1].show()
                     p.lives_labels[len(p.lives_labels)-1].show()
                 elif index == 2:
-                    # ADD SHIELD
+                    # ADD ARMOUR
                     if p.armour == False:
                         p.armour = True
-                        # p.add_armour()
                         p.armour_label = QLabel(self)
                         p.armour_label.setPixmap(QPixmap('images/armour.png'))
                         p.armour_label.setGeometry(p.avatar.geometry().x() - 10, p.avatar.geometry().y() - 10,
@@ -620,20 +602,11 @@ class StartGameSingleplayer(QMainWindow):
 
         for p in self.players:
             if p.avatar == player:
-        #self.player.lives -= 1
                 p.remove_life()
                 if p.lives == 2:
                     p.rem_life_label()
-                    # self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
-                    # self.lives3_label.hide()
                 elif p.lives == 1:
                     p.rem_life_label()
-                    # self.lives_player1.remove(self.lives_player1[len(self.lives_player1)-1])
-                    # self.lives2_label.hide()
-        #elif counter == 3:
-        #    self.lives.remove(self.lives[len(self.lives)-1])
-        #    self.lives1_label.hide()
-        #    self.write_in_base()
 
     def __update_position__(self, key):
         player_position = self.player1.avatar.geometry()
@@ -799,10 +772,6 @@ class StartGameSingleplayer(QMainWindow):
         self.lives3_label.setPixmap(QPixmap('images/lives-blue.png'))
         self.lives3_label.setGeometry(QRect(140, 10, 31, 31))
 
-        # self.lives_player1.append(self.lives1_label)
-        # self.lives_player1.append(self.lives2_label)
-        # self.lives_player1.append(self.lives3_label)
-
         self.player1.add_life_label(self.lives1_label)
         self.player1.add_life_label(self.lives2_label)
         self.player1.add_life_label(self.lives3_label)
@@ -825,10 +794,6 @@ class StartGameSingleplayer(QMainWindow):
             self.lives3_label_p2 = QLabel(self)
             self.lives3_label_p2.setPixmap(QPixmap('images/lives.png'))
             self.lives3_label_p2.setGeometry(QRect(140, 40, 31, 31))
-
-            # self.lives_player2.append(self.lives1_label_p2)
-            # self.lives_player2.append(self.lives2_label_p2)
-            # self.lives_player2.append(self.lives3_label_p2)
 
             self.player2.add_life_label(self.lives1_label_p2)
             self.player2.add_life_label(self.lives2_label_p2)
