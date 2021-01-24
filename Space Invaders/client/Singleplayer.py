@@ -1,4 +1,5 @@
 import sys
+from multiprocessing import Queue
 from random import randint
 
 from PyQt5 import QtGui
@@ -15,6 +16,7 @@ from Entities.Shield import Shield
 from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBullet
 from utilities.deus_ex import DeusEx
+from utilities.deus_ex_calculate import CalculateDeusExX
 from utilities.key_notifier import KeyNotifier
 from utilities.next_level_handler import NextLevel
 from utilities.shooting import ShootBullet
@@ -49,11 +51,13 @@ class StartGameSingleplayer(QMainWindow):
         self.player = ""
         self.broj = 0
 
-        self.powers = []
+        self.queue = Queue()
+        deus_ex_proc = CalculateDeusExX(self.queue)
+        deus_ex_proc.start()
 
         # arch
         self.mynumbers = []
-
+        self.powers = []
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
@@ -626,7 +630,9 @@ class StartGameSingleplayer(QMainWindow):
             self.empower.setMovie(movie)
             movie.start()
 
-        x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
+        x_axis = self.queue.get()
+        print("got from queue: x = ", rand_power_index)
+        #x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
 
         self.empower.setGeometry(x_axis, 660, 45, 45)
         self.empower.show()
