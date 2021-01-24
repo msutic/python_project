@@ -68,25 +68,6 @@ class CollisionPlayerBullet(QThread):
                                         collided = True
                                         break
 
-                # for bullet in self.bullets:
-                #     bullet_xy_begin = [bullet.geometry().x(), bullet.geometry().y()]
-                #     bullet_xy_end = [bullet.geometry().x() + 30, bullet.geometry().y() + 30]
-                #
-                #     bullet_x_coords = range(bullet_xy_begin[0], bullet_xy_end[0])
-                #     bullet_y_coords = range(bullet_xy_begin[1], bullet_xy_end[1])
-                #
-                #     for alien_y in alien_y_coordinates:
-                #         if collided:
-                #             break
-                #         if alien_y in bullet_y_coords:
-                #             for alien_x in alien_x_coordinates:
-                #                 if alien_x in bullet_x_coords:
-                #                     self.remove_alien(alien)
-                #                     self.remove_bullet(bullet)
-                #                     self.collision_occured.emit(alien, bullet)
-                #                     collided = True
-                #                     break
-
             sleep(0.05)
 
 
