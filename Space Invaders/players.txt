@@ -9,16 +9,3 @@ nikola 745
 marko 864
 stefan 157
 marko 91400
-ss 4130
-ff 500
-mima 1240
-mima 3270
-mako 4060
-mako 150
-mako 120
-fdsfsd 12250
-ss 0
-ff 0
-maki 120
-ss 0
-ss 60

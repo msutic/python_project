@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QLineEdit, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon
 
-from client import Singleplayer
+from client import Game
 from utilities.sc_selection import SpaceshipSelection
 
 from config import cfg
@@ -19,7 +19,7 @@ def __start_game_process__(player_id, player_spacecraft):
 
 def __start_game__(player_id, player_spacecraft):
     app = QApplication(sys.argv)
-    game = Singleplayer.StartGameSingleplayer(
+    game = Game.Game(
         player_id=player_id,
         player_spacecraft=player_spacecraft
     )
@@ -35,7 +35,7 @@ def __start_mp_game_process__(player1_id, player1_spacecraft, player2_id, player
 
 def __start_game_mp__(player1_id, player1_spacecraft, player2_id, player2_spacecraft):
     app = QApplication(sys.argv)
-    game = Singleplayer.StartGameSingleplayer(
+    game = Game.Game(
         player_id=player1_id,
         player_spacecraft=player1_spacecraft,
         player2_id=player2_id,

@@ -24,7 +24,7 @@ from utilities.shooting import ShootBullet
 from config import cfg
 
 
-class StartGameSingleplayer(QMainWindow):
+class Game(QMainWindow):
     counter = 0
 
     def __init__(self, player_id: str, player_spacecraft: str, player2_id: str = "", player2_spacecraft: str = ""):
@@ -973,5 +973,5 @@ class StartGameSingleplayer(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    sp = StartGameSingleplayer()
+    sp = Game()
     sys.exit(app.exec_())
