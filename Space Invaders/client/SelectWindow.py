@@ -13,7 +13,7 @@ from config import cfg
 
 def __start_game_process__(player_id, player_spacecraft):
     process = Process(target=__start_game__, args=(player_id, player_spacecraft))
-    process.daemon = True
+    # process.daemon = True
     process.start()
 
 
@@ -29,7 +29,7 @@ def __start_game__(player_id, player_spacecraft):
 
 def __start_mp_game_process__(player1_id, player1_spacecraft, player2_id, player2_spacecraft):
     process = Process(target=__start_game_mp__, args=(player1_id, player1_spacecraft, player2_id, player2_spacecraft))
-    process.daemon = True
+    #process.daemon = True
     process.start()
 
 

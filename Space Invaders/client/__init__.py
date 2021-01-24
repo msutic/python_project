@@ -68,7 +68,7 @@ class StartWindow(QMainWindow):
             "border:2px solid beige; color: beige;font-size: 26px;")
         self.exit_button.setFont(font)
         self.exit_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.exit_button.clicked.connect(qApp.quit)
+        self.exit_button.clicked.connect(self.closeEvent)
 
     def set_window(self):
         self.setWindowTitle("Space Invaders v1.0")
@@ -94,6 +94,7 @@ class StartWindow(QMainWindow):
 
     # HEAD
     def closeEvent(self, event):
+        self.close()
         self.sp.close()
         self.mp.close()
 

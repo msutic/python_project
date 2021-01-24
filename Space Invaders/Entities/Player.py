@@ -5,13 +5,15 @@ from Entities.Spaceship import Spaceship
 
 class Player(Spaceship):
 
-    def __init__(self, screen: QWidget, img, x, y, w, h, lives: int = 3):
+    def __init__(self, screen: QWidget, img, x, y, w, h, username: str, lives: int = 3):
         super().__init__(screen=screen, img=img, x=x, y=y, w=w, h=h)
         self.lives = lives
         self.armour = False
         self.armour_label = 0
         self.lives_labels = []
         self.is_dead = False
+        self.username = username
+        self.score = 0
 
     def add_life(self):
         if self.lives < 3:

@@ -1,4 +1,5 @@
 import sys
+from multiprocessing import Queue
 from random import randint
 
 from PyQt5 import QtGui
@@ -15,6 +16,7 @@ from Entities.Shield import Shield
 from utilities.alien_threading import AlienMovement, AlienAttack, BulletMove
 from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBullet
 from utilities.deus_ex import DeusEx
+from utilities.deus_ex_calculate import CalculateDeusExX
 from utilities.key_notifier import KeyNotifier
 from utilities.next_level_handler import NextLevel
 from utilities.shooting import ShootBullet
@@ -34,6 +36,7 @@ class StartGameSingleplayer(QMainWindow):
         self.player2_spacecraft = player2_spacecraft
 
         self.players = []
+        self.winner = 0
 
         self.multiplayer_mode = False
 
@@ -49,11 +52,13 @@ class StartGameSingleplayer(QMainWindow):
         self.player = ""
         self.broj = 0
 
-        self.powers = []
+        self.queue = Queue()
+        deus_ex_proc = CalculateDeusExX(self.queue)
+        deus_ex_proc.start()
 
         # arch
         self.mynumbers = []
-
+        self.powers = []
         self.bullets = []
         self.bullets_enemy = []
         self.aliens = []
@@ -75,7 +80,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.empowerment_timer = QTimer()
         self.empowerment_timer.timeout.connect(self.show_power)
-        self.empowerment_timer.start(5000)
+        self.empowerment_timer.start(10000)
 
         self.init_ui()
 
@@ -113,6 +118,7 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
                 cfg.SPACESHIP_HEIGHT,
+                self.player_id,
                 3
             )
         elif self.player_spacecraft == "purpleZ AAx9":
@@ -123,6 +129,7 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
                 cfg.SPACESHIP_HEIGHT,
+                self.player_id,
                 3
             )
         elif self.player_spacecraft == "military-aircraft-POWER":
@@ -133,6 +140,7 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
                 cfg.SPACESHIP_HEIGHT,
+                self.player_id,
                 3
             )
         else:
@@ -143,6 +151,7 @@ class StartGameSingleplayer(QMainWindow):
                 cfg.PLAYER_START_Y,
                 cfg.SPACESHIP_WIDTH,
                 cfg.SPACESHIP_HEIGHT,
+                self.player_id,
                 3
             )
 
@@ -155,6 +164,7 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
+                    self.player2_id,
                     3
                 )
             elif self.player2_spacecraft == "purpleZ AAx9":
@@ -165,6 +175,7 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
+                    self.player2_id,
                     3
                 )
             elif self.player2_spacecraft == "military-aircraft-POWER":
@@ -175,6 +186,7 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
+                    self.player2_id,
                     3
                 )
             elif self.player2_spacecraft == "SpaceX-air4p66":
@@ -185,8 +197,11 @@ class StartGameSingleplayer(QMainWindow):
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
+                    self.player2_id,
                     3
                 )
+        else:
+            self.winner = self.player1
 
         self.players.append(self.player1)
 
@@ -368,6 +383,7 @@ class StartGameSingleplayer(QMainWindow):
         if self.multiplayer_mode:
             if not self.player1.is_dead:
                 self.player1.lives = 3
+                self.player1.username = self.player_id
                 if self.player1.armour:
                     self.player1.armour = False
                     self.player1.armour_label.hide()
@@ -376,6 +392,7 @@ class StartGameSingleplayer(QMainWindow):
 
             if not self.player2.is_dead:
                 self.player2.lives = 3
+                self.player2.username = self.player2_id
                 if self.player2.armour:
                     self.player2.armour = False
                     self.player2.armour_label.hide()
@@ -518,6 +535,10 @@ class StartGameSingleplayer(QMainWindow):
                 self.players.remove(p)
                 self.deus_ex.rem_player(player)
 
+        if self.multiplayer_mode:
+            if len(self.players) == 1:
+                self.winner = self.players[0]
+
     @pyqtSlot(QLabel, QLabel)
     def kill_player_bullet(self, player: QLabel, bullet: QLabel):
         player.hide()
@@ -529,6 +550,10 @@ class StartGameSingleplayer(QMainWindow):
                 p.lives_labels[0].hide()
                 self.players.remove(p)
                 self.deus_ex.rem_player(player)
+
+        if self.multiplayer_mode:
+            if len(self.players) == 1:
+                self.winner = self.players[0]
 
     @pyqtSlot(int, int)
     def alien_attack(self, bullet_x, bullet_y):
@@ -626,7 +651,9 @@ class StartGameSingleplayer(QMainWindow):
             self.empower.setMovie(movie)
             movie.start()
 
-        x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
+        x_axis = self.queue.get()
+        print("got from queue: x = ", x_axis)
+        #x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
 
         self.empower.setGeometry(x_axis, 660, 45, 45)
         self.empower.show()
@@ -749,9 +776,11 @@ class StartGameSingleplayer(QMainWindow):
                 self.level_handle.alien_number -= 1
                 if key == 'space':
                     self.total_point += a.worth
+                    self.player1.score = self.total_point
                     self.score.setText(str(self.total_point))
                 elif key == 'k':
                     self.total_point2 += a.worth
+                    self.player2.score = self.total_point2
                     self.score2.setText(str(self.total_point2))
 
     @pyqtSlot(QLabel, QLabel, int)
@@ -893,7 +922,7 @@ class StartGameSingleplayer(QMainWindow):
 
     def game_over(self):
         print("GAME OVER")
-        print("SCORE: ", self.total_point)
+        #print("SCORE: ", self.winner.score)
         self.kill_threads()
 
         font = QtGui.QFont()
@@ -918,7 +947,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.winner_label = QLabel(self)
         self.winner_label.setFont(font)
-        self.winner_label.setText('winner: ' + self.player_id)
+        self.winner_label.setText('winner: ' + self.winner.username)
         self.winner_label.setStyleSheet("color: rgb(255, 255, 255);")
         self.winner_label.setGeometry(0, 300, 950, 30)
         self.winner_label.setAlignment(Qt.AlignCenter)
@@ -926,7 +955,7 @@ class StartGameSingleplayer(QMainWindow):
 
         self.end_score = QLabel(self)
         self.end_score.setFont(font)
-        self.end_score.setText('total score: ' + str(self.total_point))
+        self.end_score.setText('total score: ' + str(self.winner.score))
         self.end_score.setStyleSheet("color: rgb(255, 255, 255);")
         self.end_score.setGeometry(0, 340, 950, 30)
         self.end_score.setAlignment(Qt.AlignCenter)
@@ -938,7 +967,7 @@ class StartGameSingleplayer(QMainWindow):
 
     def write_in_base(self):
         self.file = open("players.txt", "a")
-        self.file.write(str(self.player_id) + " " + str(self.total_point) + "\n")
+        self.file.write(str(self.winner.username) + " " + str(self.winner.score) + "\n")
         self.file.close()
 
 
