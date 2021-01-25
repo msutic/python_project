@@ -1,12 +1,12 @@
 import random
 import sys
-from random import randint
-from time import sleep
 
 from PyQt5.QtWidgets import QApplication
 
 from client.Game import Game
 from multiprocessing import Queue, Process
+
+from client.TournamentWinner import DisplayWinner
 
 
 def _start_tournament_(player1_id: str, player1_spacecraft: str,
@@ -47,8 +47,11 @@ def _start_tournament_(player1_id: str, player1_spacecraft: str,
 
     finals_winner_id = _game_process(queue, winner1_id, winner1_spacecraft,
                                      winner2_id, winner2_spacecraft)
+    finals_winner_spacecraft = player_spacecrafts[player_ids.index(finals_winner_id)]
 
     print(f'TOURNAMENT WINNER: {finals_winner_id}')
+
+    _display_winner_process(finals_winner_id, finals_winner_spacecraft)
 
 
 def _game_process(queue, player1_id, player1_spacecraft,
@@ -70,6 +73,18 @@ def _start_game_(queue: Queue, player1_id, player1_spacecraft,
     sys.exit(app.exec_())
 
 
+def _display_winner_process(winner: str, spacecraft: str):
+    process = Process(target=_display_winner, args=(winner, spacecraft))
+    process.start()
+
+
+def _display_winner(winner: str, spacecraft: str):
+    app = QApplication(sys.argv)
+    dspl_wn = DisplayWinner(winner=winner, spacecraft=spacecraft)
+    dspl_wn.show()
+    sys.exit(app.exec_())
+
+
 class TournamentGame(Game):
 
     def __init__(self, queue: Queue, player1_id: str, player1_spacecraft: str,
@@ -83,4 +98,9 @@ class TournamentGame(Game):
         super().game_over()
         self.queue.put(self.winner.username)
         self.queue.close()
+
+        self.display_winner = DisplayWinner(self.winner.username)
+        self.display_winner.show()
+
+
 
