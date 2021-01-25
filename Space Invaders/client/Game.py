@@ -1,6 +1,7 @@
 import sys
 from multiprocessing import Queue
 from random import randint
+from time import sleep
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
@@ -54,8 +55,8 @@ class Game(QMainWindow):
         self.broj = 0
 
         self.queue1 = Queue()
-        deus_ex_proc = CalculateDeusExX(self.queue1)
-        deus_ex_proc.start()
+        self.deus_ex_proc = CalculateDeusExX(self.queue1)
+        self.deus_ex_proc.start()
 
         # arch
         self.mynumbers = []
@@ -607,16 +608,16 @@ class Game(QMainWindow):
                     if p.lives == 1:
                         p.add_life()
                         self.shield_destruct.counter_lives[player_index] -= 1
-                        if player_index == 0:
+                        if p.username == self.player_id:
                             p.add_life_label(self.lives2_label)
-                        if player_index == 1:
+                        elif p.username == self.player2_id:
                             p.add_life_label(self.lives2_label_p2)
                     elif p.lives == 2:
                         p.add_life()
                         self.shield_destruct.counter_lives[player_index] -= 1
-                        if player_index == 0:
+                        if p.username == self.player_id:
                             p.add_life_label(self.lives3_label)
-                        if player_index == 1:
+                        elif p.username == self.player2_id:
                             p.add_life_label(self.lives3_label_p2)
                     p.lives_labels[len(p.lives_labels)-1].show()
                 elif index == 2:
@@ -924,8 +925,10 @@ class Game(QMainWindow):
     def game_over(self):
         print("GAME OVER")
         #print("SCORE: ", self.winner.score)
-        if not self.tournament_mode:
-            self.kill_threads()
+        self.kill_threads()
+
+        self.deus_ex_proc.terminate()
+        self.key_notifier.terminate()
 
         font = QtGui.QFont()
         font.setFamily("Rockwell")
@@ -963,15 +966,20 @@ class Game(QMainWindow):
         self.end_score.setAlignment(Qt.AlignCenter)
         self.end_score.show()
 
-        if not self.tournament_mode:
-            self.free_resources()
+        self.free_resources()
 
-            self.write_in_base()
+        self.write_in_base()
 
     def write_in_base(self):
         self.file = open("players.txt", "a")
         self.file.write(str(self.winner.username) + " " + str(self.winner.score) + "\n")
         self.file.close()
+
+    def closeEvent(self, event):
+        self.kill_threads()
+        self.deus_ex_proc.terminate()
+        self.key_notifier.terminate()
+        exit()
 
 
 if __name__ == '__main__':
