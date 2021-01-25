@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWind
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 
 from client.SelectWindow import SelectWindow
+from client.Tournament import Tournament
 from config import cfg
 
 
@@ -17,6 +18,7 @@ class StartWindow(QMainWindow):
         self.init_ui()
         self.sp = SelectWindow(1)
         self.mp = SelectWindow(2)
+        self.tournament = Tournament()
 
     def init_ui(self):
         self.set_window()
@@ -29,6 +31,9 @@ class StartWindow(QMainWindow):
 
     def run_multiplayer_select_screen(self):
         self.mp.show()
+
+    def show_tournament(self):
+        self.tournament.show()
 
     def buttons(self):
         self.start_game_button = QPushButton(self)
@@ -53,13 +58,14 @@ class StartWindow(QMainWindow):
         self.mp_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.mp_button.clicked.connect(self.run_multiplayer_select_screen)
 
-        self.htp_button = QPushButton(self)
-        self.htp_button.setText("how to play")
-        self.htp_button.setGeometry(QtCore.QRect(300, 370, 201, 41))
-        self.htp_button.setStyleSheet(
+        self.tournament_button = QPushButton(self)
+        self.tournament_button.setText("tournament")
+        self.tournament_button.setGeometry(QtCore.QRect(300, 370, 201, 41))
+        self.tournament_button.setStyleSheet(
             "border:2px solid beige; color: beige;font-size: 26px;")
-        self.htp_button.setFont(font)
-        self.htp_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.tournament_button.setFont(font)
+        self.tournament_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.tournament_button.clicked.connect(self.show_tournament)
 
         self.exit_button = QPushButton(self)
         self.exit_button.setText("exit")
@@ -97,6 +103,7 @@ class StartWindow(QMainWindow):
         self.close()
         self.sp.close()
         self.mp.close()
+        self.tournament.close()
 
 
 '''
