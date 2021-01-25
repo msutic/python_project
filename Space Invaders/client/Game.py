@@ -39,6 +39,7 @@ class Game(QMainWindow):
         self.winner = 0
 
         self.multiplayer_mode = False
+        self.tournament_mode = False
 
         if not self.player2_id == "":
             self.multiplayer_mode = True
@@ -52,8 +53,8 @@ class Game(QMainWindow):
         self.player = ""
         self.broj = 0
 
-        self.queue = Queue()
-        deus_ex_proc = CalculateDeusExX(self.queue)
+        self.queue1 = Queue()
+        deus_ex_proc = CalculateDeusExX(self.queue1)
         deus_ex_proc.start()
 
         # arch
@@ -651,7 +652,7 @@ class Game(QMainWindow):
             self.empower.setMovie(movie)
             movie.start()
 
-        x_axis = self.queue.get()
+        x_axis = self.queue1.get()
         print("got from queue: x = ", x_axis)
         #x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
 
@@ -923,7 +924,8 @@ class Game(QMainWindow):
     def game_over(self):
         print("GAME OVER")
         #print("SCORE: ", self.winner.score)
-        self.kill_threads()
+        if not self.tournament_mode:
+            self.kill_threads()
 
         font = QtGui.QFont()
         font.setFamily("Rockwell")
@@ -961,9 +963,10 @@ class Game(QMainWindow):
         self.end_score.setAlignment(Qt.AlignCenter)
         self.end_score.show()
 
-        self.free_resources()
+        if not self.tournament_mode:
+            self.free_resources()
 
-        self.write_in_base()
+            self.write_in_base()
 
     def write_in_base(self):
         self.file = open("players.txt", "a")
