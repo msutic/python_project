@@ -1,7 +1,6 @@
 import sys
 from multiprocessing import Queue
 from random import randint
-from time import sleep
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
