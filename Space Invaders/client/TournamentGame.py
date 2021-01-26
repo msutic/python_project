@@ -32,26 +32,68 @@ def _start_tournament_(player1_id: str, player1_spacecraft: str,
         player_spacecrafts.append(player7_spacecraft)
         player_spacecrafts.append(player8_spacecraft)
 
-    rand_idx = random.sample(range(0, len(player_ids)), 4)
+    rand_idx = random.sample(range(0, len(player_ids)), len(player_ids))
 
     queue = Queue()
-    winner1_id = _game_process(queue, player_ids[rand_idx[0]], player_spacecrafts[rand_idx[0]],
-                               player_ids[rand_idx[1]], player_spacecrafts[rand_idx[1]])
-    winner1_spacecraft = player_spacecrafts[player_ids.index(winner1_id)]
-    print(f'WINNER ROUND 1: {winner1_id}')
 
-    winner2_id = _game_process(queue, player_ids[rand_idx[2]], player_spacecrafts[rand_idx[2]],
-                               player_ids[rand_idx[3]], player_spacecrafts[rand_idx[3]])
-    winner2_spacecraft = player_spacecrafts[player_ids.index(winner2_id)]
-    print(f'WINNER ROUND 2: {winner2_id}')
+    if len(player_ids) == 4:
+        winner1_id = _game_process(queue, player_ids[rand_idx[0]], player_spacecrafts[rand_idx[0]],
+                                   player_ids[rand_idx[1]], player_spacecrafts[rand_idx[1]])
+        winner1_spacecraft = player_spacecrafts[player_ids.index(winner1_id)]
+        print(f'WINNER ROUND 1: {winner1_id}')
 
-    finals_winner_id = _game_process(queue, winner1_id, winner1_spacecraft,
-                                     winner2_id, winner2_spacecraft)
-    finals_winner_spacecraft = player_spacecrafts[player_ids.index(finals_winner_id)]
+        winner2_id = _game_process(queue, player_ids[rand_idx[2]], player_spacecrafts[rand_idx[2]],
+                                   player_ids[rand_idx[3]], player_spacecrafts[rand_idx[3]])
+        winner2_spacecraft = player_spacecrafts[player_ids.index(winner2_id)]
+        print(f'WINNER ROUND 2: {winner2_id}')
 
-    print(f'TOURNAMENT WINNER: {finals_winner_id}')
+        finals_winner_id = _game_process(queue, winner1_id, winner1_spacecraft,
+                                         winner2_id, winner2_spacecraft)
+        finals_winner_spacecraft = player_spacecrafts[player_ids.index(finals_winner_id)]
 
-    _display_winner_process(finals_winner_id, finals_winner_spacecraft)
+        print(f'TOURNAMENT WINNER: {finals_winner_id}')
+
+        _display_winner_process(finals_winner_id, finals_winner_spacecraft)
+
+    elif len(player_ids) == 8:
+        winner1_id = _game_process(queue, player_ids[rand_idx[0]], player_spacecrafts[rand_idx[0]],
+                                   player_ids[rand_idx[1]], player_spacecrafts[rand_idx[1]])
+        winner1_spacecraft = player_spacecrafts[player_ids.index(winner1_id)]
+        print(f'WINNER GAME 1 [QUARTERFINALS]: {winner1_id}')
+
+        winner2_id = _game_process(queue, player_ids[rand_idx[2]], player_spacecrafts[rand_idx[2]],
+                                   player_ids[rand_idx[3]], player_spacecrafts[rand_idx[3]])
+        winner2_spacecraft = player_spacecrafts[player_ids.index(winner2_id)]
+        print(f'WINNER GAME 2 [QUARTERFINALS]: {winner2_id}')
+
+        winner3_id = _game_process(queue, player_ids[rand_idx[4]], player_spacecrafts[rand_idx[4]],
+                                   player_ids[rand_idx[5]], player_spacecrafts[rand_idx[5]])
+        winner3_spacecraft = player_spacecrafts[player_ids.index(winner3_id)]
+        print(f'WINNER GAME 3 [QUARTERFINALS]: {winner3_id}')
+
+        winner4_id = _game_process(queue, player_ids[rand_idx[6]], player_spacecrafts[rand_idx[6]],
+                                   player_ids[rand_idx[7]], player_spacecrafts[rand_idx[7]])
+        winner4_spacecraft = player_spacecrafts[player_ids.index(winner4_id)]
+        print(f'WINNER GAME 4 [QUARTERFINALS]: {winner4_id}')
+
+        semifinals_winner1_id = _game_process(queue, winner1_id, winner1_spacecraft,
+                                              winner2_id, winner2_spacecraft)
+        semifinals_winner1_spacecraft = player_spacecrafts[player_ids.index(semifinals_winner1_id)]
+        print(f'WINNER GAME 1 [SEMIFINALS]: {semifinals_winner1_id}')
+
+        semifinals_winner2_id = _game_process(queue, winner3_id, winner3_spacecraft,
+                                              winner4_id, winner4_spacecraft)
+        semifinals_winner2_spacecraft = player_spacecrafts[player_ids.index(semifinals_winner2_id)]
+        print(f'WINNER GAME 2 [SEMIFINALS]: {semifinals_winner2_id}')
+
+        # THE GRAND FINALE
+        finals_winner_id = _game_process(queue, semifinals_winner1_id, semifinals_winner1_spacecraft,
+                                         semifinals_winner2_id, semifinals_winner2_spacecraft)
+        finals_winner_spacecraft = player_spacecrafts[player_ids.index(finals_winner_id)]
+
+        print(f'TOURNAMENT WINNER: {finals_winner_id}')
+
+        _display_winner_process(finals_winner_id, finals_winner_spacecraft)
 
 
 def _game_process(queue, player1_id, player1_spacecraft,
