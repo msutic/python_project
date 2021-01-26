@@ -1,8 +1,5 @@
-import sys
-from multiprocessing import Process
-
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow, QApplication
+from PyQt5.QtWidgets import QLabel, QPushButton, qApp, QDesktopWidget, QMainWindow
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 
 from client.SelectWindow import SelectWindow

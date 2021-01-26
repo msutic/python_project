@@ -1,12 +1,13 @@
 import sys
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 
 from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QDesktopWidget, QMessageBox
 
-from client.Game import Game
 from client.TournamentGame import _start_tournament_
+from utilities.t_sc_select import TSpacecraftSelect
 
 
 class Tournament(QMainWindow):
@@ -14,7 +15,17 @@ class Tournament(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.selection = TSpacecraftSelect()
+        self.selection.selection_changed.connect(self._update_img)
+        self.selection.start()
+
+        self.previews = []
+
         self.init_ui()
+
+    @pyqtSlot(str, int)
+    def _update_img(self, name: str, idx: int):
+        self.previews[idx].setPixmap(QPixmap(name))
 
     def init_ui(self):
         self.setFixedSize(500, 400)
@@ -239,6 +250,16 @@ class Tournament(QMainWindow):
         self.spacecraft4_preview.setPixmap(QPixmap('images/silver.png'))
         self.spacecraft4_preview.show()
 
+        self.previews.append(self.spacecraft1_preview)
+        self.previews.append(self.spacecraft2_preview)
+        self.previews.append(self.spacecraft3_preview)
+        self.previews.append(self.spacecraft4_preview)
+
+        self.selection.add_sc(self.player1_spacecraft)
+        self.selection.add_sc(self.player2_spacecraft)
+        self.selection.add_sc(self.player3_spacecraft)
+        self.selection.add_sc(self.player4_spacecraft)
+
         if num == 4:
             self.setFixedSize(1150, 450)
         elif num == 8:
@@ -400,6 +421,16 @@ class Tournament(QMainWindow):
             self.spacecraft8_preview.setGeometry(1050, 520, 72, 72)
             self.spacecraft8_preview.setPixmap(QPixmap('images/silver.png'))
             self.spacecraft8_preview.show()
+
+            self.previews.append(self.spacecraft5_preview)
+            self.previews.append(self.spacecraft6_preview)
+            self.previews.append(self.spacecraft7_preview)
+            self.previews.append(self.spacecraft8_preview)
+
+            self.selection.add_sc(self.player5_spacecraft)
+            self.selection.add_sc(self.player6_spacecraft)
+            self.selection.add_sc(self.player7_spacecraft)
+            self.selection.add_sc(self.player8_spacecraft)
 
         self.center()
 
