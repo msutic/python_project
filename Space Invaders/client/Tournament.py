@@ -514,6 +514,19 @@ class Tournament(QMainWindow):
                 player8_nickname = self.player8_input.text()
                 player8_spacecraft = self.player8_spacecraft.currentText()
 
+                process = Process(target=_start_tournament_, args=(player1_nickname, player1_spacecraft,
+                                                                   player2_nickname, player2_spacecraft,
+                                                                   player3_nickname, player3_spacecraft,
+                                                                   player4_nickname, player4_spacecraft,
+                                                                   player5_nickname, player5_spacecraft,
+                                                                   player6_nickname, player6_spacecraft,
+                                                                   player7_nickname, player7_spacecraft,
+                                                                   player8_nickname, player8_spacecraft,
+                                                                   )
+                                  )
+                process.start()
+                self.hide()
+
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
