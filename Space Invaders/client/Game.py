@@ -1,6 +1,7 @@
 import sys
 from multiprocessing import Queue
 from random import randint
+from time import sleep
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
@@ -39,6 +40,7 @@ class Game(QMainWindow):
         self.winner = 0
 
         self.multiplayer_mode = False
+        self.tournament_mode = False
 
         if not self.player2_id == "":
             self.multiplayer_mode = True
@@ -52,9 +54,9 @@ class Game(QMainWindow):
         self.player = ""
         self.broj = 0
 
-        self.queue = Queue()
-        deus_ex_proc = CalculateDeusExX(self.queue)
-        deus_ex_proc.start()
+        self.queue1 = Queue()
+        self.deus_ex_proc = CalculateDeusExX(self.queue1)
+        self.deus_ex_proc.start()
 
         # arch
         self.mynumbers = []
@@ -606,16 +608,16 @@ class Game(QMainWindow):
                     if p.lives == 1:
                         p.add_life()
                         self.shield_destruct.counter_lives[player_index] -= 1
-                        if player_index == 0:
+                        if p.username == self.player_id:
                             p.add_life_label(self.lives2_label)
-                        if player_index == 1:
+                        elif p.username == self.player2_id:
                             p.add_life_label(self.lives2_label_p2)
                     elif p.lives == 2:
                         p.add_life()
                         self.shield_destruct.counter_lives[player_index] -= 1
-                        if player_index == 0:
+                        if p.username == self.player_id:
                             p.add_life_label(self.lives3_label)
-                        if player_index == 1:
+                        elif p.username == self.player2_id:
                             p.add_life_label(self.lives3_label_p2)
                     p.lives_labels[len(p.lives_labels)-1].show()
                 elif index == 2:
@@ -651,7 +653,7 @@ class Game(QMainWindow):
             self.empower.setMovie(movie)
             movie.start()
 
-        x_axis = self.queue.get()
+        x_axis = self.queue1.get()
         print("got from queue: x = ", x_axis)
         #x_axis = randint(10, cfg.PLAY_WINDOW_WIDTH - 30)
 
@@ -925,6 +927,9 @@ class Game(QMainWindow):
         #print("SCORE: ", self.winner.score)
         self.kill_threads()
 
+        self.deus_ex_proc.terminate()
+        self.key_notifier.terminate()
+
         font = QtGui.QFont()
         font.setFamily("Rockwell")
         font.setPointSize(60)
@@ -969,6 +974,12 @@ class Game(QMainWindow):
         self.file = open("players.txt", "a")
         self.file.write(str(self.winner.username) + " " + str(self.winner.score) + "\n")
         self.file.close()
+
+    def closeEvent(self, event):
+        self.kill_threads()
+        self.deus_ex_proc.terminate()
+        self.key_notifier.terminate()
+        exit()
 
 
 if __name__ == '__main__':

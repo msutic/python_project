@@ -104,6 +104,7 @@ class StartWindow(QMainWindow):
         self.sp.close()
         self.mp.close()
         self.tournament.close()
+        # sys.exit()
 
 
 '''

@@ -1,8 +1,12 @@
 import sys
+from multiprocessing import Process, Queue
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QDesktopWidget, QMessageBox
+
+from client.Game import Game
+from client.TournamentGame import _start_tournament_
 
 
 class Tournament(QMainWindow):
@@ -65,6 +69,8 @@ class Tournament(QMainWindow):
         self._input_(8)
 
     def _input_(self, num: int):
+        self.players_num = num
+
         self.four_btn.close()
         self.eight_btn.close()
         self.num_plyrs.hide()
@@ -75,7 +81,7 @@ class Tournament(QMainWindow):
         self._button_start.setGeometry(QtCore.QRect(500, 390, 120, 41))
         self._button_start.setStyleSheet("border:2px solid beige; color: beige;font-size: 26px;")
         self._button_start.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        # self._button_start.clicked.connect(self.on_start_button_clicked)
+        self._button_start.clicked.connect(self.on_start_button_clicked)
         self._button_start.show()
 
         self.name1_label = QLabel(self)
@@ -236,7 +242,6 @@ class Tournament(QMainWindow):
         if num == 4:
             self.setFixedSize(1150, 450)
         elif num == 8:
-
             self.setFixedSize(1150, 788)
             self._button_start.setGeometry(QtCore.QRect(500, 700, 120, 41))
 
@@ -398,14 +403,128 @@ class Tournament(QMainWindow):
 
         self.center()
 
+    def on_start_button_clicked(self):
+
+        if self.players_num == 4:
+            if self.player1_input.text() == "" or self.player2_input.text() == "" \
+                    or self.player3_input.text() == "" or self.player4_input.text() == "":
+                msg = QMessageBox()
+                msg.setText("please enter nickname for every player")
+                msg.setWindowTitle('Error')
+                msg.exec_()
+
+            elif self.player1_input.text() == self.player2_input.text() \
+                    or self.player1_input.text() == self.player3_input.text() \
+                    or self.player1_input.text() == self.player4_input.text() \
+                    or self.player2_input.text() == self.player3_input.text() \
+                    or self.player2_input.text() == self.player4_input.text() \
+                    or self.player3_input.text() == self.player4_input.text():
+                msg = QMessageBox()
+                msg.setText("nicknames must be different")
+                msg.setWindowTitle('Error')
+                msg.exec_()
+
+            else:
+                player1_nickname = self.player1_input.text()
+                player1_spacecraft = self.player1_spacecraft.currentText()
+
+                player2_nickname = self.player2_input.text()
+                player2_spacecraft = self.player2_spacecraft.currentText()
+
+                player3_nickname = self.player3_input.text()
+                player3_spacecraft = self.player3_spacecraft.currentText()
+
+                player4_nickname = self.player4_input.text()
+                player4_spacecraft = self.player4_spacecraft.currentText()
+
+                process = Process(target=_start_tournament_, args=(player1_nickname, player1_spacecraft,
+                                                                   player2_nickname, player2_spacecraft,
+                                                                   player3_nickname, player3_spacecraft,
+                                                                   player4_nickname, player4_spacecraft,
+                                                                   )
+                                  )
+                process.start()
+                self.hide()
+
+        elif self.players_num == 8:
+            if self.player1_input.text() == "" or self.player2_input.text() == "" \
+                    or self.player3_input.text() == "" or self.player4_input.text() == "" \
+                    or self.player5_input.text() == "" or self.player6_input.text() == "" \
+                    or self.player7_input.text() == "" or self.player8_input.text() == "":
+                msg = QMessageBox()
+                msg.setText("please enter a nickname for every player")
+                msg.setWindowTitle('Error')
+                msg.exec_()
+
+            elif self.player1_input.text() == self.player2_input.text() \
+                    or self.player1_input.text() == self.player3_input.text() \
+                    or self.player1_input.text() == self.player4_input.text() \
+                    or self.player1_input.text() == self.player5_input.text() \
+                    or self.player1_input.text() == self.player6_input.text() \
+                    or self.player1_input.text() == self.player7_input.text() \
+                    or self.player1_input.text() == self.player8_input.text() \
+                    or self.player2_input.text() == self.player3_input.text() \
+                    or self.player2_input.text() == self.player4_input.text() \
+                    or self.player2_input.text() == self.player5_input.text() \
+                    or self.player2_input.text() == self.player6_input.text() \
+                    or self.player2_input.text() == self.player7_input.text() \
+                    or self.player2_input.text() == self.player8_input.text() \
+                    or self.player3_input.text() == self.player4_input.text() \
+                    or self.player3_input.text() == self.player5_input.text() \
+                    or self.player3_input.text() == self.player6_input.text() \
+                    or self.player3_input.text() == self.player7_input.text() \
+                    or self.player3_input.text() == self.player8_input.text() \
+                    or self.player4_input.text() == self.player5_input.text() \
+                    or self.player4_input.text() == self.player6_input.text() \
+                    or self.player4_input.text() == self.player7_input.text() \
+                    or self.player4_input.text() == self.player8_input.text() \
+                    or self.player5_input.text() == self.player6_input.text() \
+                    or self.player5_input.text() == self.player7_input.text() \
+                    or self.player5_input.text() == self.player8_input.text() \
+                    or self.player6_input.text() == self.player7_input.text() \
+                    or self.player6_input.text() == self.player8_input.text() \
+                    or self.player7_input.text() == self.player8_input.text():
+                msg = QMessageBox()
+                msg.setText("nicknames must be different")
+                msg.setWindowTitle('Error')
+                msg.exec_()
+
+            else:
+                player1_nickname = self.player1_input.text()
+                player1_spacecraft = self.player1_spacecraft.currentText()
+
+                player2_nickname = self.player2_input.text()
+                player2_spacecraft = self.player2_spacecraft.currentText()
+
+                player3_nickname = self.player3_input.text()
+                player3_spacecraft = self.player3_spacecraft.currentText()
+
+                player4_nickname = self.player4_input.text()
+                player4_spacecraft = self.player4_spacecraft.currentText()
+
+                player5_nickname = self.player5_input.text()
+                player5_spacecraft = self.player5_spacecraft.currentText()
+
+                player6_nickname = self.player6_input.text()
+                player6_spacecraft = self.player6_spacecraft.currentText()
+
+                player7_nickname = self.player7_input.text()
+                player7_spacecraft = self.player7_spacecraft.currentText()
+
+                player8_nickname = self.player8_input.text()
+                player8_spacecraft = self.player8_spacecraft.currentText()
+
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    def closeEvent(self, event):
+        self.close()
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Tournament()
     sys.exit(app.exec_())
-
