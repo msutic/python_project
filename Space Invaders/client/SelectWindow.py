@@ -29,7 +29,7 @@ def __start_game__(player_id, player_spacecraft):
 
 def __start_mp_game_process__(player1_id, player1_spacecraft, player2_id, player2_spacecraft):
     process = Process(target=__start_game_mp__, args=(player1_id, player1_spacecraft, player2_id, player2_spacecraft))
-    #process.daemon = True
+    # process.daemon = True
     process.start()
 
 
@@ -95,22 +95,24 @@ class SelectWindow(QMainWindow):
         self.select_ship_label = QLabel(self)
         self.select_ship_label.setText('select spacecraft: ')
         self.select_ship_label.setStyleSheet("color: rgb(255, 237, 226);\n"
-        "font: 20pt \"Bahnschrift SemiLight\";")
+                                             "font: 20pt \"Bahnschrift SemiLight\";")
         self.gridLayout_2.addWidget(self.select_ship_label, 2, 0, 1, 1)
 
         self.nickname_input = QLineEdit(self)
-        self.nickname_input.setStyleSheet("background-color:transparent;font: 18pt \"Bahnschrift SemiLight\";color: rgb(255, 237, 226);")
+        self.nickname_input.setStyleSheet(
+            "background-color:transparent;font: 18pt \"Bahnschrift SemiLight\";color: rgb(255, 237, 226);")
         self.gridLayout_2.addWidget(self.nickname_input, 1, 1, 1, 1)
 
         self.name_label = QLabel(self)
         self.name_label.setText("player nickname: ")
         self.name_label.setStyleSheet("color: rgb(255, 237, 226);\n"
-        "font: 20pt \"Bahnschrift SemiLight\";")
+                                      "font: 20pt \"Bahnschrift SemiLight\";")
         self.gridLayout_2.addWidget(self.name_label, 1, 0, 1, 1)
 
         self.spacecraft_preview = QLabel(self)
         self.spacecraft_preview.setStyleSheet("border-color: rgb(255, 228, 206);\n"
-        "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), "
+                                              "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, "
+                                              "stop:0 rgba(0, 0, 0, 255), "
                                               "stop:1 rgba(255, 255, 255, 255));")
         self.spacecraft_preview.setAlignment(QtCore.Qt.AlignCenter)
         self.gridLayout_2.addWidget(self.spacecraft_preview, 3, 1, 1, 1)
@@ -124,7 +126,7 @@ class SelectWindow(QMainWindow):
             self.name_label2 = QLabel(self)
             self.name_label2.setText("player 2 nickname: ")
             self.name_label2.setStyleSheet("color: rgb(255, 237, 226);\n"
-                                          "font: 20pt \"Bahnschrift SemiLight\";")
+                                           "font: 20pt \"Bahnschrift SemiLight\";")
             self.gridLayout_2.addWidget(self.name_label2, 4, 0, 1, 1)
 
             self.selected_spacecraft2 = QtWidgets.QComboBox(self.gridLayoutWidget)
@@ -140,13 +142,14 @@ class SelectWindow(QMainWindow):
             self.select_ship_label2 = QLabel(self)
             self.select_ship_label2.setText('select spacecraft: ')
             self.select_ship_label2.setStyleSheet("color: rgb(255, 237, 226);\n"
-                                                 "font: 20pt \"Bahnschrift SemiLight\";")
+                                                  "font: 20pt \"Bahnschrift SemiLight\";")
             self.gridLayout_2.addWidget(self.select_ship_label2, 5, 0, 1, 1)
 
             self.spacecraft2_preview = QLabel(self)
             self.spacecraft2_preview.setStyleSheet("border-color: rgb(255, 228, 206);\n"
-                                                  "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), "
-                                                  "stop:1 rgba(255, 255, 255, 255));")
+                                                   "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, "
+                                                   "stop:0 rgba(0, 0, 0, 255), "
+                                                   "stop:1 rgba(255, 255, 255, 255));")
             self.spacecraft2_preview.setAlignment(QtCore.Qt.AlignCenter)
             self.gridLayout_2.addWidget(self.spacecraft2_preview, 6, 1, 1, 1)
 
@@ -171,7 +174,7 @@ class SelectWindow(QMainWindow):
                 __start_game_process__(player_id, player_spacecraft)
                 self.nickname_input.setText('')
         elif self.num_of_players == 2:
-            if self.nickname_input.text() == "" or self.nickname_input.text() == " "\
+            if self.nickname_input.text() == "" or self.nickname_input.text() == " " \
                     or self.nickname_input2.text() == "" or self.nickname_input2.text() == " ":
                 msg = QMessageBox()
                 msg.setText("please enter your nicknames...")
@@ -192,4 +195,3 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = SelectWindow()
     sys.exit(app.exec_())
-
