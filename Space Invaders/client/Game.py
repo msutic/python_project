@@ -23,6 +23,7 @@ from utilities.next_level_handler import NextLevel
 from utilities.shooting import ShootBullet
 
 from config import cfg
+from utilities.status import StatusBar
 
 
 class Game(QMainWindow):
@@ -77,6 +78,9 @@ class Game(QMainWindow):
         self.deus_ex = DeusEx()
         self.level_handle = NextLevel()
         self.deus_ex_worker = Worker(self.queue1)
+        self.status_bar = StatusBar()
+        self.status_bar.status_updated.connect(self.clear_status)
+        self.status_bar.start()
 
         self.threads_connect()
         self.start_threads()
@@ -103,6 +107,9 @@ class Game(QMainWindow):
         self.hi_score.setGeometry(QRect(510, 5, 111, 20))
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                     "font: 75 13pt \"Rockwell\";")
+
+    def clear_status(self):
+        self._status.setText('')
 
     def init_ui(self):
         self.init_window()
@@ -594,6 +601,8 @@ class Game(QMainWindow):
                 p.armour = False
                 self.shield_destruct.player_armour[player_index] = False
                 p.armour_label.hide()
+                self._status.setText(f'player {p.username} lost armour')
+                self.status_bar.update_status('go')
 
     @pyqtSlot(QLabel, QLabel, int)
     def apply_power(self, player: QLabel, power: QLabel, index: int):
@@ -608,10 +617,14 @@ class Game(QMainWindow):
                         self.shield_destruct.counter_lives[player_index] += 1
                         p.remove_life()
                         p.rem_life_label()
+                        self._status.setText(f'player {p.username} lost a life')
+                        self.status_bar.update_status('go')
                     else:
                         p.armour_label.hide()
                         p.armour = False
                         self.shield_destruct.player_armour[player_index] = False
+                        self._status.setText(f'player {p.username} lost armour')
+                        self.status_bar.update_status('go')
                 elif index == 1:
                     # ADD 1 LIFE
                     if p.lives == 1:
@@ -621,6 +634,8 @@ class Game(QMainWindow):
                             p.add_life_label(self.lives2_label)
                         elif p.username == self.player2_id:
                             p.add_life_label(self.lives2_label_p2)
+                        self._status.setText(f'extra life - player {p.username}')
+                        self.status_bar.update_status('go')
                     elif p.lives == 2:
                         p.add_life()
                         self.shield_destruct.counter_lives[player_index] -= 1
@@ -628,6 +643,8 @@ class Game(QMainWindow):
                             p.add_life_label(self.lives3_label)
                         elif p.username == self.player2_id:
                             p.add_life_label(self.lives3_label_p2)
+                        self._status.setText(f'extra life - player {p.username}')
+                        self.status_bar.update_status('go')
                     p.lives_labels[len(p.lives_labels) - 1].show()
                 elif index == 2:
                     # ADD ARMOUR
@@ -640,6 +657,8 @@ class Game(QMainWindow):
                         p.armour_label.show()
 
                         self.shield_destruct.player_armour[player_index] = True
+                        self._status.setText(f'extra armour - player {p.username}')
+                        self.status_bar.update_status('go')
 
     @pyqtSlot(QLabel)
     def remove_power_object(self, power: QLabel):
@@ -685,7 +704,7 @@ class Game(QMainWindow):
 
         if not self.player1.is_dead:
             if key == Qt.Key_D:
-                if self.player1.armour == True:
+                if self.player1.armour:
                     if not player_position.x() + player_position.width() + 10 > 950:
                         self.player1.avatar.setGeometry(
                             player_position.x() + cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(),
@@ -700,7 +719,7 @@ class Game(QMainWindow):
                             player_position.height()
                         )
             if key == Qt.Key_A:
-                if self.player1.armour == True:
+                if self.player1.armour:
                     if not player_position.x() - 10 < 0:
                         self.player1.avatar.setGeometry(
                             player_position.x() - cfg.SPACESHIP_VELOCITY, player_position.y(), player_position.width(),
@@ -727,14 +746,13 @@ class Game(QMainWindow):
                 self.shootingThread.add_bullet(bullet)
                 d = {'space': bullet}
                 self.collision_bullet_alien.dict_list.append(d)
-                # self.collision_bullet_alien.add_bullet(bullet)
 
         if self.multiplayer_mode:
             player2_position = self.player2.avatar.geometry()
 
             if not self.player2.is_dead:
                 if key == Qt.Key_Right:
-                    if self.player2.armour == True:
+                    if self.player2.armour:
                         if not player2_position.x() + player2_position.width() + 10 > 950:
                             self.player2.avatar.setGeometry(
                                 player2_position.x() + cfg.SPACESHIP_VELOCITY, player2_position.y(),
@@ -751,7 +769,7 @@ class Game(QMainWindow):
                                 player2_position.height()
                             )
                 if key == Qt.Key_Left:
-                    if self.player2.armour == True:
+                    if self.player2.armour:
                         if not player2_position.x() - 10 < 0:
                             self.player2.avatar.setGeometry(
                                 player2_position.x() - cfg.SPACESHIP_VELOCITY, player2_position.y(),
@@ -780,7 +798,6 @@ class Game(QMainWindow):
                     self.shootingThread.add_bullet(bullet)
                     d = {'k': bullet}
                     self.collision_bullet_alien.dict_list.append(d)
-                    # self.collision_bullet_alien.add_bullet(bullet)
 
     def destroy_enemy_collision(self, alien: QLabel, bullet: QLabel, key: str):
         bullet.hide()
@@ -930,6 +947,12 @@ class Game(QMainWindow):
         self.current_level_value.setGeometry(QRect(540, 30, 111, 20))
         self.current_level_value.setStyleSheet("color: rgb(255, 255, 255)")
         self.current_level_value.setFont(font)
+
+        self._status = QLabel(self)
+        self._status.setGeometry(QRect(0, 745, cfg.PLAY_WINDOW_WIDTH, 16))
+        self._status.setStyleSheet("color: rgb(255, 255, 255)")
+        self._status.setFont(font)
+        self._status.setAlignment(Qt.AlignCenter)
 
     def game_over(self):
         print("GAME OVER")
