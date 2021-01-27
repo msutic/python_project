@@ -18,6 +18,7 @@ from utilities.collision_handler import CollisionPlayerBullet, CollisionAlienBul
 from utilities.deus_ex import DeusEx
 from utilities.deus_ex_calculate import CalculateDeusExX
 from utilities.deus_ex_worker import Worker
+from utilities.explosion import PlayerExplosion
 from utilities.key_notifier import KeyNotifier
 from utilities.next_level_handler import NextLevel
 from utilities.shooting import ShootBullet
@@ -82,6 +83,10 @@ class Game(QMainWindow):
         self.status_bar.status_updated.connect(self.clear_status)
         self.status_bar.start()
 
+        self.player_explosion = PlayerExplosion()
+        self.player_explosion.explosion_detected.connect(self.hide_explosion)
+        self.player_explosion.start()
+
         self.threads_connect()
         self.start_threads()
 
@@ -107,6 +112,9 @@ class Game(QMainWindow):
         self.hi_score.setGeometry(QRect(510, 5, 111, 20))
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
                                     "font: 75 13pt \"Rockwell\";")
+
+    def hide_explosion(self):
+        self.explode.hide()
 
     def clear_status(self):
         self._status.setText('')
@@ -564,8 +572,17 @@ class Game(QMainWindow):
 
         for p in self.players:
             if p.avatar == player:
+                self._status.setText(f'player {p.username} died')
+                self.status_bar.update_status('go')
                 p.is_dead = True
                 p.lives_labels[0].hide()
+                self.explode = QLabel(self)
+                self.explode.setGeometry(player.geometry().x(), player.geometry().y() - 20, 100, 100)
+                movie = QMovie('images/resized-expl.gif')
+                self.explode.setMovie(movie)
+                movie.start()
+                self.explode.show()
+                self.player_explosion.add_effect('die')
                 self.players.remove(p)
                 self.deus_ex.rem_player(player)
 
@@ -693,6 +710,13 @@ class Game(QMainWindow):
 
         for p in self.players:
             if p.avatar == player:
+                self.explode = QLabel(self)
+                self.explode.setGeometry(player.geometry().x() + 20, player.geometry().y() - 20, 35, 35)
+                movie = QMovie('images/bullet-hit.gif')
+                self.explode.setMovie(movie)
+                movie.start()
+                self.explode.show()
+                self.player_explosion.add_effect('hit')
                 p.remove_life()
                 if p.lives == 2:
                     p.rem_life_label()
