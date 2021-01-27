@@ -14,7 +14,7 @@ Cilj igre je pobediti sve vanzemaljce.
 ### Meni  
 Prilikom pokretanja aplikacije, prikazuje se početni meni.  
 
-![Start Menu](Space Invaders/doc/menu.png)  
+![Start Menu](Space%20Invaders/doc/menu.png)  
 
 Postoji nekoliko režima igranja:  
 - Singleplayer  
