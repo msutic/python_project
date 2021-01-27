@@ -3,7 +3,7 @@ from multiprocessing import Process
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QDesktopWidget, QMessageBox
 
 from client.TournamentGame import _start_tournament_
@@ -29,6 +29,7 @@ class Tournament(QMainWindow):
 
     def init_ui(self):
         self.setFixedSize(500, 400)
+        self.setWindowIcon(QIcon('images/tournament-icon.png'))
         font = QtGui.QFont()
         font.setFamily("Rockwell")
         self.center()

@@ -12,7 +12,8 @@ class CalculateDeusExX(Process):
 
     def _calculate_(self, q: Queue):
         while 1:
+            sleep(8)
             x_coord = randint(0, cfg.PLAY_WINDOW_WIDTH - 50)
             q.put(x_coord)
-            print("putting on queue: x=", x_coord)
-            sleep(8)
+            print(f"putting on queue: x = {x_coord}")
+

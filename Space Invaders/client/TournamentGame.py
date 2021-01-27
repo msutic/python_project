@@ -141,8 +141,8 @@ class TournamentGame(Game):
         self.queue.put(self.winner.username)
         self.queue.close()
 
-        self.display_winner = DisplayWinner(self.winner.username)
-        self.display_winner.show()
+        # self.display_winner = DisplayWinner(self.winner.username)
+        # self.display_winner.show()
 
 
 

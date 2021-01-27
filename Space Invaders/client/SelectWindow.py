@@ -70,7 +70,7 @@ class SelectWindow(QMainWindow):
     def init_ui(self):
         self.setFixedSize(cfg.SELECT_WINDOW_WIDTH, cfg.SELECT_WINDOW_HEIGHT)
         self.setWindowTitle('SELECT - Space Invaders v1.0')
-        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowIcon(QIcon('images/icon.png'))
 
         self.background = QLabel(self)
         # if bg is not shown then in line below change to '../images/bg-res...' in QPixmap

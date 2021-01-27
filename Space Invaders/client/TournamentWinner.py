@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication
 
 
@@ -17,10 +17,16 @@ class DisplayWinner(QMainWindow):
     def init_ui(self):
         self.setFixedSize(500, 500)
         self.setWindowTitle('TOURNAMENT STATS')
+        self.setWindowIcon(QIcon('images/trophey.png'))
         self.background = QLabel(self)
         # if bg is not shown then in line below change to '../images/bg-res...' in QPixmap
         self.background.setPixmap(QPixmap('images/game_background.png'))
         self.background.setGeometry(0, 0, 1200, 788)
+
+        self.trophey = QLabel(self)
+        self.trophey.setPixmap(QPixmap('images/trophey.png'))
+        self.trophey.setGeometry(0, 80, 500, 222)
+        self.trophey.setAlignment(QtCore.Qt.AlignCenter)
 
         self.tournament_h = QLabel(self)
         self.tournament_h.setText('TOURNAMENT')
@@ -32,7 +38,7 @@ class DisplayWinner(QMainWindow):
 
         self.winner_label = QLabel(self)
         self.winner_label.setText(f'Congratulations {self.winner}\n YOU HAVE WON THIS TOURNAMENT')
-        self.winner_label.setGeometry(0, 200, 500, 55)
+        self.winner_label.setGeometry(0, 330, 500, 55)
         self.winner_label.setStyleSheet("color: rgb(255, 237, 226);\n"
                                         "font: 20pt \"Bahnschrift SemiLight\";")
         self.winner_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -47,7 +53,7 @@ class DisplayWinner(QMainWindow):
             self.winner_spacecraft.setPixmap(QPixmap('images/military.png'))
         elif self.spacecraft == 'SpaceX-air4p66':
             self.winner_spacecraft.setPixmap(QPixmap('images/spacex.png'))
-        self.winner_spacecraft.setGeometry(0, 300, 500, 72)
+        self.winner_spacecraft.setGeometry(0, 400, 500, 72)
         self.winner_spacecraft.setAlignment(QtCore.Qt.AlignCenter)
         self.winner_spacecraft.show()
 
