@@ -100,9 +100,9 @@ class Game(QMainWindow):
 
         self.hi_score = QLabel(self)
         self.hi_score.setText(str(self.broj))
-        self.hi_score.setGeometry(QRect(910, 10, 111, 21))
+        self.hi_score.setGeometry(QRect(510, 5, 111, 20))
         self.hi_score.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                    "font: 75 15pt \"Fixedsys\";")
+                                    "font: 75 13pt \"Rockwell\";")
 
     def init_ui(self):
         self.init_window()
@@ -835,18 +835,10 @@ class Game(QMainWindow):
         self.key_notifier.rem_key(event.key())
 
     def labels(self):
-        self.pause_label = QLabel(self)
-        self.pause_label.setText("pause [p]")
-        self.pause_label.setGeometry(QRect(850, 750, 101, 31))
-        self.pause_label.show()
 
         font = QtGui.QFont()
         font.setFamily("Rockwell")
         font.setPointSize(15)
-
-        self.pause_label.setFont(font)
-        self.pause_label.setStyleSheet("color: rgb(255, 255, 255);")
-        self.pause_label.setAlignment(Qt.AlignCenter)
 
         self.player1_name = QLabel(self)
         self.player1_name.setText(self.player_id)
@@ -873,69 +865,71 @@ class Game(QMainWindow):
         if self.multiplayer_mode:
             self.player2_name = QLabel(self)
             self.player2_name.setText(self.player2_id)
-            self.player2_name.setGeometry(5, 40, 75, 30)
+            self.player2_name.setGeometry(780, 10, 75, 30)
             self.player2_name.setStyleSheet("color: red")
             self.player2_name.setFont(font)
 
             self.lives1_label_p2 = QLabel(self)
             self.lives1_label_p2.setPixmap(QPixmap('images/lives.png'))
-            self.lives1_label_p2.setGeometry(QRect(80, 40, 31, 31))
+            self.lives1_label_p2.setGeometry(QRect(855, 10, 31, 31))
 
             self.lives2_label_p2 = QLabel(self)
             self.lives2_label_p2.setPixmap(QPixmap('images/lives.png'))
-            self.lives2_label_p2.setGeometry(QRect(110, 40, 31, 31))
+            self.lives2_label_p2.setGeometry(QRect(885, 10, 31, 31))
 
             self.lives3_label_p2 = QLabel(self)
             self.lives3_label_p2.setPixmap(QPixmap('images/lives.png'))
-            self.lives3_label_p2.setGeometry(QRect(140, 40, 31, 31))
+            self.lives3_label_p2.setGeometry(QRect(915, 10, 31, 31))
 
             self.player2.add_life_label(self.lives1_label_p2)
             self.player2.add_life_label(self.lives2_label_p2)
             self.player2.add_life_label(self.lives3_label_p2)
 
             self.score_label2 = QLabel(self)
-            self.score_label2.setText("score 2: ")
-            self.score_label2.setGeometry(QRect(810, 60, 61, 31))
-            self.score_label2.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                            "font: 75 15pt \"Fixedsys\";")
+            self.score_label2.setText("score: ")
+            self.score_label2.setGeometry(QRect(780, 35, 61, 16))
+            self.score_label2.setStyleSheet("color: red;\n"
+                                            "font: 75 13pt \"Rockwell\";")
 
             self.score2 = QLabel(self)
             self.score2.setText(str(self.total_point2))
-            self.score2.setGeometry(QRect(872, 67, 111, 16))
-            self.score2.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                      "font: 75 15pt \"Fixedsys\";")
+            self.score2.setGeometry(QRect(830, 35, 111, 16))
+            self.score2.setStyleSheet("color: red;\n"
+                                      "font: 75 13pt \"Rockwell\";")
 
-        font.setPointSize(10)
+        font.setPointSize(13)
 
         self.score_label = QLabel(self)
         self.score_label.setText("score: ")
-        self.score_label.setGeometry(QRect(810, 30, 61, 31))
-        self.score_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                       "font: 75 15pt \"Fixedsys\";")
-
-        self.hiscore_label = QLabel(self)
-        self.hiscore_label.setText("highscore: ")
-        self.hiscore_label.setGeometry(QRect(800, 10, 111, 20))
-        self.hiscore_label.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                         "font: 75 15pt \"Fixedsys\";")
+        self.score_label.setGeometry(QRect(5, 35, 61, 16))
+        self.score_label.setStyleSheet("color: blue")
+        self.score_label.setFont(font)
 
         self.score = QLabel(self)
         self.score.setText(str(self.total_point))
-        self.score.setGeometry(QRect(870, 40, 111, 16))
-        self.score.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                 "font: 75 15pt \"Fixedsys\";")
+        self.score.setGeometry(QRect(55, 35, 111, 16))
+        self.score.setStyleSheet("color: blue")
+        self.score.setFont(font)
+
+        self.hiscore_label = QLabel(self)
+        self.hiscore_label.setText("highscore: ")
+        self.hiscore_label.setGeometry(QRect(-20, 5, cfg.PLAY_WINDOW_WIDTH, 20))
+        self.hiscore_label.setStyleSheet("color: rgb(255, 255, 255)")
+        self.hiscore_label.setFont(font)
+        self.hiscore_label.setAlignment(Qt.AlignCenter)
 
         self.current_level = QLabel(self)
-        self.current_level.setText("Current level: ")
-        self.current_level.setGeometry(QRect(420, 10, 111, 20))
-        self.current_level.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                         "font: 75 15pt \"Fixedsys\";")
+        self.current_level.setText("current level: ")
+        self.current_level.setGeometry(QRect(0, 30, cfg.PLAY_WINDOW_WIDTH, 20))
+        self.current_level.setStyleSheet("color: rgb(255, 255, 255)")
+        self.current_level.setFont(font)
+        self.current_level.setAlignment(Qt.AlignCenter)
 
         self.current_level_value = QLabel(self)
         self.current_level_value.setText("1")
-        self.current_level_value.setGeometry(QRect(540, 10, 111, 20))
-        self.current_level_value.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                               "font: 75 15pt \"Fixedsys\";")
+        self.current_level_value.setGeometry(QRect(540, 30, 111, 20))
+        self.current_level_value.setStyleSheet("color: rgb(255, 255, 255)")
+        self.current_level_value.setFont(font)
 
     def game_over(self):
         print("GAME OVER")
