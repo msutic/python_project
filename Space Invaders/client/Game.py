@@ -80,12 +80,7 @@ class Game(QMainWindow):
         self.level_handle = NextLevel()
         self.deus_ex_worker = Worker(self.queue1)
         self.status_bar = StatusBar()
-        self.status_bar.status_updated.connect(self.clear_status)
-        self.status_bar.start()
-
         self.player_explosion = PlayerExplosion()
-        self.player_explosion.explosion_detected.connect(self.hide_explosion)
-        self.player_explosion.start()
 
         self.threads_connect()
         self.start_threads()
@@ -235,7 +230,7 @@ class Game(QMainWindow):
         self.setWindowTitle('Space Invaders [singleplayer mode] v1.0')
 
         self.bgLabel = QLabel(self)
-        self.background = QPixmap('images/bg-resized2.jpg')
+        self.background = QPixmap('images/game_background.png')
         self.bgLabel.setPixmap(self.background)
         self.bgLabel.setGeometry(0, 0, cfg.PLAY_WINDOW_WIDTH, cfg.PLAY_WINDOW_HEIGHT)
 
@@ -332,6 +327,8 @@ class Game(QMainWindow):
         self.deus_ex.start()
         self.level_handle.start()
         self.deus_ex_worker.start()
+        self.status_bar.start()
+        self.player_explosion.start()
 
     def threads_connect(self):
         self.shootingThread.updated_position.connect(self.update_bullet)
@@ -350,6 +347,8 @@ class Game(QMainWindow):
         self.deus_ex.collision_occured.connect(self.apply_power)
         self.level_handle.next_level.connect(self.update_level)
         self.deus_ex_worker.calc_done.connect(self.show_power)
+        self.status_bar.status_updated.connect(self.clear_status)
+        self.player_explosion.explosion_detected.connect(self.hide_explosion)
 
     def start_new_threads(self):
         self.shootingThread = ShootBullet()
@@ -405,6 +404,14 @@ class Game(QMainWindow):
         self.deus_ex_worker.calc_done.connect(self.show_power)
         self.deus_ex_worker.start()
 
+        self.status_bar = StatusBar()
+        self.status_bar.status_updated.connect(self.clear_status)
+        self.status_bar.start()
+
+        self.player_explosion = PlayerExplosion()
+        self.player_explosion.explosion_detected.connect(self.hide_explosion)
+        self.player_explosion.start()
+
         if self.multiplayer_mode:
             if not self.player1.is_dead:
                 self.player1.lives = 3
@@ -455,8 +462,6 @@ class Game(QMainWindow):
 
             for life in self.player1.lives_labels:
                 life.show()
-
-        # self.empowerment_timer.start(10000)
 
     def update_level(self, level: int):
         self.current_level_value.setText(str(level))
@@ -538,6 +543,8 @@ class Game(QMainWindow):
             power.hide()
         self.deus_ex.powers.clear()
 
+        self._status.setText('')
+
     def kill_threads(self):
         self.shootingThread.terminate()
         self.alien_movement_thread.terminate()
@@ -549,6 +556,8 @@ class Game(QMainWindow):
         self.deus_ex.terminate()
         self.level_handle.terminate()
         self.deus_ex_worker.terminate()
+        self.status_bar.terminate()
+        self.player_explosion.terminate()
 
     @pyqtSlot(QLabel)
     def kill_player(self, player: QLabel):
@@ -684,6 +693,7 @@ class Game(QMainWindow):
 
         power.hide()
 
+    @pyqtSlot(int)
     def show_power(self, x_axis: int):
         rand_power_index = randint(0, 2)
         self.empower = QLabel(self)

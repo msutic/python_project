@@ -10,16 +10,4 @@ marko 864
 stefan 157
 marko 91400
 ff 19010
-ff 23520
-hh 3960
-ss 37340
-ss 180
-ss 0
-gg 40
-ss 30
-mima 140
-mima 170
-maki 20
-ss 0
-ss 0
-mima 0
+pera 4160
