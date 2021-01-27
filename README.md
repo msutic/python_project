@@ -1,4 +1,4 @@
-# Recreation of Space Invaders (1978) game done in Python
+# Space Invaders (1978)
 
 ### What you need:
 - <b>python3.8.5+</b> 
