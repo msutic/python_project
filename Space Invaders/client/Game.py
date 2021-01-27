@@ -28,7 +28,6 @@ from utilities.status import StatusBar
 
 
 class Game(QMainWindow):
-    counter = 0
 
     def __init__(self, player_id: str, player_spacecraft: str, player2_id: str = "", player2_spacecraft: str = ""):
         super().__init__()
@@ -169,7 +168,7 @@ class Game(QMainWindow):
                 self.player2 = Player(
                     self,
                     'images/silver.png',
-                    850,
+                    cfg.PLAYER2_START_X,
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
@@ -180,7 +179,7 @@ class Game(QMainWindow):
                 self.player2 = Player(
                     self,
                     'images/purple.png',
-                    850,
+                    cfg.PLAYER2_START_X,
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
@@ -191,7 +190,7 @@ class Game(QMainWindow):
                 self.player2 = Player(
                     self,
                     'images/military.png',
-                    850,
+                    cfg.PLAYER2_START_X,
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,
@@ -202,7 +201,7 @@ class Game(QMainWindow):
                 self.player2 = Player(
                     self,
                     'images/spacex.png',
-                    850,
+                    cfg.PLAYER2_START_X,
                     cfg.PLAYER_START_Y,
                     cfg.SPACESHIP_WIDTH,
                     cfg.SPACESHIP_HEIGHT,

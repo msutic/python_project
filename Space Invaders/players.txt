@@ -11,3 +11,7 @@ stefan 157
 marko 91400
 ff 19010
 pera 4160
+marko 82240
+maki 4300
+ff 2440
+ffx 680
