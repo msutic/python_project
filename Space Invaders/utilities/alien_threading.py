@@ -104,7 +104,6 @@ class BulletMove(QThread):
 
 class AlienAttack(QThread):
     init_bullet = pyqtSignal(int, int)
-    shoot = pyqtSignal(QLabel, int, int)
 
     def __init__(self):
         super().__init__()
