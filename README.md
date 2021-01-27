@@ -9,11 +9,45 @@ Cilj igre je pobediti sve vanzemaljce.
 - [Python3](https://www.python.org/downloads/)  
 - [PyCharm](https://www.jetbrains.com/pycharm/download)  
 
-## Uputstvo za igranje
+## Uputstvo za korisćenje  
 
-![Start menu](./doc/menu.png)  
-### What you need:
-- <b>python3.8.5+</b> 
-- <b>pyqt5 lib</b> 
+### Meni  
+Prilikom pokretanja aplikacije, prikazuje se početni meni.  
+
+![Start Menu](Space Invaders/doc/menu.png)  
+
+Postoji nekoliko režima igranja:  
+- Singleplayer  
+- Multiplayer  
+- Turnir  
+
+Svaki od ovih režima biće objašnjen u posebnim sekcijama.  
+
+### Singleplayer  
+
+Singleplayer je mod igrice u kojem učestvuje jedan igrač.  
+Klikom na `start game`, odabira se ovaj mod. 
+
+![select sp](Space Invaders/doc/select-sp.png)  
+  
+ Nakon klika, korisniku se otvara prozor u kom treba da unese svoj nickname  
+ i nudi mu se izbor raznih svemirskih brodova.  
+ Polja su validirana, tj. korisnik ne može da nastavi dalje bez unetog imena.  
+ 
+ Pritiskom na `-> start`, igra započinje.  
+ 
+ ![Game sp](Space Invaders/doc/game-sp.png)  
+ 
+ 
+ ### Ciklus igre   
+ 
+ 
+ ### Pravila igre  
+ 
+ 
+ ### Komande  
+ 
+ 
+ ### Opis realizacije
 
 
