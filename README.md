@@ -96,22 +96,48 @@ se proglašava pobednik turnira.
 	 Igrači mogu da ispaljuju metke na odgovarajući taster, koji se kreću vertikalno ka gore, i u koliko  
 	 metak pogodi vanzemaljca, on nestaje.  
  #### Naredni nivo
-	Kada igrač ubije sve vanzemaljce, prelazi na sledeći nivo, prilikom čega se povećava brzina kojom  
-	se kreću vanzemaljci, ubrzava se kretanje metaka ispaljenih od strane vanzemaljaca i smanjuje se  
-	interval na kom vanzemaljci ispaljuju metke. 
+	Prilikom prelaska na sledeći nivo, povećava se brzina kojom se kreću vanzemaljci, ubrzava se kretanje  
+	metaka ispaljenih od strane vanzemaljaca i smanjuje se interval na kom vanzemaljci ispaljuju metke. 
 	Takođe, igračev brod dobija blago ubrzanje kretanja.  
 	Ukoliko je igrač pokupio neku slučajnu silu, na narednom nivou mu se oduzima.  	
 	Ako je igra u multiplayer modu, ukoliko jedan igrač pogine, drugi nastavlja da igra, i u narednom nivou  
 	on nastavlja sam da igra. 
 	Životi igrača se resetuju na 3 i štitovi se ponovo inicijalizuju.  
+####DeusEx
+	Deus-Ex je komponenta koja na određenom vremenskom intervalu prikazuje slučajnu silu na ekranu,  
+	koju igrači mogu da pokupe. Slučajna sila se na ekranu zadržava 2 sekunde, i za to vreme, igrači imaju  
+	priliku da je pokupe.  
+	
+	Postoje tri vrste slučajnih sila:  
+	- Skull  
+	- Life  
+	- Armour  
+
+##### Skull ![skull](Space%20Invaders/doc/skull-resized.gif)
+ Ukoliko igrač pokupi ovu silu, gubi jedan život.  
+##### Life ![life](Space%20Invaders/doc/lives.png)
+ Kada igrač pokupi `srce`, dobija život gratis. Ukoliko je igrač pokupio `srce` dok je imao 3 života,  
+neće mu se povećati broj života.   
+##### Armour ![armour](Space%20Invaders/doc/armor-resized.gif)
+Ukoliko igrač pokupi ovu silu, dobija dodatni štit oko svog avatara, koji ga štiti od metka vanzemaljaca,  
+i od gubljenja života ukoliko pokupi slučajnu silu `Skull`.  
+Kada igrač, dok ima aktivan štit, pokupi `Skull` silu ili ga pogodi metak vanzemaljca, štit nestaje. 
+		
 #### Kraj
 	Kada svi igrači poginu, prikaže se Game Over prozor koji ispisuje nickname pobednika.  	
  
  ### Pravila igre  
- 
+- Svaki igrač ima 3 života
+- Pobednik je igrač koji ostane najduže u igri  
+- Samo jedan igrač može da pokupi slučajnu silu  
+- Prelazak na sledeći nivo se dešava kada se unište svi vanzemaljci  
  
  ### Komande  
- 
+ | ACTION | PLAYER 1 | PLAYER 2 |
+ | :--- | :---: | ---: |
+ | **Move left** | `A` | `Key-Left` |
+ | **Move right** | `D` | `Key-Right` |
+ | **Shoot** | `space` | `K` |
  
  ### Opis realizacije
 
