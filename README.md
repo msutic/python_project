@@ -16,7 +16,7 @@ Prilikom pokretanja aplikacije, prikazuje se početni meni.
 
 ![Start Menu](Space%20Invaders/doc/menu.png)  
 
-Postoji nekoliko režima igranja:  
+###Postoji nekoliko režima igranja:  
 - Singleplayer  
 - Multiplayer  
 - Turnir  
@@ -28,7 +28,7 @@ Svaki od ovih režima biće objašnjen u posebnim sekcijama.
 Singleplayer je mod igrice u kojem učestvuje jedan igrač.  
 Klikom na `start game`, odabira se ovaj mod. 
 
-![select sp](Space Invaders/doc/select-sp.png)  
+![select sp](Space%20Invaders/doc/select-sp1.png)  
   
  Nakon klika, korisniku se otvara prozor u kom treba da unese svoj nickname  
  i nudi mu se izbor raznih svemirskih brodova.  
@@ -36,11 +36,76 @@ Klikom na `start game`, odabira se ovaj mod.
  
  Pritiskom na `-> start`, igra započinje.  
  
- ![Game sp](Space Invaders/doc/game-sp.png)  
+ ![Game sp](Space%20Invaders/doc/game-sp.png)  
  
+ 
+### Multiplayer  
+
+U multiplayer modu, u igri učestvuju dva igrača.  
+Svaki igrač ima svoj nickname i svoj svemirski brod, koji odabere u select prozoru koji mu se prikaže  
+kada klikne na `multiplayer` dugme.  
+
+Neophodno je da korisnicka imena igrača budu unikatna.  
+Ukoliko se imena poklapaju, igrači će dobiti poruku da je neopodno da igra neće započeti  
+dok se ne ispoštuje pravilo.  
+
+![select mp](Space%20Invaders/doc/sc-mp.png)  
+
+Nakon unosa imena i selekcije broda, prelazi se na glavni prozor u kom se odvija igrica.  
+
+![game mp](Space%20Invaders/doc/game-mp.png)  
+
+
+### Turnir  
+
+Tournament mod podržava da u igri učestvuje veći broj igrača.  
+Za turnir je potrebno minimum 4 igrača, a maksimalno je podržano 8 igrača.  
+Igrači se takmiče po fazama (Quarterfinals -> Semifinals -> The Grand Finale)  
+Na sledećoj slici je ilustrovano kako se odvija turnir.  
+
+![tournament](Space%20Invaders/doc/tournament.png)  
+
+Takođe, za turnir takođe važi pravilo da nickname svakog igrača mora biti unikatan, dok brodovi  
+mogu da budu isti.  
+
+Klikom na `tournament` dugme, korisniku se nudi izbor koliko igrača želi da prijavi.  
+Nakon toga, svaki igrač unosi svoj nickname i bira svog avatara (spaceship).  
+Naredna slika je primer turnira sa 4 igrača.  
+
+![4playersTournament](Space%20Invaders/doc/4players.png)  
+
+Kada svi igrači podese svoj unos, nasumično se izaberu dva igrača koji će započeti turnir.  
+Igra se odvija sve dok oba igrača ne poginu. Pobednik runde je onaj igrač koji je proveo duže vremena  
+igrajući igru, i on prolazi u sledeću fazu.  
+Nakon toga se takmiče druga dva igrača, od kojih pobednik prolazi dalje i takmiči se sa pobednikom  
+prethodne runde.  
+Turnir se odvija sve dok se ne sastanu dva igrača koja su došla do finala i nakon te finalne runde  
+se proglašava pobednik turnira.  
+
  
  ### Ciklus igre   
- 
+ #### Početak
+	 Na početku igre, vanzemaljci se nalaze na sredini ekrana na vrhu, a startne pozicije igrača su u  
+	 donjim uglovima.  
+	 Inicijalizuju se 4 štita, koji brane igrača od napada vanzemaljaca.  Štitovi se postepeno raspadaju  
+	 kako ih pogodi metak vanzemaljca.  
+	 Vanzemaljci se kreću levo-desno i vremenom se spuštaju ka dnu ekrana.  
+	 Na određenom vremenskom intervalu vanzemaljci ispaljuju metke koji lete vertikalno ka dole.  
+	 Ukoliko se avatar igrača nađe na mestu metka vanzemaljca, tj. dođe do kolizije igrača sa metkom,  
+	 igrač gubi život.  
+	 Igrači mogu da ispaljuju metke na odgovarajući taster, koji se kreću vertikalno ka gore, i u koliko  
+	 metak pogodi vanzemaljca, on nestaje.  
+ #### Naredni nivo
+	Kada igrač ubije sve vanzemaljce, prelazi na sledeći nivo, prilikom čega se povećava brzina kojom  
+	se kreću vanzemaljci, ubrzava se kretanje metaka ispaljenih od strane vanzemaljaca i smanjuje se  
+	interval na kom vanzemaljci ispaljuju metke. 
+	Takođe, igračev brod dobija blago ubrzanje kretanja.  
+	Ukoliko je igrač pokupio neku slučajnu silu, na narednom nivou mu se oduzima.  	
+	Ako je igra u multiplayer modu, ukoliko jedan igrač pogine, drugi nastavlja da igra, i u narednom nivou  
+	on nastavlja sam da igra. 
+	Životi igrača se resetuju na 3 i štitovi se ponovo inicijalizuju.  
+#### Kraj
+	Kada svi igrači poginu, prikaže se Game Over prozor koji ispisuje nickname pobednika.  	
  
  ### Pravila igre  
  

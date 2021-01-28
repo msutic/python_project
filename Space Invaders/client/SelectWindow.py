@@ -180,6 +180,11 @@ class SelectWindow(QMainWindow):
                 msg.setText("please enter your nicknames...")
                 msg.setWindowTitle('Error')
                 msg.exec_()
+            elif self.nickname_input.text() == self.nickname_input2.text():
+                msg = QMessageBox()
+                msg.setText("nicknames must be unique...")
+                msg.setWindowTitle('Error')
+                msg.exec_()
             else:
                 player1_id = self.nickname_input.text()
                 player1_spacecraft = self.selected_spacecraft.currentText()
