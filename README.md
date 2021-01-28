@@ -2,14 +2,14 @@
 
 Rekreacija igre Space Invaders iz 1978. godine sa modernim dizajnom.  
 Igra je realizovana uz pomoc PyQt5 biblioteke u python programskom jeziku.  
-Cilj igre je pobediti sve vanzemaljce.  
+Cilj igre je uništiti sve vanzemaljce.  
 
 ## Neophodne tehnologije 
 - [PyQt5](https://pypi.org/project/PyQt5/)  
 - [Python3](https://www.python.org/downloads/)  
 - [PyCharm](https://www.jetbrains.com/pycharm/download)  
 
-## Uputstvo za korisćenje  
+## Uputstvo za korišćenje  
 
 ### Meni  
 Prilikom pokretanja aplikacije, prikazuje se početni meni.  
@@ -112,16 +112,12 @@ se proglašava pobednik turnira.
 	- Skull  
 	- Life  
 	- Armour  
-
-##### Skull ![skull](Space%20Invaders/doc/skull-resized.gif)
- Ukoliko igrač pokupi ovu silu, gubi jedan život.  
-##### Life ![life](Space%20Invaders/doc/lives.png)
- Kada igrač pokupi `srce`, dobija život gratis. Ukoliko je igrač pokupio `srce` dok je imao 3 života,  
-neće mu se povećati broj života.   
-##### Armour ![armour](Space%20Invaders/doc/armor-resized.gif)
-Ukoliko igrač pokupi ovu silu, dobija dodatni štit oko svog avatara, koji ga štiti od metka vanzemaljaca,  
-i od gubljenja života ukoliko pokupi slučajnu silu `Skull`.  
-Kada igrač, dok ima aktivan štit, pokupi `Skull` silu ili ga pogodi metak vanzemaljca, štit nestaje. 
+	
+ | Name | Avatar | PLAYER |
+ | :--- | :---: | :---: | 
+ | **Skull** | ![skull](Space%20Invaders/doc/skull-resized.gif) | `-1 life` |
+ | **Life** | ![life](Space%20Invaders/doc/lives.png) | `+1 life` |
+ | **Armour** | ![armour](Space%20Invaders/doc/armor-resized.gif) | `shield` | 
 		
 #### Kraj
 	Kada svi igrači poginu, prikaže se Game Over prozor koji ispisuje nickname pobednika.  	
@@ -130,7 +126,13 @@ Kada igrač, dok ima aktivan štit, pokupi `Skull` silu ili ga pogodi metak vanz
 - Svaki igrač ima 3 života
 - Pobednik je igrač koji ostane najduže u igri  
 - Samo jedan igrač može da pokupi slučajnu silu  
-- Prelazak na sledeći nivo se dešava kada se unište svi vanzemaljci  
+- Prelazak na sledeći nivo se dešava kada se unište svi vanzemaljci 
+- Kada igrač pokupi `Life`, dobija život gratis. Ukoliko je igrač pokupio `Life` dok je imao 3 života,  
+neće mu se povećati broj života.  
+- Ukoliko igrač pokupi `armour`, dobija dodatni štit oko svog avatara, koji ga štiti od metka vanzemaljaca,  
+i od gubljenja života ukoliko pokupi slučajnu silu `Skull`.  
+- Kada igrač, dok ima aktivan štit, pokupi `Skull` silu ili ga pogodi metak vanzemaljca, štit nestaje.  
+- Igra se beskonačno nivoa.
  
  ### Komande  
  | ACTION | PLAYER 1 | PLAYER 2 |
@@ -148,7 +150,7 @@ Komunikacija između procesa se vrši preko `Queue-a`.
 |--> `client` : ***prozori za interakciju sa korisnikom***  
 |--> `config` --> `cfg.py` : ***konfiguracioni fajl sa konstantama***  
 |--> `doc` : ***sadržaj za dokumentaciju***  
-|--> `Entities` --> ***objekti u igri***  
-|--> `images` --> ***slike za objekte***  
+|--> `Entities` --> ***implementacija klasa objekata***  
+|--> `images` --> ***slike objekata***  
 |--> `utilities` --> ***logika za niti i procese***  
 |--> `main.py` --> ***glavna skripta***  
