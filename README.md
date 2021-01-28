@@ -16,7 +16,7 @@ Prilikom pokretanja aplikacije, prikazuje se početni meni.
 
 ![Start Menu](Space%20Invaders/doc/menu.png)  
 
-###Postoji nekoliko režima igranja:  
+### Postoji nekoliko režima igranja:  
 - Singleplayer  
 - Multiplayer  
 - Turnir  
@@ -103,7 +103,7 @@ se proglašava pobednik turnira.
 	Ako je igra u multiplayer modu, ukoliko jedan igrač pogine, drugi nastavlja da igra, i u narednom nivou  
 	on nastavlja sam da igra. 
 	Životi igrača se resetuju na 3 i štitovi se ponovo inicijalizuju.  
-####DeusEx
+#### DeusEx
 	Deus-Ex je komponenta koja na određenom vremenskom intervalu prikazuje slučajnu silu na ekranu,  
 	koju igrači mogu da pokupe. Slučajna sila se na ekranu zadržava 2 sekunde, i za to vreme, igrači imaju  
 	priliku da je pokupe.  
@@ -140,5 +140,15 @@ Kada igrač, dok ima aktivan štit, pokupi `Skull` silu ili ga pogodi metak vanz
  | **Shoot** | `space` | `K` |
  
  ### Opis realizacije
+Za realizaciju ovog projekta, korišćena je `PyQt5` biblioteka uz pomoć koje je izgrađena grafika.  
+Ažuriranje grafike odrađeno je upotrebom procesa (`multiprocessing`) i tredova (`QThread`).  
+Komunikacija između procesa se vrši preko `Queue-a`.  
 
-
+| `Space Invaders`  
+|--> `client` : ***prozori za interakciju sa korisnikom***  
+|--> `config` --> `cfg.py` : ***konfiguracioni fajl sa konstantama***  
+|--> `doc` : ***sadržaj za dokumentaciju***  
+|--> `Entities` --> ***objekti u igri***  
+|--> `images` --> ***slike za objekte***  
+|--> `utilities` --> ***logika za niti i procese***  
+|--> `main.py` --> ***glavna skripta***  
