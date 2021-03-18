@@ -154,3 +154,5 @@ Komunikacija između procesa se vrši preko `Queue-a`.
 |--> `images` --> ***slike objekata***  
 |--> `utilities` --> ***logika za niti i procese***  
 |--> `main.py` --> ***glavna skripta***  
+
+Updated English documentation coming soon...
